@@ -130,8 +130,82 @@ def test_refresh_platform_all_runs_all_enabled_sources() -> None:
     assert len(payload["results"]) == 2
 
 
+def test_get_sources_returns_status_focused_fields_only() -> None:
+    from api.routes import trends as trends_route
+
+    async def fake_query_sources(platform=None, enabled_only=False):
+        return [
+            {
+                "Id": 18,
+                "id": "youtube_us",
+                "name": "YouTube US",
+                "platform": "youtube",
+                "last_fetched_at": "2026-03-19T10:00:00Z",
+                "last_fetch_status": "success",
+                "enabled": True,
+                "xc-token": "secret-should-never-leak",
+                "params": '{"region":"US"}',
+            }
+        ]
+
+    original_query_sources = trends_route.nocodb_trends.query_sources
+    trends_route.nocodb_trends.query_sources = fake_query_sources
+
+    client = _make_client()
+    response = client.get("/api/sources")
+
+    trends_route.nocodb_trends.query_sources = original_query_sources
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload == [
+        {
+            "id": "youtube_us",
+            "name": "YouTube US",
+            "platform": "youtube",
+            "last_fetched_at": "2026-03-19T10:00:00Z",
+            "last_fetch_status": "success",
+            "enabled": True,
+        }
+    ]
+
+
+def test_get_sources_platform_filter_is_forwarded() -> None:
+    from api.routes import trends as trends_route
+
+    seen = {}
+
+    async def fake_query_sources(platform=None, enabled_only=False):
+        seen["platform"] = platform
+        seen["enabled_only"] = enabled_only
+        return [
+            {
+                "id": "spotify_global",
+                "name": "Spotify Global",
+                "platform": "spotify",
+                "last_fetched_at": None,
+                "last_fetch_status": "",
+                "enabled": False,
+            }
+        ]
+
+    original_query_sources = trends_route.nocodb_trends.query_sources
+    trends_route.nocodb_trends.query_sources = fake_query_sources
+
+    client = _make_client()
+    response = client.get("/api/sources", params={"platform": "spotify"})
+
+    trends_route.nocodb_trends.query_sources = original_query_sources
+
+    assert response.status_code == 200
+    assert seen == {"platform": "spotify", "enabled_only": False}
+    assert response.json()[0]["id"] == "spotify_global"
+
+
 if __name__ == "__main__":
     test_refresh_rejects_payload_with_both_source_id_and_platform()
     test_refresh_by_source_id_runs_exactly_one_source()
     test_refresh_platform_all_runs_all_enabled_sources()
+    test_get_sources_returns_status_focused_fields_only()
+    test_get_sources_platform_filter_is_forwarded()
     print("test_api_refresh_and_sources.py: ok")
