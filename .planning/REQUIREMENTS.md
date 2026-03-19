@@ -9,11 +9,11 @@
 
 ### Cleanup
 
-- [ ] **CLEN-01**: All SehaRadar files are removed — health_agents/, workflows/unified_scan_workflow.py, workflows/syncdetection_worker.py, workflows/email_digest_workflow.py, server.py, bridge-service.js, main.py (old), promed.js, promednew.js, parsers/, config/sources.json, emptySDKagnet.py, test-*.js root files
-- [ ] **CLEN-02**: Retained reusable tools moved to Trenfy structure — tools/nocodb_trends_client.py, trend_agents/shared/models.py
-- [ ] **CLEN-03**: pyproject.toml updated — name = "trenfy", all SehaRadar dependencies removed, Trenfy dependencies added
-- [ ] **CLEN-04**: docker-compose.yml replaced — Trenfy-only services (no RSSHub, no Caddy config)
-- [ ] **CLEN-05**: .env.example updated — only Trenfy environment variables
+- [x] **CLEN-01**: All SehaRadar files are removed — health_agents/, workflows/unified_scan_workflow.py, workflows/syncdetection_worker.py, workflows/email_digest_workflow.py, server.py, bridge-service.js, main.py (old), promed.js, promednew.js, parsers/, config/sources.json, emptySDKagnet.py, test-*.js root files
+- [x] **CLEN-02**: Retained reusable tools moved to Trenfy structure — tools/nocodb_trends_client.py, trend_agents/shared/models.py
+- [x] **CLEN-03**: pyproject.toml updated — name = "trenfy", all SehaRadar dependencies removed, Trenfy dependencies added
+- [x] **CLEN-04**: docker-compose.yml replaced — Trenfy-only services (no RSSHub, no Caddy config)
+- [x] **CLEN-05**: .env.example updated — only Trenfy environment variables
 
 ### Backend Core
 
@@ -119,11 +119,11 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CLEN-01 | Phase 1 | Pending |
-| CLEN-02 | Phase 1 | Pending |
-| CLEN-03 | Phase 1 | Pending |
-| CLEN-04 | Phase 1 | Pending |
-| CLEN-05 | Phase 1 | Pending |
+| CLEN-01 | Phase 1 | ✓ Complete |
+| CLEN-02 | Phase 1 | ✓ Complete |
+| CLEN-03 | Phase 1 | ✓ Complete |
+| CLEN-04 | Phase 1 | ✓ Complete |
+| CLEN-05 | Phase 1 | ✓ Complete |
 | CORE-01 | Phase 2 | Pending |
 | CORE-02 | Phase 2 | Pending |
 | CORE-03 | Phase 2 | Pending |
