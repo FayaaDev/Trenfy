@@ -170,9 +170,39 @@ async def test_scan_all_continues_when_one_source_fails() -> None:
     assert result == {"fetched": 4, "stored": 2, "duplicates": 2, "sources_run": 2}
 
 
+async def test_scan_all_still_processes_sources_after_mid_list_failure() -> None:
+    class IsolationWorkflow(TrendsWorkflow):
+        async def scan_source(self, source: TrendSource):
+            if source.id == "FAIL_MIDDLE":
+                raise RuntimeError("middle failure")
+            return {
+                "source_id": source.id,
+                "fetched": 1,
+                "stored": 1,
+                "duplicates": 0,
+                "invalid": 0,
+                "status": "success",
+            }
+
+    workflow = IsolationWorkflow(FakeTrendsClient())
+    result = await workflow.scan_all(
+        [
+            _source(source_id="FIRST_OK"),
+            _source(source_id="FAIL_MIDDLE"),
+            _source(source_id="LAST_OK"),
+        ]
+    )
+
+    assert result["fetched"] == 2
+    assert result["stored"] == 2
+    assert result["duplicates"] == 0
+    assert result["sources_run"] == 2
+
+
 if __name__ == "__main__":
     asyncio.run(test_scan_source_dispatches_dedups_and_stores_new_rows())
     asyncio.run(test_scan_source_partial_success_when_invalid_items_skipped())
     asyncio.run(test_scan_source_sets_error_and_breaker_open_statuses())
     asyncio.run(test_scan_all_continues_when_one_source_fails())
+    asyncio.run(test_scan_all_still_processes_sources_after_mid_list_failure())
     print("test_trends_workflow.py: ok")
