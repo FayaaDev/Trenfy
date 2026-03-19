@@ -4,13 +4,13 @@ milestone: v1.0
 milestone_name: milestone
 current_plan: 3
 status: unknown
-stopped_at: Completed 04-02-PLAN.md
-last_updated: "2026-03-19T08:34:22.822Z"
+stopped_at: Completed 04-03-PLAN.md
+last_updated: "2026-03-19T08:40:48.502Z"
 progress:
   total_phases: 5
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 13
-  completed_plans: 12
+  completed_plans: 13
 ---
 
 # Trenfy — Project State
@@ -72,6 +72,8 @@ Phase 5: React Native App ░░░░░░░░░░░░░░░░░░
 - [Phase 04]: Centralized refresh selector validation in api/contracts.py with invalid_refresh_selector error contract.
 - [Phase 04]: Composed trends and sources routers to expose /api/sources without changing existing /api/trends paths.
 - [Phase 04]: Normalized NocoDB source rows with id/Id fallback before API projection.
+- [Phase 04]: Compose sets NOCODB_API_URL to nocodb service URL for deterministic internal networking.
+- [Phase 04]: .env.example now documents only required Phase 4 NocoDB/source/server variables.
 
 ## Performance Metrics
 
@@ -87,8 +89,9 @@ Phase 5: React Native App ░░░░░░░░░░░░░░░░░░
 | Phase 03-platform-clients P04 | 8min | 2 tasks | 2 files |
 | Phase 04-api-infrastructure P01 | 5min | 3 tasks | 5 files |
 | Phase 04-api-infrastructure P02 | 6min | 2 tasks | 4 files |
+| Phase 04-api-infrastructure P03 | 2min | 2 tasks | 4 files |
 
 ## Session Notes
 
-**Last session:** 2026-03-19T08:34:22.819Z
-**Stopped at:** Completed 04-02-PLAN.md
+**Last session:** 2026-03-19T08:40:48.499Z
+**Stopped at:** Completed 04-03-PLAN.md

@@ -62,10 +62,10 @@
 
 ### Infrastructure
 
-- [ ] **INFRA-01**: docker-compose.yml defines a single trenfy-backend service (Python FastAPI) with NocoDB URL and YouTube + X API credentials as environment variables
-- [ ] **INFRA-02**: Dockerfile builds the Python backend — Python 3.11-slim, installs requirements, starts uvicorn on port 8080
+- [x] **INFRA-01**: docker-compose.yml defines a single trenfy-backend service (Python FastAPI) with NocoDB URL and YouTube + X API credentials as environment variables
+- [x] **INFRA-02**: Dockerfile builds the Python backend — Python 3.11-slim, installs requirements, starts uvicorn on port 8080
 - [ ] **INFRA-03**: NocoDB trends and trend_sources tables exist with schema matching Trenfy.md (columns: platform, category, title, description, url, thumbnail_url, published_date, fetched_at, metric_type, metric_value, metadata, region_code, content_hash, notification_sent)
-- [ ] **INFRA-04**: .env.example documents all required environment variables (NocoDB, YouTube, X, server settings)
+- [x] **INFRA-04**: .env.example documents all required environment variables (NocoDB, YouTube, X, server settings)
 
 ---
 
@@ -157,10 +157,10 @@
 | APP-10 | Phase 5 | Pending |
 | APP-11 | Phase 5 | Pending |
 | APP-12 | Phase 5 | Pending |
-| INFRA-01 | Phase 4 | Pending |
-| INFRA-02 | Phase 4 | Pending |
+| INFRA-01 | Phase 4 | Complete |
+| INFRA-02 | Phase 4 | Complete |
 | INFRA-03 | Phase 2 | Pending |
-| INFRA-04 | Phase 4 | Pending |
+| INFRA-04 | Phase 4 | Complete |
 
 **Coverage:**
 - v1 requirements: 41 total
