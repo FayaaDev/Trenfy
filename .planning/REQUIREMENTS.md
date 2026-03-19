@@ -39,9 +39,9 @@
 
 - [x] **API-01**: GET /api/trends returns paginated list of trends (default limit=50, max=200), filterable by platform, category, region_code, start_date, end_date
 - [x] **API-02**: GET /api/trends/{id} returns single trend detail by NocoDB row ID
-- [ ] **API-03**: POST /api/trends/refresh accepts {"source_id": "..."} or {"platform": "..."} and triggers an immediate fetch for that source/platform
+- [x] **API-03**: POST /api/trends/refresh accepts {"source_id": "..."} or {"platform": "..."} and triggers an immediate fetch for that source/platform
 - [x] **API-04**: GET /api/trends/stats returns aggregate counts by platform (total trends, newest fetched_at per platform)
-- [ ] **API-05**: GET /api/sources returns all configured sources with id, name, platform, last_fetched_at, last_fetch_status, enabled
+- [x] **API-05**: GET /api/sources returns all configured sources with id, name, platform, last_fetched_at, last_fetch_status, enabled
 - [x] **API-06**: GET /health returns {"status": "ok", "scheduler_running": true/false}
 - [x] **API-07**: All responses include CORS headers permitting requests from the React Native app
 
@@ -140,9 +140,9 @@
 | PLAT-08 | Phase 3 | Complete |
 | API-01 | Phase 4 | Complete |
 | API-02 | Phase 4 | Complete |
-| API-03 | Phase 4 | Pending |
+| API-03 | Phase 4 | Complete |
 | API-04 | Phase 4 | Complete |
-| API-05 | Phase 4 | Pending |
+| API-05 | Phase 4 | Complete |
 | API-06 | Phase 4 | Complete |
 | API-07 | Phase 4 | Complete |
 | APP-01 | Phase 5 | Pending |

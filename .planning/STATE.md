@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_plan: 2
+current_plan: 3
 status: unknown
-stopped_at: Completed 04-01-PLAN.md
-last_updated: "2026-03-19T08:26:39.576Z"
+stopped_at: Completed 04-02-PLAN.md
+last_updated: "2026-03-19T08:34:22.822Z"
 progress:
   total_phases: 5
   completed_phases: 3
   total_plans: 13
-  completed_plans: 11
+  completed_plans: 12
 ---
 
 # Trenfy — Project State
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-03-19)
 
 Phase: 04 (api-infrastructure) — IN PROGRESS
 Plan: 2 of 3
-Current Plan: 2
+Current Plan: 3
 Total Plans in Phase: 3
 
 ## Progress
@@ -69,6 +69,9 @@ Phase 5: React Native App ░░░░░░░░░░░░░░░░░░
 - [Phase 03]: Workflow maps client breaker-open reason to disabled_circuit_breaker status while preserving scan isolation.
 - [Phase 04-api-infrastructure]: Use URL-safe base64 JSON cursors carrying offset and sort
 - [Phase 04-api-infrastructure]: Return explicit 404 payload for missing trend ids instead of generic FastAPI detail
+- [Phase 04]: Centralized refresh selector validation in api/contracts.py with invalid_refresh_selector error contract.
+- [Phase 04]: Composed trends and sources routers to expose /api/sources without changing existing /api/trends paths.
+- [Phase 04]: Normalized NocoDB source rows with id/Id fallback before API projection.
 
 ## Performance Metrics
 
@@ -83,8 +86,9 @@ Phase 5: React Native App ░░░░░░░░░░░░░░░░░░
 | Phase 03-platform-clients P03 | 3min | 2 tasks | 4 files |
 | Phase 03-platform-clients P04 | 8min | 2 tasks | 2 files |
 | Phase 04-api-infrastructure P01 | 5min | 3 tasks | 5 files |
+| Phase 04-api-infrastructure P02 | 6min | 2 tasks | 4 files |
 
 ## Session Notes
 
-**Last session:** 2026-03-19T08:26:39.574Z
-**Stopped at:** Completed 04-01-PLAN.md
+**Last session:** 2026-03-19T08:34:22.819Z
+**Stopped at:** Completed 04-02-PLAN.md
