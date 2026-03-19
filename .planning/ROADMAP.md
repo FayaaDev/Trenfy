@@ -37,20 +37,25 @@
 ### Success Criteria
 1. `GET /health` returns `{"status": "ok", "scheduler_running": true}` within 200ms after server startup
 2. The NocoDB `trends` and `trend_sources` tables exist with all columns matching the Trenfy.md schema; the NocoDB client can write a test TrendItem and read it back without error
-3. The scheduler starts all four sources (YouTube, Spotify, Steam, TikTok) on their configured intervals; killing one source's task with a simulated exception leaves the other three running unaffected
+3. The scheduler starts two sources (YouTube, and X) on their configured intervals; killing one source's task with a simulated exception leaves the other three running unaffected
 4. `config/trend_sources.json` loads via the source registry and returns a typed list of `TrendSource` objects with correct intervals and enabled flags
 
 ---
 
 ## Phase 3: Platform Clients
-**Goal:** All four platform clients fetching, normalizing, and persisting real trend data with deduplication and failure isolation
+**Goal:** All two platform clients fetching, normalizing, and persisting real trend data with deduplication and failure isolation
 **Requirements:** PLAT-01, PLAT-02, PLAT-03, PLAT-04, PLAT-05, PLAT-06, PLAT-07, PLAT-08
+**Plans:** 4 plans
+
+### Plans
+- [ ] 03-01-PLAN.md — Contract foundation (BaseTrendClient, normalization helpers, hash tests) (PLAT-07, PLAT-08)
+- [ ] 03-02-PLAN.md — YouTube + Spotify clients with auth/normalization and tests (PLAT-01, PLAT-02, PLAT-07)
+- [ ] 03-03-PLAN.md — Steam + TikTok clients with retry/circuit-breaker controls and tests (PLAT-03, PLAT-04, PLAT-05, PLAT-06)
+- [ ] 03-04-PLAN.md — Trends workflow wiring (dispatch, dedup, status handling, isolation tests) (PLAT-06, PLAT-07, PLAT-08)
 
 ### Success Criteria
 1. YouTube client fetches trending videos for US, SA, and JP regions and persists them to NocoDB; running the scheduler twice within 15 minutes produces zero duplicate rows (content_hash dedup confirmed)
-2. Spotify client obtains and silently refreshes its OAuth2 token; concurrent refresh calls under `asyncio.Lock` never produce a 401 error reaching NocoDB
-3. Steam client returns a non-empty list of top sellers under normal conditions; when the Steam store HTML changes, it logs `SCRAPE_DEGRADED` and returns an empty list rather than raising an exception
-4. TikTok client fetches trending content via RapidAPI; after 3 consecutive API failures it auto-disables and logs a clear circuit-breaker message while YouTube, Spotify, and Steam continue polling uninterrupted
+2. X uses /2/tweets/search/recent endpoint
 
 ---
 
