@@ -1,4 +1,11 @@
-from trend_agents.shared.models import SourceType, TrendItem, generate_trend_hash
+from trend_agents.shared.models import (
+    SourceType,
+    TrendItem,
+    TrendSource,
+    generate_trend_hash,
+)
+from tools.trend_clients.base import BaseTrendClient
+from tools.trend_clients.common import normalize_category
 
 
 def test_source_type_includes_tiktok() -> None:
@@ -44,8 +51,31 @@ def test_generate_trend_hash_changes_on_key_fields() -> None:
         assert generate_trend_hash(variant) != base_hash
 
 
+def test_normalize_category_known_and_unknown_values() -> None:
+    assert normalize_category("Gaming") == "gaming"
+    assert normalize_category("MUSIC") == "music"
+    assert normalize_category("film") == "entertainment"
+
+
+def test_base_trend_client_fetch_is_abstract_async_contract() -> None:
+    assert "fetch" in BaseTrendClient.__abstractmethods__
+
+    class ConcreteClient(BaseTrendClient):
+        platform = "test"
+
+        async def fetch(
+            self, source: TrendSource, max_items: int = 20
+        ) -> list[TrendItem]:
+            return []
+
+    client = ConcreteClient()
+    assert client.platform == "test"
+
+
 if __name__ == "__main__":
     test_source_type_includes_tiktok()
     test_generate_trend_hash_is_deterministic()
     test_generate_trend_hash_changes_on_key_fields()
+    test_normalize_category_known_and_unknown_values()
+    test_base_trend_client_fetch_is_abstract_async_contract()
     print("test_trend_client_contracts.py: ok")
