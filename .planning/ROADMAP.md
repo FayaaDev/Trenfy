@@ -9,6 +9,11 @@
 ## Phase 1: Clean Slate
 **Goal:** Remove all SehaRadar code and establish the Trenfy project skeleton
 **Requirements:** CLEN-01, CLEN-02, CLEN-03, CLEN-04, CLEN-05
+**Plans:** 2 plans
+
+### Plans
+- [ ] 01-01-PLAN.md — Delete SehaRadar files, clean tools/ and config/ (CLEN-01, CLEN-02)
+- [ ] 01-02-PLAN.md — Rewrite pyproject.toml, docker-compose.yml, create app.py skeleton (CLEN-03, CLEN-04, CLEN-05)
 
 ### Success Criteria
 1. The repository contains zero SehaRadar files — no health_agents/, no server.py, no bridge-service.js, no promed scripts; `git ls-files` shows only Trenfy-relevant paths
