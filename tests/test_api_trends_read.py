@@ -166,6 +166,40 @@ def test_get_trends_stats_returns_platform_totals_and_recency() -> None:
     assert payload["total_trends"] == sum(row["total_trends"] for row in by_platform)
 
 
+def test_health_integrations_reports_config_without_leaking_secrets() -> None:
+    import os
+
+    keys = ["YOUTUBE_API_KEY", "X_BEARER_TOKEN", "NOCODB_API_TOKEN"]
+    original_values = {key: os.getenv(key) for key in keys}
+
+    os.environ["YOUTUBE_API_KEY"] = "yt-secret-value"
+    os.environ["X_BEARER_TOKEN"] = ""
+    os.environ["NOCODB_API_TOKEN"] = "nocodb-secret-value"
+
+    try:
+        client = _make_client()
+        response = client.get("/health/integrations")
+    finally:
+        for key, value in original_values.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["status"] == "ok"
+    assert payload["credentials"] == {
+        "youtube_api_key_configured": True,
+        "x_bearer_token_configured": False,
+        "nocodb_api_token_configured": True,
+    }
+    assert "youtube" in payload["platform_source_counts"]
+    assert "x" in payload["platform_source_counts"]
+    assert "yt-secret-value" not in response.text
+    assert "nocodb-secret-value" not in response.text
+
+
 if __name__ == "__main__":
     test_cursor_codec_round_trip()
     test_limit_validator_defaults_and_caps()
@@ -175,4 +209,5 @@ if __name__ == "__main__":
     test_get_trends_enforces_limit_defaults_and_caps()
     test_get_trends_rejects_invalid_cursor_with_400()
     test_get_trends_stats_returns_platform_totals_and_recency()
+    test_health_integrations_reports_config_without_leaking_secrets()
     print("test_api_trends_read.py: ok")

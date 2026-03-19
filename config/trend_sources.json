@@ -26,6 +26,24 @@
       "params": {"chart": "mostPopular", "regionCode": "SA", "part": "snippet,contentDetails,statistics"},
       "check_interval_minutes": 15,
       "enabled": true
+    },
+    {
+      "id": "X_RECENT_GLOBAL_EN",
+      "name": "X Recent Search - Global English",
+      "platform": "x",
+      "endpoint": "tweets.search.recent",
+      "params": {"query": "(breaking OR viral OR \"just announced\") lang:en -is:retweet", "region_code": "GLOBAL", "category": "news", "sort_order": "recency", "max_results": 20},
+      "check_interval_minutes": 10,
+      "enabled": true
+    },
+    {
+      "id": "X_RECENT_SA_AR",
+      "name": "X Recent Search - Saudi Arabia Arabic",
+      "platform": "x",
+      "endpoint": "tweets.search.recent",
+      "params": {"query": "(saudi OR riyadh OR ksa) lang:ar -is:retweet", "region_code": "SA", "category": "news", "sort_order": "recency", "max_results": 20},
+      "check_interval_minutes": 10,
+      "enabled": true
     }
   ]
 }

@@ -103,3 +103,6 @@ class YouTubeTrendClient(BaseTrendClient):
         )
         trend.content_hash = compute_content_hash(trend)
         return trend
+
+
+CLIENT_CLASS = YouTubeTrendClient

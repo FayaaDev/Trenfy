@@ -273,8 +273,26 @@ class NocoDBTrendsClient:
 
         return existing
 
+    def _resolve_stats_platforms(self) -> List[str]:
+        try:
+            from trend_agents.shared import source_registry
+
+            configured_platforms = sorted(
+                {
+                    str(source.platform or "").strip().lower()
+                    for source in source_registry.list_all()
+                    if str(source.platform or "").strip()
+                }
+            )
+            if configured_platforms:
+                return configured_platforms
+        except Exception:
+            pass
+
+        return ["youtube", "x"]
+
     async def get_statistics(self) -> Dict[str, Any]:
-        platforms = ["youtube", "x"]
+        platforms = self._resolve_stats_platforms()
         by_platform: List[Dict[str, Any]] = []
         total_trends = 0
 

@@ -263,39 +263,21 @@ def generate_trend_hash(item: TrendItem) -> str:
       "enabled": true
     },
     {
-      "id": "SPOTIFY_NEW_RELEASES",
-      "name": "Spotify New Releases",
-      "platform": "spotify",
-      "endpoint": "browse/new-releases",
-      "params": {"limit": 20},
-      "check_interval_minutes": 60,
+      "id": "X_RECENT_GLOBAL_EN",
+      "name": "X Recent Search - Global English",
+      "platform": "x",
+      "endpoint": "tweets.search.recent",
+      "params": {"query": "(breaking OR viral OR \"just announced\") lang:en -is:retweet", "region_code": "GLOBAL", "category": "news", "sort_order": "recency", "max_results": 20},
+      "check_interval_minutes": 10,
       "enabled": true
     },
     {
-      "id": "SPOTIFY_FEATURED_PLAYLISTS",
-      "name": "Spotify Featured Playlists",
-      "platform": "spotify",
-      "endpoint": "browse/featured-playlists",
-      "params": {"limit": 20},
-      "check_interval_minutes": 60,
-      "enabled": true
-    },
-    {
-      "id": "STEAM_TOP_SELLERS",
-      "name": "Steam Top Sellers",
-      "platform": "steam",
-      "endpoint": "store/top_sellers",
-      "params": {},
-      "check_interval_minutes": 30,
-      "enabled": true
-    },
-    {
-      "id": "STEAM_NEW_RELEASES",
-      "name": "Steam New Releases",
-      "platform": "steam",
-      "endpoint": "store/new_releases",
-      "params": {},
-      "check_interval_minutes": 30,
+      "id": "X_RECENT_SA_AR",
+      "name": "X Recent Search - Saudi Arabia Arabic",
+      "platform": "x",
+      "endpoint": "tweets.search.recent",
+      "params": {"query": "(saudi OR riyadh OR ksa) lang:ar -is:retweet", "region_code": "SA", "category": "news", "sort_order": "recency", "max_results": 20},
+      "check_interval_minutes": 10,
       "enabled": true
     }
   ]
@@ -334,6 +316,7 @@ No LLM analysis. No translation. Pipeline: **fetch → normalize → hash → de
 | Endpoint | Method | Purpose |
 |---|---|---|
 | `/health` | GET | Health check |
+| `/health/integrations` | GET | Credential/config status (no secret values) |
 | `/api/trends` | GET | Query trends with filters |
 | `/api/trends/{id}` | GET | Single trend detail |
 | `/api/trends/refresh` | POST | Trigger source/platform refresh |
@@ -346,7 +329,7 @@ No LLM analysis. No translation. Pipeline: **fetch → normalize → hash → de
 
 | Param | Type | Notes |
 |---|---|---|
-| `platform` | string | youtube / spotify / steam |
+| `platform` | string | youtube / x |
 | `category` | string | e.g. gaming, music, video |
 | `start_date` | string | YYYY-MM-DD |
 | `end_date` | string | YYYY-MM-DD |
@@ -451,7 +434,7 @@ Step 14. docker-compose.yml, Dockerfile
 Step 15. Tests
 ```
 
-Working YouTube client by step 5. Full end-to-end by step 9. All three platforms by step 11.
+Working YouTube client by step 5. Full end-to-end by step 9. YouTube + X support by step 11.
 
 ---
 
