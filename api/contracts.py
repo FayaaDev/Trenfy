@@ -1,0 +1,51 @@
+import base64
+import json
+from typing import Any, Dict, List, Optional, TypedDict
+
+DEFAULT_LIMIT = 50
+MAX_LIMIT = 200
+
+
+class PagingMeta(TypedDict):
+    limit: int
+    next_cursor: Optional[str]
+    has_more: bool
+
+
+class TrendsListResponse(TypedDict):
+    items: List[Dict[str, Any]]
+    paging: PagingMeta
+
+
+class PlatformStats(TypedDict):
+    platform: str
+    total_trends: int
+    newest_fetched_at: Optional[str]
+
+
+class TrendsStatsResponse(TypedDict):
+    total_trends: int
+    by_platform: List[PlatformStats]
+
+
+def normalize_limit(value: Optional[int]) -> int:
+    if value is None:
+        return DEFAULT_LIMIT
+    return min(max(1, int(value)), MAX_LIMIT)
+
+
+def encode_cursor(offset: int, sort: str = "-fetched_at") -> str:
+    payload = json.dumps({"offset": int(offset), "sort": sort}).encode("utf-8")
+    return base64.urlsafe_b64encode(payload).decode("utf-8")
+
+
+def decode_cursor(cursor: str) -> Dict[str, Any]:
+    try:
+        payload = json.loads(base64.urlsafe_b64decode(cursor.encode("utf-8")))
+        offset = int(payload.get("offset", 0))
+        sort = str(payload.get("sort") or "-fetched_at")
+        if offset < 0:
+            raise ValueError("invalid_cursor")
+        return {"offset": offset, "sort": sort}
+    except Exception as exc:
+        raise ValueError("invalid_cursor") from exc
