@@ -26,6 +26,13 @@
 ## Phase 2: Data Foundation
 **Goal:** FastAPI core, NocoDB schema, source registry, Pydantic models, and per-source async scheduler running end-to-end
 **Requirements:** CORE-01, CORE-02, CORE-03, CORE-04, CORE-05, CORE-06, INFRA-03
+**Plans:** 4 plans
+
+### Plans
+- [ ] 02-01-PLAN.md — NocoDB table creation via MCP (trends verify + trend_sources create, capture NOCODB_SOURCES_TABLE_ID)
+- [ ] 02-02-PLAN.md — Source registry (source_registry.py loading trend_sources.json into List[TrendSource])
+- [ ] 02-03-PLAN.md — NocoDB client extension (sync_sources, update_source_status) + TrendsWorkflow stub
+- [ ] 02-04-PLAN.md — TrendsScheduler + app.py lifespan wiring + real /health scheduler state
 
 ### Success Criteria
 1. `GET /health` returns `{"status": "ok", "scheduler_running": true}` within 200ms after server startup
