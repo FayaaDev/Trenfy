@@ -28,6 +28,40 @@ class TrendsStatsResponse(TypedDict):
     by_platform: List[PlatformStats]
 
 
+INVALID_REFRESH_SELECTOR = "invalid_refresh_selector"
+
+
+class RefreshRequest(TypedDict):
+    source_id: Optional[str]
+    platform: Optional[str]
+
+
+class RefreshResult(TypedDict):
+    source_id: str
+    fetched: int
+    stored: int
+    duplicates: int
+    invalid: int
+    status: str
+
+
+class RefreshResponse(TypedDict):
+    sources_run: int
+    fetched: int
+    stored: int
+    duplicates: int
+    results: List[RefreshResult]
+
+
+def validate_refresh_selector(
+    source_id: Optional[str], platform: Optional[str]
+) -> None:
+    has_source = bool(str(source_id or "").strip())
+    has_platform = bool(str(platform or "").strip())
+    if has_source and has_platform:
+        raise ValueError(INVALID_REFRESH_SELECTOR)
+
+
 def normalize_limit(value: Optional[int]) -> int:
     if value is None:
         return DEFAULT_LIMIT

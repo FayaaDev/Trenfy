@@ -1,10 +1,18 @@
-from typing import Optional
+from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Body, Query
 from fastapi.responses import JSONResponse
 
-from api.contracts import decode_cursor, encode_cursor, normalize_limit
+from api.contracts import (
+    INVALID_REFRESH_SELECTOR,
+    decode_cursor,
+    encode_cursor,
+    normalize_limit,
+    validate_refresh_selector,
+)
+from trend_agents.shared import source_registry
 from tools.nocodb_trends_client import nocodb_trends
+from workflows.trends_scheduler import workflow
 
 router = APIRouter(prefix="/api/trends", tags=["trends"])
 
@@ -71,3 +79,48 @@ async def get_trend(record_id: str):
             content={"error": "trend_not_found", "id": record_id},
         )
     return row
+
+
+@router.post("/refresh")
+async def refresh_trends(
+    payload: Optional[Dict[str, Optional[str]]] = Body(default=None),
+):
+    payload = payload or {}
+    source_id = (payload.get("source_id") or "").strip() or None
+    platform = (payload.get("platform") or "").strip() or None
+
+    try:
+        validate_refresh_selector(source_id, platform)
+    except ValueError:
+        return JSONResponse(
+            status_code=422,
+            content={"error": INVALID_REFRESH_SELECTOR},
+        )
+
+    if source_id:
+        source = source_registry.get_source(source_id)
+        if source is None:
+            return JSONResponse(
+                status_code=404,
+                content={"error": "source_not_found", "id": source_id},
+            )
+        selected_sources = [source]
+    else:
+        enabled_sources = source_registry.list_enabled()
+        if platform and platform != "all":
+            selected_sources = [s for s in enabled_sources if s.platform == platform]
+        else:
+            selected_sources = enabled_sources
+
+    results: List[Dict[str, Any]] = []
+    for source in selected_sources:
+        result = await workflow.scan_source(source)
+        results.append(result)
+
+    return {
+        "sources_run": len(results),
+        "fetched": sum(int(r.get("fetched", 0)) for r in results),
+        "stored": sum(int(r.get("stored", 0)) for r in results),
+        "duplicates": sum(int(r.get("duplicates", 0)) for r in results),
+        "results": results,
+    }

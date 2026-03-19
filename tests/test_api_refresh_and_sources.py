@@ -42,13 +42,13 @@ def test_refresh_by_source_id_runs_exactly_one_source() -> None:
     source = _sample_source("youtube_us", "youtube")
     seen = {"source_ids": []}
 
-    async def fake_get_source(source_id: str):
+    def fake_get_source(source_id: str):
         return source if source_id == "youtube_us" else None
 
-    async def fake_scan_source(selected_source):
-        seen["source_ids"].append(selected_source.id)
+    async def fake_scan_source(source):
+        seen["source_ids"].append(source.id)
         return {
-            "source_id": selected_source.id,
+            "source_id": source.id,
             "fetched": 12,
             "stored": 7,
             "duplicates": 5,
@@ -98,10 +98,10 @@ def test_refresh_platform_all_runs_all_enabled_sources() -> None:
     def fake_list_enabled():
         return enabled_sources
 
-    async def fake_scan_source(selected_source):
-        seen["source_ids"].append(selected_source.id)
+    async def fake_scan_source(source):
+        seen["source_ids"].append(source.id)
         return {
-            "source_id": selected_source.id,
+            "source_id": source.id,
             "fetched": 3,
             "stored": 2,
             "duplicates": 1,
