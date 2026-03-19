@@ -255,25 +255,52 @@ class NocoDBTrendsClient:
         return existing
 
     async def get_statistics(self) -> Dict[str, Any]:
-        platforms = ["youtube", "spotify", "steam"]
-        stats: Dict[str, Any] = {"total": 0, "by_platform": {}}
+        platforms = ["youtube", "spotify", "steam", "tiktok"]
+        by_platform: List[Dict[str, Any]] = []
+        total_trends = 0
 
         for platform in platforms:
+            platform_total = 0
+            newest_fetched_at: Optional[str] = None
+
             try:
-                response = await self._request(
+                count_response = await self._request(
                     "GET",
                     f"/api/v2/tables/{self.trends_table_id}/records",
                     params={"where": f"(platform,eq,{platform})", "limit": 1},
                 )
-                if response:
-                    data = response.json()
-                    count = data.get("count", 0)
-                    stats["by_platform"][platform] = count
-                    stats["total"] += count
+                if count_response is not None:
+                    platform_total = int(count_response.json().get("count", 0))
             except Exception:
-                stats["by_platform"][platform] = 0
+                platform_total = 0
 
-        return stats
+            try:
+                newest_response = await self._request(
+                    "GET",
+                    f"/api/v2/tables/{self.trends_table_id}/records",
+                    params={
+                        "where": f"(platform,eq,{platform})",
+                        "sort": "-fetched_at",
+                        "limit": 1,
+                    },
+                )
+                if newest_response is not None:
+                    newest_rows = newest_response.json().get("list", [])
+                    if newest_rows:
+                        newest_fetched_at = newest_rows[0].get("fetched_at")
+            except Exception:
+                newest_fetched_at = None
+
+            by_platform.append(
+                {
+                    "platform": platform,
+                    "total_trends": platform_total,
+                    "newest_fetched_at": newest_fetched_at,
+                }
+            )
+            total_trends += platform_total
+
+        return {"total_trends": total_trends, "by_platform": by_platform}
 
     async def query_sources(
         self,

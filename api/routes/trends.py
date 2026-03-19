@@ -57,6 +57,11 @@ async def list_trends(
     }
 
 
+@router.get("/stats")
+async def get_stats():
+    return await nocodb_trends.get_statistics()
+
+
 @router.get("/{record_id}")
 async def get_trend(record_id: str):
     row = await nocodb_trends.get_trend_by_id(record_id)
