@@ -26,8 +26,8 @@
 
 ### Platform Clients
 
-- [ ] **PLAT-01**: YouTube client fetches trending videos for configured regions (US, SA, JP) using YouTube Data API v3 with API key auth
-- [ ] **PLAT-02**: YouTube client stays within 10,000 daily quota units — conservative scheduling (≤600 units/day for 3 regions at 15-minute intervals)
+- [x] **PLAT-01**: YouTube client fetches trending videos for configured regions (US, SA, JP) using YouTube Data API v3 with API key auth
+- [x] **PLAT-02**: YouTube client stays within 10,000 daily quota units — conservative scheduling (≤600 units/day for 3 regions at 15-minute intervals)
 - [ ] **PLAT-03**: X client fetches trending posts/topics for configured regions via official X API endpoints
 - [ ] **PLAT-04**: X API auth token/credentials handling is centralized and refreshed safely to avoid concurrent refresh race conditions
 - [ ] **PLAT-05**: X client applies rate-limit-aware fetching (backoff/retry with caps) and stays within configured request budgets
@@ -130,8 +130,8 @@
 | CORE-04 | Phase 2 | Complete |
 | CORE-05 | Phase 2 | Complete |
 | CORE-06 | Phase 2 | Complete |
-| PLAT-01 | Phase 3 | Pending |
-| PLAT-02 | Phase 3 | Pending |
+| PLAT-01 | Phase 3 | Complete |
+| PLAT-02 | Phase 3 | Complete |
 | PLAT-03 | Phase 3 | Pending |
 | PLAT-04 | Phase 3 | Pending |
 | PLAT-05 | Phase 3 | Pending |
