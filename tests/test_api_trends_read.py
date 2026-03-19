@@ -141,18 +141,8 @@ def test_get_trends_stats_returns_platform_totals_and_recency() -> None:
                     "newest_fetched_at": "2026-03-19T10:00:00Z",
                 },
                 {
-                    "platform": "spotify",
-                    "total_trends": 3,
-                    "newest_fetched_at": "2026-03-19T09:00:00Z",
-                },
-                {
-                    "platform": "steam",
-                    "total_trends": 2,
-                    "newest_fetched_at": "2026-03-19T08:00:00Z",
-                },
-                {
-                    "platform": "tiktok",
-                    "total_trends": 1,
+                    "platform": "x",
+                    "total_trends": 6,
                     "newest_fetched_at": None,
                 },
             ],
@@ -171,9 +161,7 @@ def test_get_trends_stats_returns_platform_totals_and_recency() -> None:
     by_platform = payload["by_platform"]
     assert {row["platform"] for row in by_platform} == {
         "youtube",
-        "spotify",
-        "steam",
-        "tiktok",
+        "x",
     }
     assert payload["total_trends"] == sum(row["total_trends"] for row in by_platform)
 

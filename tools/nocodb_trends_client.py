@@ -135,7 +135,26 @@ class NocoDBTrendsClient:
             )
             if response is None:
                 return []
-            return response.json().get("list", [])
+            payload = response.json()
+
+            if isinstance(payload, list):
+                return [row for row in payload if isinstance(row, dict)]
+
+            if isinstance(payload, dict):
+                rows = payload.get("list")
+                if isinstance(rows, list):
+                    return [row for row in rows if isinstance(row, dict)]
+
+                data = payload.get("data")
+                if isinstance(data, list):
+                    return [row for row in data if isinstance(row, dict)]
+                if isinstance(data, dict):
+                    return [data]
+
+                if payload.get("Id") is not None or payload.get("id") is not None:
+                    return [payload]
+
+            return []
         except Exception as e:
             print(f"[NocoDBTrends] Error batch creating trends: {e}")
             return []
@@ -255,7 +274,7 @@ class NocoDBTrendsClient:
         return existing
 
     async def get_statistics(self) -> Dict[str, Any]:
-        platforms = ["youtube", "spotify", "steam", "tiktok"]
+        platforms = ["youtube", "x"]
         by_platform: List[Dict[str, Any]] = []
         total_trends = 0
 

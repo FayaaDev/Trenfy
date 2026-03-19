@@ -91,7 +91,7 @@ def test_refresh_platform_all_runs_all_enabled_sources() -> None:
 
     enabled_sources = [
         _sample_source("youtube_us", "youtube"),
-        _sample_source("spotify_global", "spotify"),
+        _sample_source("x_global", "x"),
     ]
     seen = {"source_ids": []}
 
@@ -121,7 +121,7 @@ def test_refresh_platform_all_runs_all_enabled_sources() -> None:
     trends_route.workflow.scan_source = original_scan_source
 
     assert response.status_code == 200
-    assert seen["source_ids"] == ["youtube_us", "spotify_global"]
+    assert seen["source_ids"] == ["youtube_us", "x_global"]
     payload = response.json()
     assert payload["sources_run"] == 2
     assert payload["fetched"] == 6
@@ -180,9 +180,9 @@ def test_get_sources_platform_filter_is_forwarded() -> None:
         seen["enabled_only"] = enabled_only
         return [
             {
-                "id": "spotify_global",
-                "name": "Spotify Global",
-                "platform": "spotify",
+                "id": "x_global",
+                "name": "X Global",
+                "platform": "x",
                 "last_fetched_at": None,
                 "last_fetch_status": "",
                 "enabled": False,
@@ -193,13 +193,13 @@ def test_get_sources_platform_filter_is_forwarded() -> None:
     trends_route.nocodb_trends.query_sources = fake_query_sources
 
     client = _make_client()
-    response = client.get("/api/sources", params={"platform": "spotify"})
+    response = client.get("/api/sources", params={"platform": "x"})
 
     trends_route.nocodb_trends.query_sources = original_query_sources
 
     assert response.status_code == 200
-    assert seen == {"platform": "spotify", "enabled_only": False}
-    assert response.json()[0]["id"] == "spotify_global"
+    assert seen == {"platform": "x", "enabled_only": False}
+    assert response.json()[0]["id"] == "x_global"
 
 
 if __name__ == "__main__":

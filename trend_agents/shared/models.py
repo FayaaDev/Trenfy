@@ -1,20 +1,17 @@
 import hashlib
-from datetime import date
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from pydantic import BaseModel, Field
 
 
 class SourceType(str, Enum):
     YOUTUBE = "youtube"
-    SPOTIFY = "spotify"
-    STEAM = "steam"
-    TIKTOK = "tiktok"
+    X = "x"
 
 
 class TrendItem(BaseModel):
-    platform: str = Field(..., description="youtube | spotify | steam")
+    platform: str = Field(..., description="youtube | x")
     category: str = Field(default="", description="gaming | music | video | etc.")
     title: str
     description: str = ""
@@ -37,29 +34,6 @@ class YouTubeVideoMetadata(BaseModel):
     like_count: int = 0
     comment_count: int = 0
     category_id: str = ""
-
-
-class SpotifyTrackMetadata(BaseModel):
-    track_id: str
-    artist_name: str = ""
-    album_name: str = ""
-    album_type: str = "track"
-    popularity: int = 0
-    duration_ms: int = 0
-    danceability: float = 0.0
-    energy: float = 0.0
-    tempo: float = 0.0
-
-
-class SteamGameMetadata(BaseModel):
-    app_id: str
-    developer: str = ""
-    publisher: str = ""
-    genres: List[str] = Field(default_factory=list)
-    price: str = ""
-    release_date: str = ""
-    current_players: Optional[int] = None
-    peak_players: Optional[int] = None
 
 
 class TrendSource(BaseModel):

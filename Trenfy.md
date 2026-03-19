@@ -2,7 +2,7 @@
 
 ## Overview
 
-Trenfy is a platform for tracking trends across YouTube, Spotify, and Steam. It polls platform APIs, normalizes the data, deduplicates entries, and stores them in NocoDB for querying and analysis.
+Trenfy is a platform for tracking trends across YouTube and X. It polls platform APIs, normalizes the data, deduplicates entries, and stores them in NocoDB for querying and analysis.
 
 This is a fresh build. The original repo (SehaRadar) is a health surveillance system running on a separate server.
 
@@ -11,7 +11,7 @@ This is a fresh build. The original repo (SehaRadar) is a health surveillance sy
 ## Architecture
 
 ```
-Platform APIs (YouTube / Spotify / Steam)
+Platform APIs (YouTube / X)
          ↓
   Trend Clients (tools/trend_clients/)
          ↓
@@ -42,7 +42,7 @@ Platform APIs (YouTube / Spotify / Steam)
 
 | Column | Type | Notes |
 |---|---|---|
-| `platform` | SingleLineText | youtube / spotify / steam |
+| `platform` | SingleLineText | youtube / x |
 | `category` | SingleLineText | gaming / music / video / etc. |
 | `title` | SingleLineText | Item title |
 | `description` | LongText | Item description/summary |
@@ -63,7 +63,7 @@ Platform APIs (YouTube / Spotify / Steam)
 |---|---|---|
 | `id` | SingleLineText | YOUTUBE_TRENDING_US, etc. |
 | `name` | SingleLineText | Display name |
-| `platform` | SingleSelect | youtube / spotify / steam |
+| `platform` | SingleSelect | youtube / x |
 | `endpoint` | SingleLineText | API endpoint path |
 | `params` | JSON | Request parameters |
 | `check_interval_minutes` | Number | |
@@ -389,7 +389,7 @@ NOCODB_BASE_ID=
 NOCODB_API_TOKEN=
 NOCODB_TRENDS_TABLE_ID=
 NOCODB_SOURCES_TABLE_ID=
-NOCODB_API_URL=http://nocodb:8080
+NOCODB_API_URL=https://nocodb.fayaa92.sa
 
 # YouTube Data API v3
 YOUTUBE_API_KEY=

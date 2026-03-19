@@ -121,7 +121,7 @@ async def test_scan_source_partial_success_when_invalid_items_skipped() -> None:
 
 
 async def test_scan_source_sets_error_and_breaker_open_statuses() -> None:
-    source = _source(platform="tiktok", source_id="TIKTOK_TRENDING")
+    source = _source(platform="x", source_id="X_TRENDING")
 
     trends_client = FakeTrendsClient()
     error_client = FakePlatformClient(should_raise=True)
@@ -130,7 +130,7 @@ async def test_scan_source_sets_error_and_breaker_open_statuses() -> None:
     workflow = TrendsWorkflow(trends_client)
     error_result = await workflow.scan_source(source)
     assert error_result["status"] == "error"
-    assert trends_client.status_updates[-1] == ("TIKTOK_TRENDING", "error")
+    assert trends_client.status_updates[-1] == ("X_TRENDING", "error")
 
     breaker_client = FakePlatformClient(
         rows=[], status_reason="disabled_circuit_breaker"
@@ -139,7 +139,7 @@ async def test_scan_source_sets_error_and_breaker_open_statuses() -> None:
     breaker_result = await workflow.scan_source(source)
     assert breaker_result["status"] == "disabled_circuit_breaker"
     assert trends_client.status_updates[-1] == (
-        "TIKTOK_TRENDING",
+        "X_TRENDING",
         "disabled_circuit_breaker",
     )
 

@@ -29,13 +29,24 @@ def test_dockerfile_runtime_contract() -> None:
     _assert_contains(dockerfile, '--port", "8080"', "uvicorn port")
 
 
-def test_compose_backend_nocodb_contract() -> None:
+def test_compose_backend_hosted_nocodb_contract() -> None:
     compose = _read("docker-compose.yml")
     _assert_contains(compose, "trenfy-backend:", "backend service")
-    _assert_contains(compose, "nocodb:", "nocodb service")
+    _assert_contains(compose, "env_file:", "backend env_file")
+    _assert_contains(compose, "- .env", "backend env_file path")
     _assert_contains(
-        compose, "NOCODB_API_URL=http://nocodb:8080", "internal nocodb URL"
+        compose,
+        "NOCODB_API_URL=https://nocodb.fayaa92.sa",
+        "hosted nocodb URL override",
     )
+
+    if "nocodb:" in compose:
+        raise AssertionError("Compose should not include a local nocodb service")
+
+    if "NOCODB_API_URL=http://nocodb:8080" in compose:
+        raise AssertionError(
+            "Compose should not override NOCODB_API_URL to local nocodb"
+        )
 
 
 def test_env_contract_keys() -> None:
@@ -47,10 +58,7 @@ def test_env_contract_keys() -> None:
         "NOCODB_SOURCES_TABLE_ID=",
         "NOCODB_API_URL=",
         "YOUTUBE_API_KEY=",
-        "SPOTIFY_CLIENT_ID=",
-        "SPOTIFY_CLIENT_SECRET=",
-        "STEAM_API_KEY=",
-        "STEAM_PUBLISHER_KEY=",
+        "X_BEARER_TOKEN=",
         "SERVER_PORT=",
         "LOG_LEVEL=",
         "TRENDS_ENABLED=",
@@ -61,6 +69,6 @@ def test_env_contract_keys() -> None:
 
 if __name__ == "__main__":
     test_dockerfile_runtime_contract()
-    test_compose_backend_nocodb_contract()
+    test_compose_backend_hosted_nocodb_contract()
     test_env_contract_keys()
     print("infra-config-contract-ok")

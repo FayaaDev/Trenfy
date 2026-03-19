@@ -47,7 +47,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Trenfy API",
-    description="Trend-Catching Platform — YouTube, Spotify, Steam, TikTok",
+    description="Trend-Catching Platform — YouTube and X",
     version="0.1.0",
     lifespan=lifespan,
 )

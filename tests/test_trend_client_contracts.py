@@ -8,8 +8,8 @@ from tools.trend_clients.base import BaseTrendClient
 from tools.trend_clients.common import normalize_category
 
 
-def test_source_type_includes_tiktok() -> None:
-    assert SourceType.TIKTOK.value == "tiktok"
+def test_source_type_includes_x() -> None:
+    assert SourceType.X.value == "x"
 
 
 def test_generate_trend_hash_is_deterministic() -> None:
@@ -40,7 +40,7 @@ def test_generate_trend_hash_changes_on_key_fields() -> None:
     )
 
     variants = [
-        base.model_copy(update={"platform": "spotify"}),
+        base.model_copy(update={"platform": "x"}),
         base.model_copy(update={"title": "Hash Me 2"}),
         base.model_copy(update={"published_date": "2026-03-20"}),
         base.model_copy(update={"region_code": "SA"}),
@@ -73,7 +73,7 @@ def test_base_trend_client_fetch_is_abstract_async_contract() -> None:
 
 
 if __name__ == "__main__":
-    test_source_type_includes_tiktok()
+    test_source_type_includes_x()
     test_generate_trend_hash_is_deterministic()
     test_generate_trend_hash_changes_on_key_fields()
     test_normalize_category_known_and_unknown_values()
