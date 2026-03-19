@@ -14,10 +14,11 @@ from trend_agents.shared import source_registry
 from tools.nocodb_trends_client import nocodb_trends
 from workflows.trends_scheduler import workflow
 
-router = APIRouter(prefix="/api/trends", tags=["trends"])
+trends_router = APIRouter(prefix="/api/trends", tags=["trends"])
+sources_router = APIRouter(prefix="/api", tags=["sources"])
 
 
-@router.get("")
+@trends_router.get("")
 async def list_trends(
     platform: Optional[str] = None,
     category: Optional[str] = None,
@@ -65,12 +66,12 @@ async def list_trends(
     }
 
 
-@router.get("/stats")
+@trends_router.get("/stats")
 async def get_stats():
     return await nocodb_trends.get_statistics()
 
 
-@router.get("/{record_id}")
+@trends_router.get("/{record_id}")
 async def get_trend(record_id: str):
     row = await nocodb_trends.get_trend_by_id(record_id)
     if row is None:
@@ -81,7 +82,7 @@ async def get_trend(record_id: str):
     return row
 
 
-@router.post("/refresh")
+@trends_router.post("/refresh")
 async def refresh_trends(
     payload: Optional[Dict[str, Optional[str]]] = Body(default=None),
 ):
@@ -124,3 +125,25 @@ async def refresh_trends(
         "duplicates": sum(int(r.get("duplicates", 0)) for r in results),
         "results": results,
     }
+
+
+@sources_router.get("/sources")
+@trends_router.get("/sources")
+async def list_sources(platform: Optional[str] = None):
+    rows = await nocodb_trends.query_sources(platform=platform, enabled_only=False)
+    return [
+        {
+            "id": row.get("id") or row.get("Id") or "",
+            "name": row.get("name") or "",
+            "platform": row.get("platform") or "",
+            "last_fetched_at": row.get("last_fetched_at"),
+            "last_fetch_status": row.get("last_fetch_status") or "",
+            "enabled": bool(row.get("enabled", False)),
+        }
+        for row in rows
+    ]
+
+
+router = APIRouter()
+router.include_router(trends_router)
+router.include_router(sources_router)

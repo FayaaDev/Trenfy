@@ -328,10 +328,22 @@ class NocoDBTrendsClient:
             )
             if response is None:
                 return []
-            return response.json().get("list", [])
+            rows = response.json().get("list", [])
+            return [self._normalize_source_row(row) for row in rows]
         except Exception as e:
             print(f"[NocoDBTrends] Error querying sources: {e}")
             return []
+
+    def _normalize_source_row(self, row: Dict[str, Any]) -> Dict[str, Any]:
+        source_id = row.get("id") or row.get("Id") or ""
+        return {
+            "id": source_id,
+            "name": row.get("name") or "",
+            "platform": row.get("platform") or "",
+            "last_fetched_at": row.get("last_fetched_at"),
+            "last_fetch_status": row.get("last_fetch_status") or "",
+            "enabled": bool(row.get("enabled", False)),
+        }
 
     async def update_source_last_fetched(
         self, source_id: str, status: str = "success"
