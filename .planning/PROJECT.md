@@ -12,14 +12,18 @@ Users can open the app and immediately see what's trending right now across gami
 
 ### Validated
 
-(None yet — ship to validate)
+*(Validated in Phase 2: data-foundation)*
+- [x] NocoDB schema created — `trends` and `trend_sources` tables live in base `ps82pgir3bbih55`
+- [x] Source registry loads all 8 configured sources from `config/trend_sources.json`
+- [x] Per-source async scheduler with failure isolation (`asyncio.create_task` per source)
+- [x] FastAPI app starts scheduler + syncs sources on startup via lifespan hook
+- [x] `/health` reports real scheduler state
 
 ### Active
 
 - [ ] Backend polls YouTube, Spotify, Steam, and TikTok for trending content
 - [ ] Trends are normalized, deduplicated, and stored in NocoDB
 - [ ] FastAPI server exposes REST endpoints to query trends
-- [ ] Scheduler runs per-source on configurable intervals
 - [ ] React Native app displays a browsable, filterable trend feed
 - [ ] Users can filter trends by platform (YouTube / Spotify / Steam / TikTok) and category (gaming / music / entertainment)
 - [ ] Tapping a trend opens it on its native platform
@@ -60,11 +64,19 @@ Users can open the app and immediately see what's trending right now across gami
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
 | Remove all SehaRadar code | Clean slate — dual-system coexistence causes confusion and bloat | — Pending |
-| NocoDB as database | Already self-hosted and running; existing client code reusable | — Pending |
+| NocoDB as database | Already self-hosted and running; existing client code reusable | ✓ Validated Phase 2 |
 | TikTok via RapidAPI/scraping | No official public API available | — Pending |
 | No auth in v1 | Simplifies architecture; trends are public data | — Pending |
 | Docker only (no Caddy) | Reduce infra complexity for v1 | — Pending |
 | React Native for mobile | User specified; cross-platform (iOS + Android) | — Pending |
+| Upsert by source id on startup | JSON is additive source of truth; preserves last_fetched_at | ✓ Validated Phase 2 |
+| lifespan context manager | Modern FastAPI pattern over @app.on_event | ✓ Validated Phase 2 |
+
+## Current State
+
+Phase 2 complete (2026-03-19) — Data foundation in place. Scheduler runs, NocoDB schema live,
+source registry working. Phase 3 (Platform Clients) is next: YouTube, Spotify, Steam clients
+with real API calls replacing the Phase 2 stubs.
 
 ---
-*Last updated: 2026-03-19 after initialization*
+*Last updated: 2026-03-19 after Phase 2 completion*
