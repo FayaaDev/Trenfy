@@ -12,7 +12,7 @@ services:
     env_file:
       - .env
     environment:
-      NOCODB_API_URL: http://nocodb:8080
+      - NOCODB_API_URL=http://nocodb:8080
     depends_on:
       nocodb:
         condition: service_healthy
