@@ -28,10 +28,10 @@
 
 - [x] **PLAT-01**: YouTube client fetches trending videos for configured regions (US, SA, JP) using YouTube Data API v3 with API key auth
 - [x] **PLAT-02**: YouTube client stays within 10,000 daily quota units — conservative scheduling (≤600 units/day for 3 regions at 15-minute intervals)
-- [ ] **PLAT-03**: X client fetches trending posts/topics for configured regions via official X API endpoints
-- [ ] **PLAT-04**: X API auth token/credentials handling is centralized and refreshed safely to avoid concurrent refresh race conditions
-- [ ] **PLAT-05**: X client applies rate-limit-aware fetching (backoff/retry with caps) and stays within configured request budgets
-- [ ] **PLAT-06**: X client uses a circuit-breaker — after 3 consecutive failures the source auto-disables and logs clearly
+- [x] **PLAT-03**: X client fetches trending posts/topics for configured regions via official X API endpoints
+- [x] **PLAT-04**: X API auth token/credentials handling is centralized and refreshed safely to avoid concurrent refresh race conditions
+- [x] **PLAT-05**: X client applies rate-limit-aware fetching (backoff/retry with caps) and stays within configured request budgets
+- [x] **PLAT-06**: X client uses a circuit-breaker — after 3 consecutive failures the source auto-disables and logs clearly
 - [x] **PLAT-07**: All platform clients implement the abstract base interface (BaseTrendClient) with a fetch() method returning List[TrendItem]
 - [x] **PLAT-08**: content_hash generated per item: SHA-256 of "platform|title.lower()|published_date|region_code" truncated to 32 chars
 
@@ -132,10 +132,10 @@
 | CORE-06 | Phase 2 | Complete |
 | PLAT-01 | Phase 3 | Complete |
 | PLAT-02 | Phase 3 | Complete |
-| PLAT-03 | Phase 3 | Pending |
-| PLAT-04 | Phase 3 | Pending |
-| PLAT-05 | Phase 3 | Pending |
-| PLAT-06 | Phase 3 | Pending |
+| PLAT-03 | Phase 3 | Complete |
+| PLAT-04 | Phase 3 | Complete |
+| PLAT-05 | Phase 3 | Complete |
+| PLAT-06 | Phase 3 | Complete |
 | PLAT-07 | Phase 3 | Complete |
 | PLAT-08 | Phase 3 | Complete |
 | API-01 | Phase 4 | Pending |
