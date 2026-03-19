@@ -65,7 +65,7 @@
 **Plans:** 3 plans
 
 ### Plans
-- [ ] 04-01-PLAN.md — Read API contracts and trends/stats endpoints (`/api/trends`, `/api/trends/{id}`, `/api/trends/stats`) with cursor pagination
+- [x] 04-01-PLAN.md — Read API contracts and trends/stats endpoints (`/api/trends`, `/api/trends/{id}`, `/api/trends/stats`) with cursor pagination ✓ 8453f52
 - [ ] 04-02-PLAN.md — Refresh + sources endpoints (`POST /api/trends/refresh`, `GET /api/sources`) with selector validation and status payloads
 - [ ] 04-03-PLAN.md — Docker/Compose/env hardening for one-command backend + nocodb deployment
 
