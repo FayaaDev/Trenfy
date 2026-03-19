@@ -45,13 +45,13 @@
 ## Phase 3: Platform Clients
 **Goal:** All two platform clients fetching, normalizing, and persisting real trend data with deduplication and failure isolation
 **Requirements:** PLAT-01, PLAT-02, PLAT-03, PLAT-04, PLAT-05, PLAT-06, PLAT-07, PLAT-08
-**Plans:** 3/4 plans complete
+**Plans:** 4/4 plans complete
 
 ### Plans
 - [x] 03-01-PLAN.md — Contract foundation (BaseTrendClient, normalization helpers, hash tests) (PLAT-07, PLAT-08) ✓ f0ed8d0
 - [x] 03-02-PLAN.md — YouTube + Spotify clients with auth/normalization and tests (PLAT-01, PLAT-02, PLAT-07) ✓ 1be7515
 - [x] 03-03-PLAN.md — Steam + TikTok clients with retry/circuit-breaker controls and tests (PLAT-03, PLAT-04, PLAT-05, PLAT-06) ✓ e33d3c5
-- [ ] 03-04-PLAN.md — Trends workflow wiring (dispatch, dedup, status handling, isolation tests) (PLAT-06, PLAT-07, PLAT-08)
+- [x] 03-04-PLAN.md — Trends workflow wiring (dispatch, dedup, status handling, isolation tests) (PLAT-06, PLAT-07, PLAT-08) ✓ 12fc748
 
 ### Success Criteria
 1. YouTube client fetches trending videos for US, SA, and JP regions and persists them to NocoDB; running the scheduler twice within 15 minutes produces zero duplicate rows (content_hash dedup confirmed)
