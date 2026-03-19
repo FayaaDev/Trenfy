@@ -128,6 +128,56 @@ def test_get_trends_rejects_invalid_cursor_with_400() -> None:
     assert response.json() == {"error": "invalid_cursor"}
 
 
+def test_get_trends_stats_returns_platform_totals_and_recency() -> None:
+    from api.routes import trends as trends_route
+
+    async def fake_get_statistics():
+        return {
+            "total_trends": 11,
+            "by_platform": [
+                {
+                    "platform": "youtube",
+                    "total_trends": 5,
+                    "newest_fetched_at": "2026-03-19T10:00:00Z",
+                },
+                {
+                    "platform": "spotify",
+                    "total_trends": 3,
+                    "newest_fetched_at": "2026-03-19T09:00:00Z",
+                },
+                {
+                    "platform": "steam",
+                    "total_trends": 2,
+                    "newest_fetched_at": "2026-03-19T08:00:00Z",
+                },
+                {
+                    "platform": "tiktok",
+                    "total_trends": 1,
+                    "newest_fetched_at": None,
+                },
+            ],
+        }
+
+    original = trends_route.nocodb_trends.get_statistics
+    trends_route.nocodb_trends.get_statistics = fake_get_statistics
+
+    client = _make_client()
+    response = client.get("/api/trends/stats")
+
+    trends_route.nocodb_trends.get_statistics = original
+
+    assert response.status_code == 200
+    payload = response.json()
+    by_platform = payload["by_platform"]
+    assert {row["platform"] for row in by_platform} == {
+        "youtube",
+        "spotify",
+        "steam",
+        "tiktok",
+    }
+    assert payload["total_trends"] == sum(row["total_trends"] for row in by_platform)
+
+
 if __name__ == "__main__":
     test_cursor_codec_round_trip()
     test_limit_validator_defaults_and_caps()
@@ -136,4 +186,5 @@ if __name__ == "__main__":
     test_get_trend_by_id_returns_not_found_payload()
     test_get_trends_enforces_limit_defaults_and_caps()
     test_get_trends_rejects_invalid_cursor_with_400()
+    test_get_trends_stats_returns_platform_totals_and_recency()
     print("test_api_trends_read.py: ok")
