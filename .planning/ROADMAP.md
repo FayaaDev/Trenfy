@@ -62,6 +62,12 @@
 ## Phase 4: API & Infrastructure
 **Goal:** All REST endpoints live and reachable, Docker Compose stack deployable with a single `docker compose up`
 **Requirements:** API-01, API-02, API-03, API-04, API-05, API-06, API-07, INFRA-01, INFRA-02, INFRA-04
+**Plans:** 3 plans
+
+### Plans
+- [ ] 04-01-PLAN.md — Read API contracts and trends/stats endpoints (`/api/trends`, `/api/trends/{id}`, `/api/trends/stats`) with cursor pagination
+- [ ] 04-02-PLAN.md — Refresh + sources endpoints (`POST /api/trends/refresh`, `GET /api/sources`) with selector validation and status payloads
+- [ ] 04-03-PLAN.md — Docker/Compose/env hardening for one-command backend + nocodb deployment
 
 ### Success Criteria
 1. `GET /api/trends?platform=youtube&region_code=US&limit=20` returns a paginated JSON response with correct filtering; `GET /api/trends/{id}` returns the matching row; `GET /api/trends/stats` returns per-platform counts
