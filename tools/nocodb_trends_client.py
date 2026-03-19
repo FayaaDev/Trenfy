@@ -5,11 +5,14 @@ Targets the trends and trend_sources tables in NocoDB.
 
 import json
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 import httpx
 
 from trend_agents.shared.models import TrendItem
+
+if TYPE_CHECKING:
+    from trend_agents.shared.models import TrendSource
 
 
 class NocoDBTrendsClient:
@@ -324,6 +327,109 @@ class NocoDBTrendsClient:
             return response is not None
         except Exception as e:
             print(f"[NocoDBTrends] Error updating source: {e}")
+            return False
+
+    async def sync_sources(self, sources: List["TrendSource"]) -> int:
+        """Upsert sources from JSON config into trend_sources table.
+
+        Inserts sources not yet in the table. Skips existing rows (preserves
+        last_fetched_at and last_fetch_status). Returns count of inserted rows.
+        Failure is non-fatal — logs warning and returns 0.
+        """
+        if not self.sources_table_id:
+            print(
+                "[NocoDBTrends] sync_sources skipped: NOCODB_SOURCES_TABLE_ID not set"
+            )
+            return 0
+
+        try:
+            # Fetch existing source IDs from table
+            existing_response = await self._request(
+                "GET",
+                f"/api/v2/tables/{self.sources_table_id}/records",
+                params={"fields": "id", "limit": 200},
+            )
+            if existing_response is None:
+                return 0
+            existing_ids: set = {
+                row.get("id", "") for row in existing_response.json().get("list", [])
+            }
+
+            # Insert only sources not already present
+            to_insert = [
+                {
+                    "id": s.id,
+                    "name": s.name,
+                    "platform": s.platform,
+                    "endpoint": s.endpoint,
+                    "params": json.dumps(s.params) if s.params else "{}",
+                    "check_interval_minutes": s.check_interval_minutes,
+                    "enabled": s.enabled,
+                    "last_fetched_at": None,
+                    "last_fetch_status": "",
+                }
+                for s in sources
+                if s.id not in existing_ids
+            ]
+
+            if not to_insert:
+                print(
+                    f"[NocoDBTrends] sync_sources: all {len(sources)} sources already present"
+                )
+                return 0
+
+            await self._request(
+                "POST",
+                f"/api/v2/tables/{self.sources_table_id}/records",
+                json_body=to_insert,
+            )
+            print(f"[NocoDBTrends] sync_sources: inserted {len(to_insert)} new sources")
+            return len(to_insert)
+
+        except Exception as e:
+            print(f"[NocoDBTrends] sync_sources warning (non-fatal): {e}")
+            return 0
+
+    async def update_source_status(
+        self, source_id: str, status: str = "success"
+    ) -> bool:
+        """Update last_fetched_at and last_fetch_status for a source by its string ID.
+
+        Note: source_id here is the string like 'YOUTUBE_TRENDING_US', not a NocoDB row int.
+        Must first find the NocoDB row ID, then PATCH it.
+        """
+        if not self.sources_table_id:
+            return False
+
+        try:
+            # Find NocoDB row by source string id
+            lookup = await self._request(
+                "GET",
+                f"/api/v2/tables/{self.sources_table_id}/records",
+                params={"where": f"(id,eq,{source_id})", "limit": 1},
+            )
+            if lookup is None:
+                return False
+            rows = lookup.json().get("list", [])
+            if not rows:
+                return False
+
+            nocodb_row_id = rows[0].get("Id") or rows[0].get("id")
+
+            response = await self._request(
+                "PATCH",
+                f"/api/v2/tables/{self.sources_table_id}/records",
+                json_body=[
+                    {
+                        "Id": nocodb_row_id,
+                        "last_fetched_at": datetime.now().isoformat(),
+                        "last_fetch_status": status,
+                    }
+                ],
+            )
+            return response is not None
+        except Exception as e:
+            print(f"[NocoDBTrends] Error updating source status: {e}")
             return False
 
 
