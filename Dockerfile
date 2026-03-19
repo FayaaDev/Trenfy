@@ -1,0 +1,22 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install system dependencies for beautifulsoup4/lxml
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy project files
+COPY pyproject.toml .
+COPY trend_agents/ trend_agents/
+COPY tools/ tools/
+COPY config/ config/
+COPY app.py .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -e .
+
+EXPOSE 8080
+
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8080"]
