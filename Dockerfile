@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
 
 # Copy project files
 COPY pyproject.toml .
+COPY workflows/ workflows/
 COPY trend_agents/ trend_agents/
 COPY tools/ tools/
 COPY config/ config/
