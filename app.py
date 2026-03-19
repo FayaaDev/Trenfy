@@ -11,6 +11,8 @@ from datetime import datetime
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from api.routes.trends import router as trends_router
+
 logger = logging.getLogger(__name__)
 
 
@@ -58,6 +60,8 @@ app.add_middleware(
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
+
+app.include_router(trends_router)
 
 
 @app.get("/health")
