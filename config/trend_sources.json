@@ -1,0 +1,76 @@
+{
+  "sources": [
+    {
+      "id": "YOUTUBE_TRENDING_US",
+      "name": "YouTube Trending - United States",
+      "platform": "youtube",
+      "endpoint": "videos.list",
+      "params": {"chart": "mostPopular", "regionCode": "US", "part": "snippet,contentDetails,statistics"},
+      "check_interval_minutes": 15,
+      "enabled": true
+    },
+    {
+      "id": "YOUTUBE_TRENDING_JP",
+      "name": "YouTube Trending - Japan",
+      "platform": "youtube",
+      "endpoint": "videos.list",
+      "params": {"chart": "mostPopular", "regionCode": "JP", "part": "snippet,contentDetails,statistics"},
+      "check_interval_minutes": 15,
+      "enabled": true
+    },
+    {
+      "id": "YOUTUBE_TRENDING_SA",
+      "name": "YouTube Trending - Saudi Arabia",
+      "platform": "youtube",
+      "endpoint": "videos.list",
+      "params": {"chart": "mostPopular", "regionCode": "SA", "part": "snippet,contentDetails,statistics"},
+      "check_interval_minutes": 15,
+      "enabled": true
+    },
+    {
+      "id": "SPOTIFY_NEW_RELEASES",
+      "name": "Spotify New Releases",
+      "platform": "spotify",
+      "endpoint": "browse/new-releases",
+      "params": {"limit": 20},
+      "check_interval_minutes": 60,
+      "enabled": true
+    },
+    {
+      "id": "SPOTIFY_FEATURED_PLAYLISTS",
+      "name": "Spotify Featured Playlists",
+      "platform": "spotify",
+      "endpoint": "browse/featured-playlists",
+      "params": {"limit": 20},
+      "check_interval_minutes": 60,
+      "enabled": true
+    },
+    {
+      "id": "STEAM_TOP_SELLERS",
+      "name": "Steam Top Sellers",
+      "platform": "steam",
+      "endpoint": "store/top_sellers",
+      "params": {},
+      "check_interval_minutes": 30,
+      "enabled": true
+    },
+    {
+      "id": "STEAM_NEW_RELEASES",
+      "name": "Steam New Releases",
+      "platform": "steam",
+      "endpoint": "store/new_releases",
+      "params": {},
+      "check_interval_minutes": 30,
+      "enabled": true
+    },
+    {
+      "id": "TIKTOK_TRENDING",
+      "name": "TikTok Trending",
+      "platform": "tiktok",
+      "endpoint": "trending",
+      "params": {"region": "US"},
+      "check_interval_minutes": 30,
+      "enabled": true
+    }
+  ]
+}
