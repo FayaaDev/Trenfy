@@ -10,6 +10,7 @@ class SourceType(str, Enum):
     YOUTUBE = "youtube"
     SPOTIFY = "spotify"
     STEAM = "steam"
+    TIKTOK = "tiktok"
 
 
 class TrendItem(BaseModel):
