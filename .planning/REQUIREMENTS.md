@@ -21,19 +21,19 @@
 - [ ] **CORE-02**: Source registry loads enabled trend sources from config/trend_sources.json
 - [ ] **CORE-03**: TrendItem and TrendSource pydantic models validate correctly (existing models.py)
 - [x] **CORE-04**: NocoDB trends client creates, reads, and deduplicates trend records (existing nocodb_trends_client.py)
-- [x] **CORE-05**: Per-source async scheduler runs each source on its configured interval (YouTube 15m, Spotify 60m, Steam 30m, TikTok 30m)
+- [x] **CORE-05**: Per-source async scheduler runs each source on its configured interval (YouTube 15m, X 15m)
 - [x] **CORE-06**: Failed source does not block other sources — each source runs in an isolated asyncio task with error handling
 
 ### Platform Clients
 
 - [ ] **PLAT-01**: YouTube client fetches trending videos for configured regions (US, SA, JP) using YouTube Data API v3 with API key auth
 - [ ] **PLAT-02**: YouTube client stays within 10,000 daily quota units — conservative scheduling (≤600 units/day for 3 regions at 15-minute intervals)
-- [ ] **PLAT-03**: Spotify client fetches new releases and featured playlists using OAuth2 Client Credentials (no user login)
-- [ ] **PLAT-04**: Spotify token auto-refreshes before expiry with a thread-safe asyncio.Lock to prevent race conditions
-- [ ] **PLAT-05**: Steam client scrapes top sellers and new releases from store.steampowered.com — gracefully returns empty list if scrape fails rather than raising
-- [ ] **PLAT-06**: TikTok client fetches trending content via RapidAPI (tikapi or equivalent) with a circuit-breaker — after 3 consecutive failures the source auto-disables and logs clearly
-- [ ] **PLAT-07**: All platform clients implement the abstract base interface (BaseTrendClient) with a fetch() method returning List[TrendItem]
-- [ ] **PLAT-08**: content_hash generated per item: SHA-256 of "platform|title.lower()|published_date|region_code" truncated to 32 chars
+- [ ] **PLAT-03**: X client fetches trending posts/topics for configured regions via official X API endpoints
+- [ ] **PLAT-04**: X API auth token/credentials handling is centralized and refreshed safely to avoid concurrent refresh race conditions
+- [ ] **PLAT-05**: X client applies rate-limit-aware fetching (backoff/retry with caps) and stays within configured request budgets
+- [ ] **PLAT-06**: X client uses a circuit-breaker — after 3 consecutive failures the source auto-disables and logs clearly
+- [x] **PLAT-07**: All platform clients implement the abstract base interface (BaseTrendClient) with a fetch() method returning List[TrendItem]
+- [x] **PLAT-08**: content_hash generated per item: SHA-256 of "platform|title.lower()|published_date|region_code" truncated to 32 chars
 
 ### Trends API
 
@@ -50,7 +50,7 @@
 - [ ] **APP-01**: Expo (managed workflow) project scaffolded with React Navigation (stack + tab), NativeWind v4, FlashList, Zustand
 - [ ] **APP-02**: Main feed screen shows a scrollable FlashList of trend cards sorted by fetched_at descending, with infinite scroll (load more on scroll end)
 - [ ] **APP-03**: Trend card displays: thumbnail image (expo-image), title, platform icon, contextual metric label ("4.2M views" / "89 popularity" / "12.4K players"), time since fetched_at ("4 min ago")
-- [ ] **APP-04**: Platform filter tabs (YouTube / Spotify / Steam / TikTok / All) at the top of the feed — tapping filters the list without re-fetching
+- [ ] **APP-04**: Platform filter tabs (YouTube / X / All) at the top of the feed — tapping filters the list without re-fetching
 - [ ] **APP-05**: Category filter (Gaming / Music / Entertainment / All) — secondary filter below platform tabs
 - [ ] **APP-06**: Region selector (US / SA) — accessible from feed screen, persisted in AsyncStorage across app restarts
 - [ ] **APP-07**: Tapping a trend card opens the source URL in the device's default browser or native app (Linking.openURL)
@@ -62,10 +62,10 @@
 
 ### Infrastructure
 
-- [ ] **INFRA-01**: docker-compose.yml defines a single trenfy-backend service (Python FastAPI) with NocoDB URL and all platform API keys as environment variables
+- [ ] **INFRA-01**: docker-compose.yml defines a single trenfy-backend service (Python FastAPI) with NocoDB URL and YouTube + X API credentials as environment variables
 - [ ] **INFRA-02**: Dockerfile builds the Python backend — Python 3.11-slim, installs requirements, starts uvicorn on port 8080
 - [ ] **INFRA-03**: NocoDB trends and trend_sources tables exist with schema matching Trenfy.md (columns: platform, category, title, description, url, thumbnail_url, published_date, fetched_at, metric_type, metric_value, metadata, region_code, content_hash, notification_sent)
-- [ ] **INFRA-04**: .env.example documents all required environment variables (NocoDB, YouTube, Spotify, Steam, TikTok/RapidAPI, server settings)
+- [ ] **INFRA-04**: .env.example documents all required environment variables (NocoDB, YouTube, X, server settings)
 
 ---
 
@@ -89,7 +89,7 @@
 - **ENH-02**: Bookmarks / favorites — save trends locally (no backend, AsyncStorage only)
 - **ENH-03**: Share trend — native share sheet to share a trend card
 - **ENH-04**: Dark mode — NativeWind color scheme toggle
-- **ENH-05**: Additional regions — GB, DE, BR, IN for YouTube; additional Spotify markets
+- **ENH-05**: Additional regions — GB, DE, BR, IN for YouTube and X
 
 ### Additional Sources
 
@@ -136,8 +136,8 @@
 | PLAT-04 | Phase 3 | Pending |
 | PLAT-05 | Phase 3 | Pending |
 | PLAT-06 | Phase 3 | Pending |
-| PLAT-07 | Phase 3 | Pending |
-| PLAT-08 | Phase 3 | Pending |
+| PLAT-07 | Phase 3 | Complete |
+| PLAT-08 | Phase 3 | Complete |
 | API-01 | Phase 4 | Pending |
 | API-02 | Phase 4 | Pending |
 | API-03 | Phase 4 | Pending |

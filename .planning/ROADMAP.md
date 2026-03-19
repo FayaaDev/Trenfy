@@ -45,10 +45,10 @@
 ## Phase 3: Platform Clients
 **Goal:** All two platform clients fetching, normalizing, and persisting real trend data with deduplication and failure isolation
 **Requirements:** PLAT-01, PLAT-02, PLAT-03, PLAT-04, PLAT-05, PLAT-06, PLAT-07, PLAT-08
-**Plans:** 4 plans
+**Plans:** 1/4 plans complete
 
 ### Plans
-- [ ] 03-01-PLAN.md — Contract foundation (BaseTrendClient, normalization helpers, hash tests) (PLAT-07, PLAT-08)
+- [x] 03-01-PLAN.md — Contract foundation (BaseTrendClient, normalization helpers, hash tests) (PLAT-07, PLAT-08) ✓ f0ed8d0
 - [ ] 03-02-PLAN.md — YouTube + Spotify clients with auth/normalization and tests (PLAT-01, PLAT-02, PLAT-07)
 - [ ] 03-03-PLAN.md — Steam + TikTok clients with retry/circuit-breaker controls and tests (PLAT-03, PLAT-04, PLAT-05, PLAT-06)
 - [ ] 03-04-PLAN.md — Trends workflow wiring (dispatch, dedup, status handling, isolation tests) (PLAT-06, PLAT-07, PLAT-08)
