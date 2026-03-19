@@ -17,12 +17,12 @@
 
 ### Backend Core
 
-- [ ] **CORE-01**: FastAPI app (app.py) starts successfully with a working /health endpoint
+- [x] **CORE-01**: FastAPI app (app.py) starts successfully with a working /health endpoint
 - [ ] **CORE-02**: Source registry loads enabled trend sources from config/trend_sources.json
 - [ ] **CORE-03**: TrendItem and TrendSource pydantic models validate correctly (existing models.py)
 - [x] **CORE-04**: NocoDB trends client creates, reads, and deduplicates trend records (existing nocodb_trends_client.py)
-- [ ] **CORE-05**: Per-source async scheduler runs each source on its configured interval (YouTube 15m, Spotify 60m, Steam 30m, TikTok 30m)
-- [ ] **CORE-06**: Failed source does not block other sources — each source runs in an isolated asyncio task with error handling
+- [x] **CORE-05**: Per-source async scheduler runs each source on its configured interval (YouTube 15m, Spotify 60m, Steam 30m, TikTok 30m)
+- [x] **CORE-06**: Failed source does not block other sources — each source runs in an isolated asyncio task with error handling
 
 ### Platform Clients
 
@@ -124,12 +124,12 @@
 | CLEN-03 | Phase 1 | ✓ Complete |
 | CLEN-04 | Phase 1 | ✓ Complete |
 | CLEN-05 | Phase 1 | ✓ Complete |
-| CORE-01 | Phase 2 | Pending |
+| CORE-01 | Phase 2 | Complete |
 | CORE-02 | Phase 2 | Pending |
 | CORE-03 | Phase 2 | Pending |
 | CORE-04 | Phase 2 | Complete |
-| CORE-05 | Phase 2 | Pending |
-| CORE-06 | Phase 2 | Pending |
+| CORE-05 | Phase 2 | Complete |
+| CORE-06 | Phase 2 | Complete |
 | PLAT-01 | Phase 3 | Pending |
 | PLAT-02 | Phase 3 | Pending |
 | PLAT-03 | Phase 3 | Pending |
