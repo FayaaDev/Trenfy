@@ -1,6 +1,6 @@
 import hashlib
 from enum import Enum
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -23,6 +23,7 @@ class TrendItem(BaseModel):
     region_code: str = Field(default="US", description="ISO region code")
     metadata: Dict[str, Any] = Field(default_factory=dict)
     content_hash: str = ""
+    ar_translation: Optional[str] = None
 
 
 class YouTubeVideoMetadata(BaseModel):
@@ -46,6 +47,8 @@ class TrendSource(BaseModel):
     enabled: bool = True
     last_fetched_at: Optional[str] = None
     last_fetch_status: str = ""
+    min_metric_value: int = 0
+    blocked_keywords: List[str] = Field(default_factory=list)
 
 
 def generate_trend_hash(item: TrendItem) -> str:
