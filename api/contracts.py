@@ -2,6 +2,8 @@ import base64
 import json
 from typing import Any, Dict, List, Optional, TypedDict
 
+from pydantic import BaseModel, field_validator
+
 DEFAULT_LIMIT = 50
 MAX_LIMIT = 200
 
@@ -78,6 +80,46 @@ def validate_refresh_selector(
     has_platform = bool(str(platform or "").strip())
     if has_source and has_platform:
         raise ValueError(INVALID_REFRESH_SELECTOR)
+
+
+class PatchTrendRequest(BaseModel):
+    """Partial update payload for PATCH /api/trends/{id}.
+
+    Only fields explicitly set by the caller are included when calling .updates().
+    """
+
+    status: Optional[str] = None
+    title: Optional[str] = None
+    category: Optional[str] = None
+    description: Optional[str] = None
+    url: Optional[str] = None
+    thumbnail_url: Optional[str] = None
+    published_date: Optional[str] = None
+    metric_type: Optional[str] = None
+    metric_value: Optional[int] = None
+    region_code: Optional[str] = None
+    ar_translation: Optional[str] = None
+
+    @field_validator("status", mode="before")
+    @classmethod
+    def validate_status(cls, v):
+        if v is None:
+            return v
+        normalized = str(v).strip().lower()
+        if normalized not in VALID_STATUSES:
+            raise ValueError(INVALID_STATUS)
+        return normalized
+
+    @field_validator("title", mode="before")
+    @classmethod
+    def validate_title(cls, v):
+        if v is not None and not str(v).strip():
+            raise ValueError("title cannot be blank")
+        return v
+
+    def updates(self) -> Dict[str, Any]:
+        """Return only the fields that were explicitly set by the caller."""
+        return self.model_dump(exclude_unset=True)
 
 
 def normalize_limit(value: Optional[int]) -> int:

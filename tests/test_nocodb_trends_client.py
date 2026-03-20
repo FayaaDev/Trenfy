@@ -89,6 +89,88 @@ async def test_sync_sources_inserts_valid_rows_and_skips_invalid_platforms() -> 
     assert post_calls[1]["json_body"][0]["id"] == "X_RECENT_GLOBAL_EN"
 
 
+class FakeTrendClient(NocoDBTrendsClient):
+    """Fake NocoDB client for testing trend mutation helpers."""
+
+    def __init__(self, existing_row=None):
+        self.trends_table_id = "trends"
+        self.calls = []
+        self._existing_row = existing_row
+
+    async def _request(
+        self,
+        method,
+        path,
+        *,
+        params=None,
+        json_body=None,
+        allow_404=False,
+    ):
+        self.calls.append(
+            {
+                "method": method,
+                "path": path,
+                "params": params,
+                "json_body": json_body,
+            }
+        )
+        if method in ("PATCH", "DELETE"):
+            return _FakeResponse({"success": True})
+        return _FakeResponse({})
+
+    async def get_trend_by_id(self, record_id):
+        return self._existing_row
+
+
+async def test_update_trend_returns_none_when_not_found():
+    """update_trend returns None when the trend does not exist."""
+    client = FakeTrendClient(existing_row=None)
+    result = await client.update_trend("999", {"status": "approved"})
+    assert result is None
+
+
+async def test_update_trend_returns_updated_row_when_found():
+    """update_trend returns the updated row when the trend exists."""
+    row = {"Id": "1", "title": "Test", "status": "pending"}
+    client = FakeTrendClient(existing_row=row)
+    result = await client.update_trend("1", {"status": "approved"})
+    assert result is not None
+    assert result.get("Id") == "1"
+
+
+async def test_update_trend_sends_patch_with_correct_body():
+    """update_trend sends a PATCH request with the correct body shape."""
+    row = {"Id": "42", "title": "Test"}
+    client = FakeTrendClient(existing_row=row)
+    await client.update_trend("42", {"status": "approved"})
+    patch_calls = [c for c in client.calls if c["method"] == "PATCH"]
+    assert len(patch_calls) == 1
+    body = patch_calls[0]["json_body"]
+    assert isinstance(body, list)
+    assert body[0]["Id"] == "42"
+    assert body[0]["status"] == "approved"
+
+
+async def test_delete_trend_returns_true_when_found():
+    """delete_trend returns True when the trend exists and deletion succeeds."""
+    row = {"Id": "7", "title": "Old Trend"}
+    client = FakeTrendClient(existing_row=row)
+    result = await client.delete_trend("7")
+    assert result is True
+
+
+async def test_delete_trend_sends_delete_with_correct_body():
+    """delete_trend sends a DELETE request with the correct body shape."""
+    row = {"Id": "7", "title": "Old Trend"}
+    client = FakeTrendClient(existing_row=row)
+    await client.delete_trend("7")
+    delete_calls = [c for c in client.calls if c["method"] == "DELETE"]
+    assert len(delete_calls) == 1
+    body = delete_calls[0]["json_body"]
+    assert isinstance(body, list)
+    assert body[0]["Id"] == "7"
+
+
 if __name__ == "__main__":
     asyncio.run(test_sync_sources_inserts_valid_rows_and_skips_invalid_platforms())
     print("test_nocodb_trends_client.py: ok")

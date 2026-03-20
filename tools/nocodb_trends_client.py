@@ -258,6 +258,48 @@ class NocoDBTrendsClient:
             print(f"[NocoDBTrends] Error getting trend by id: {e}")
             return None
 
+    def _record_id(self, row: Dict[str, Any]) -> str:
+        """Extract the NocoDB row ID from a record dict."""
+        return str(row.get("Id") or row.get("id") or "")
+
+    async def update_trend(
+        self, record_id: str, updates: Dict[str, Any]
+    ) -> Optional[Dict[str, Any]]:
+        """Update a trend by its NocoDB row ID.
+
+        Returns the updated row on success, None if the trend does not exist.
+        """
+        existing = await self.get_trend_by_id(record_id)
+        if existing is None:
+            return None
+        try:
+            await self._request(
+                "PATCH",
+                f"/api/v2/tables/{self.trends_table_id}/records",
+                json_body=[{"Id": record_id, **updates}],
+            )
+        except Exception as e:
+            print(f"[NocoDBTrends] Error updating trend: {e}")
+            return None
+        return await self.get_trend_by_id(record_id)
+
+    async def delete_trend(self, record_id: str) -> bool:
+        """Hard-delete a trend from NocoDB by its row ID.
+
+        Returns True on success, False on error.
+        Delete contract: DELETE /api/v2/tables/{table_id}/records with body [{"Id": row_id}]
+        """
+        try:
+            await self._request(
+                "DELETE",
+                f"/api/v2/tables/{self.trends_table_id}/records",
+                json_body=[{"Id": record_id}],
+            )
+            return True
+        except Exception as e:
+            print(f"[NocoDBTrends] Error deleting trend: {e}")
+            return False
+
     async def check_duplicate_by_hash(self, content_hash: str) -> bool:
         try:
             response = await self._request(

@@ -150,3 +150,38 @@ def test_validate_status_filter_invalid_raises():
         assert str(e) == "invalid_status"
     else:
         raise AssertionError("expected ValueError('invalid_status')")
+
+
+# ---------------------------------------------------------------------------
+# PatchTrendRequest contract (api/contracts.py)
+# ---------------------------------------------------------------------------
+
+
+def test_patch_trend_request_model_dump_excludes_unset():
+    """model_dump(exclude_unset=True) only includes explicitly provided fields."""
+    from api.contracts import PatchTrendRequest
+
+    req = PatchTrendRequest(status="approved")
+    updates = req.updates()
+    assert updates == {"status": "approved"}
+
+
+def test_patch_trend_request_preserves_empty_string_for_non_title():
+    """Empty description is preserved (not dropped) because it is explicitly set."""
+    from api.contracts import PatchTrendRequest
+
+    req = PatchTrendRequest(description="")
+    updates = req.updates()
+    assert "description" in updates
+    assert updates["description"] == ""
+
+
+def test_patch_trend_request_invalid_status_raises():
+    """PatchTrendRequest(status='archived') raises a validation error."""
+    import pytest
+    from pydantic import ValidationError
+
+    from api.contracts import PatchTrendRequest
+
+    with pytest.raises(ValidationError):
+        PatchTrendRequest(status="archived")
