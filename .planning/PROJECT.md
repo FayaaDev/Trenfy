@@ -2,7 +2,7 @@
 
 ## What This Is
 
-Trenfy is a trend-catching platform for gaming, music, and entertainment. The shipped v1.0 scope delivers a Python FastAPI backend that polls YouTube and X, normalizes and deduplicates trend data, and persists it to NocoDB for API consumption. Mobile app delivery remains the next milestone focus.
+Trenfy is a trend-catching platform for gaming, music, and entertainment. The v1.1 scope delivered requirements traceability repair — reconciling all 59 v1.0 requirement IDs, closing CORE-02/CORE-03 as validated, and establishing the active requirements baseline for next milestone work. The backend pipeline (shipped v1.0) and a cost-safe mockup endpoint are live. Mobile app delivery is the primary next milestone focus.
 
 ## Core Value
 
@@ -10,30 +10,34 @@ Users can open the app and immediately see what's trending right now across gami
 
 ## Current State
 
-- v1.0 MVP shipped on 2026-03-20 across Phases 1-5 (17 plans, 33 tasks).
-- Backend pipeline is live: source registry, per-source scheduler isolation, YouTube/X clients, trend APIs, and filtering/enrichment extensions.
-- Milestone was archived with accepted verification debt and deferred mobile app scope. See `.planning/milestones/v1.0-MILESTONE-AUDIT.md` and `.planning/milestones/v1.0-REQUIREMENTS.md`.
+- v1.1 shipped on 2026-03-20 with Phase 6 (2 plans, 3 tasks).
+- Requirements baseline repaired: 59 v1.0 IDs reconciled across CLEN/CORE/PLAT/API/FILT/APP/INFRA categories.
+- CORE-02, CORE-03 formally closed as validated (Phase 2 VERIFICATION.md confirmed); INFRA-03 confirmed satisfied-pending one human NocoDB check.
+- 24/59 v1.0 requirements are fully validated; 24 remain satisfied-evidence-pending (code done, missing VERIFICATION.md artifacts); 12 (APP-01..12) remain deferred to next milestone.
 
 ## Next Milestone Goals
 
-- Phase 6: Repair requirements baseline and traceability consistency.
-- Phase 7: Rebuild missing milestone verification artifacts and backend E2E proof.
-- Phase 8: Deliver React Native v1 scope and verify mobile-to-backend flow.
+- Deliver React Native mobile app: APP-01..APP-12 (scaffold, FlashList feed, filtering, deep links, RTL support, pull-to-refresh, error/loading states).
+- Close verification debt: create 01/03/04-VERIFICATION.md artifacts covering CLEN/PLAT/API/INFRA satisfied-evidence-pending requirements.
+- Run E2E integration test: fetch→persist→GET /api/trends→mobile render.
 
 ## Requirements Snapshot
 
 ### Validated
 
-- [x] NocoDB-backed ingestion pipeline and source lifecycle are implemented.
-- [x] YouTube and X clients fetch, normalize, and deduplicate trend data.
-- [x] Trend APIs and Docker runtime contracts are implemented and available.
-- [x] Filtering and Arabic enrichment capabilities are integrated into ingestion/query paths.
+- [x] NocoDB-backed ingestion pipeline and source lifecycle are implemented. — v1.0
+- [x] YouTube and X clients fetch, normalize, and deduplicate trend data. — v1.0
+- [x] Trend APIs and Docker runtime contracts are implemented and available. — v1.0
+- [x] Filtering and Arabic enrichment capabilities are integrated into ingestion/query paths. — v1.0
+- [x] Requirements traceability baseline established: 59 v1.0 IDs reconciled with correct statuses. — v1.1
+- [x] CORE-02 (source registry) and CORE-03 (Pydantic models) closed as validated via Phase 2 evidence. — v1.1
+- [x] INFRA-03 NocoDB schema confirmed satisfied-pending human table check. — v1.1
 
-### Active (v1.1 Carry-Over)
+### Active (v1.2 targets)
 
-- [ ] Verification debt closure for CLEN/PLAT/API/INFRA requirement groups.
-- [ ] CORE-02, CORE-03, and INFRA-03 closure evidence.
-- [ ] APP-01..APP-12 mobile delivery and verification.
+- [ ] Verification debt closure: create 01/03/04-VERIFICATION.md for CLEN/PLAT/API/INFRA groups.
+- [ ] INFRA-03 human verification: confirm NocoDB `trends` and `trend_sources` table existence.
+- [ ] APP-01..APP-12: React Native mobile app delivery.
 
 ### Out of Scope
 
@@ -51,7 +55,7 @@ Users can open the app and immediately see what's trending right now across gami
 - Backend codebase is approximately 4.3k lines of Python focused on ingestion/workflow/API paths.
 - NocoDB base and source table IDs are already established for local runtime.
 - Quick-task work exists for cost-safe mockup payload usage without live refresh pressure.
-- Current risk is process quality (traceability + verification completeness), not backend feature absence.
+- Current risk is mobile delivery execution (12 APP requirements) and closing 24 satisfied-evidence-pending items with proper VERIFICATION.md artifacts.
 
 ## Constraints
 
@@ -70,10 +74,11 @@ Users can open the app and immediately see what's trending right now across gami
 | X via official API (tier-aware) | Keep v1 stable with explicit rate-limit handling and graceful degradation | ✓ Implemented v1.0 |
 | No auth in v1 | Simplifies architecture; trends are public data | ✓ Kept in v1.0 |
 | Docker only (no Caddy) | Reduce infra complexity for v1 | ✓ Kept in v1.0 |
-| React Native for mobile | User-specified cross-platform client | ⚠ Deferred to v1.1 |
+| React Native for mobile | User-specified cross-platform client | ⚠ Deferred to v1.2 |
 | Upsert by source id on startup | JSON is additive source of truth; preserves last_fetched_at | ✓ Validated Phase 2 |
 | lifespan context manager | Modern FastAPI pattern over @app.on_event | ✓ Validated Phase 2 |
-| Ship v1.0 with accepted audit gaps | Preserve release cadence while tracking debt explicitly | ⚠ Requires closure in Phases 6-8 |
+| Ship v1.0 with accepted audit gaps | Preserve release cadence while tracking debt explicitly | ✓ Reconciled in v1.1 |
+| Repair traceability in v1.1 before mobile work | 24 satisfied-evidence-pending items needed reconciliation before adding new scope | ✓ Completed v1.1 |
 
 ---
-*Last updated: 2026-03-20 after v1.0 milestone archival*
+*Last updated: 2026-03-20 after v1.1 milestone*
