@@ -8,7 +8,6 @@
 ## Current Milestone Scope (v1.1)
 
 - [x] Phase 6: Requirements Baseline Repair (2 plans) (completed 2007-03-20)
-- [ ] Phase 7: Mobile App Delivery and E2E Validation (0 plans)
 
 ### Phase 6: Requirements Baseline Repair
 
@@ -20,16 +19,3 @@
 Plans:
 - [ ] 06-01-PLAN.md — Create v1.1 REQUIREMENTS.md and update ROADMAP Phase 6 entry
 - [ ] 06-02-PLAN.md — Create Phase 6 VERIFICATION.md closing CORE-02, CORE-03, INFRA-03
-
-### Phase 7: Mobile App Delivery and E2E Validation
-
-**Goal**: Deliver the React Native Expo app (APP-01..APP-12) with full feature implementation and E2E backend-to-mobile flow validation
-**Depends on**: Phase 7
-**Requirements**: REQ-801 through REQ-812
-**Plans**: To be planned
-
-## Notes
-
-- v1.0 shipped with accepted audit gaps; see `.planning/milestones/v1.0-MILESTONE-AUDIT.md`.
-- Active v1.1 requirements tracked in `.planning/REQUIREMENTS.md`.
-- Start fresh milestone requirements with `/gsd-new-milestone`.

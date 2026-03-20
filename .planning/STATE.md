@@ -7,10 +7,10 @@ current_phase_name: requirements-baseline-repair
 current_plan: 0
 status: verifying
 stopped_at: Completed 06-02-PLAN.md
-last_updated: "2026-03-20T07:56:13.201Z"
+last_updated: "2026-03-20T07:59:31.744Z"
 last_activity: 2026-03-20
 progress:
-  total_phases: 2
+  total_phases: 1
   completed_phases: 1
   total_plans: 2
   completed_plans: 2
@@ -32,7 +32,7 @@ See: .planning/PROJECT.md (updated 2026-03-20)
 **Current Phase Name:** requirements-baseline-repair
 **Current Plan:** 0
 **Total Plans in Phase:** 0
-**Total Phases:** 4
+**Total Phases:** 3
 **Status:** Phase complete — ready for verification
 **Progress:** [██████████] 100%
 **Last Activity:** 2026-03-20
