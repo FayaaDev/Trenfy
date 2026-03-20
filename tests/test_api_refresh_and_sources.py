@@ -202,6 +202,106 @@ def test_get_sources_platform_filter_is_forwarded() -> None:
     assert response.json()[0]["id"] == "x_global"
 
 
+def test_patch_trend_updates_fields_and_returns_updated_trend() -> None:
+    from api.routes import trends as trends_route
+
+    existing = {"Id": "5", "title": "Old Title", "status": "pending"}
+    updated = {"Id": "5", "title": "New Title", "status": "approved"}
+    call_count = {"n": 0}
+
+    async def fake_update_trend(record_id, updates):
+        call_count["n"] += 1
+        return updated
+
+    original_update = trends_route.nocodb_trends.update_trend
+    trends_route.nocodb_trends.update_trend = fake_update_trend
+
+    client = _make_client()
+    response = client.patch(
+        "/api/trends/5", json={"title": "New Title", "status": "approved"}
+    )
+
+    trends_route.nocodb_trends.update_trend = original_update
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "approved"
+    assert response.json()["title"] == "New Title"
+    assert call_count["n"] == 1
+
+
+def test_patch_trend_returns_404_when_not_found() -> None:
+    from api.routes import trends as trends_route
+
+    async def fake_update_trend(record_id, updates):
+        return None
+
+    original_update = trends_route.nocodb_trends.update_trend
+    trends_route.nocodb_trends.update_trend = fake_update_trend
+
+    client = _make_client()
+    response = client.patch("/api/trends/999", json={"status": "approved"})
+
+    trends_route.nocodb_trends.update_trend = original_update
+
+    assert response.status_code == 404
+    payload = response.json()
+    assert payload["error"] == "trend_not_found"
+    assert payload["id"] == "999"
+
+
+def test_patch_trend_rejects_invalid_status() -> None:
+    client = _make_client()
+    response = client.patch("/api/trends/5", json={"status": "archived"})
+    assert response.status_code == 422
+
+
+def test_delete_trend_returns_deleted_ack_on_success() -> None:
+    from api.routes import trends as trends_route
+
+    existing = {"Id": "3", "title": "To Delete"}
+
+    async def fake_get_trend(record_id):
+        return existing
+
+    async def fake_delete_trend(record_id):
+        return True
+
+    original_get = trends_route.nocodb_trends.get_trend_by_id
+    original_delete = trends_route.nocodb_trends.delete_trend
+    trends_route.nocodb_trends.get_trend_by_id = fake_get_trend
+    trends_route.nocodb_trends.delete_trend = fake_delete_trend
+
+    client = _make_client()
+    response = client.delete("/api/trends/3")
+
+    trends_route.nocodb_trends.get_trend_by_id = original_get
+    trends_route.nocodb_trends.delete_trend = original_delete
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload == {"id": "3", "deleted": True}
+
+
+def test_delete_trend_returns_404_when_not_found() -> None:
+    from api.routes import trends as trends_route
+
+    async def fake_get_trend(record_id):
+        return None
+
+    original_get = trends_route.nocodb_trends.get_trend_by_id
+    trends_route.nocodb_trends.get_trend_by_id = fake_get_trend
+
+    client = _make_client()
+    response = client.delete("/api/trends/999")
+
+    trends_route.nocodb_trends.get_trend_by_id = original_get
+
+    assert response.status_code == 404
+    payload = response.json()
+    assert payload["error"] == "trend_not_found"
+    assert payload["id"] == "999"
+
+
 if __name__ == "__main__":
     test_refresh_rejects_payload_with_both_source_id_and_platform()
     test_refresh_by_source_id_runs_exactly_one_source()

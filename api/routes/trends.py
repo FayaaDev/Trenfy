@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 
 from api.contracts import (
     INVALID_REFRESH_SELECTOR,
+    PatchTrendRequest,
     decode_cursor,
     encode_cursor,
     normalize_limit,
@@ -207,6 +208,30 @@ async def get_trend(record_id: str):
             content={"error": "trend_not_found", "id": record_id},
         )
     return row
+
+
+@trends_router.patch("/{record_id}")
+async def patch_trend(record_id: str, payload: PatchTrendRequest):
+    updates = payload.updates()
+    result = await nocodb_trends.update_trend(record_id, updates)
+    if result is None:
+        return JSONResponse(
+            status_code=404,
+            content={"error": "trend_not_found", "id": record_id},
+        )
+    return result
+
+
+@trends_router.delete("/{record_id}")
+async def delete_trend(record_id: str):
+    existing = await nocodb_trends.get_trend_by_id(record_id)
+    if existing is None:
+        return JSONResponse(
+            status_code=404,
+            content={"error": "trend_not_found", "id": record_id},
+        )
+    await nocodb_trends.delete_trend(record_id)
+    return {"id": record_id, "deleted": True}
 
 
 @trends_router.post("/refresh")
