@@ -32,6 +32,15 @@ Users can open the app and immediately see what's trending right now across gami
 - [ ] Deployed via Docker Compose (no reverse proxy in v1)
 - [ ] Platform scope for v1 remains YouTube + X only; additional platforms are deferred to later milestones
 
+### Validated in Phase 6: data-filtering
+
+*(Validated in Phase 6: data-filtering)*
+- [x] Metric threshold filter drops items below `min_metric_value` before dedup
+- [x] Keyword blocklist filter drops items with blocked terms (case-insensitive)
+- [x] Arabic items enriched with `ar_translation` via OpenRouter (best-effort, non-blocking)
+- [x] `ar_translation` LongText column exists in NocoDB Trends table
+- [x] `GET /api/trends` supports multi-value platform OR filter, full-text `?q=` search, `sort_by`, and `min_metric_value` floor
+
 ### Out of Scope
 
 - User authentication / accounts — not needed, app is public
@@ -75,8 +84,7 @@ Users can open the app and immediately see what's trending right now across gami
 
 ## Current State
 
-Phase 4 complete (2026-03-19) — API contracts and infra hardening are in place.
-Phase 5 (React Native App) is next, with platform scope locked to YouTube + X for v1.
+Phase 6 complete (2026-03-20) — data filtering, Arabic translation enrichment, and API query extensions are in place. This is the final backend phase; the milestone (v1.0) is now complete.
 
 ---
-*Last updated: 2026-03-20 after platform-scope update*
+*Last updated: 2026-03-20 after Phase 6 completion*
