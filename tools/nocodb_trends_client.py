@@ -395,6 +395,19 @@ class NocoDBTrendsClient:
             "enabled": bool(row.get("enabled", False)),
         }
 
+    def _source_to_record(self, source: "TrendSource") -> Dict[str, Any]:
+        return {
+            "id": source.id,
+            "name": source.name,
+            "platform": source.platform,
+            "endpoint": source.endpoint,
+            "params": json.dumps(source.params) if source.params else "{}",
+            "check_interval_minutes": source.check_interval_minutes,
+            "enabled": source.enabled,
+            "last_fetched_at": None,
+            "last_fetch_status": "",
+        }
+
     async def update_source_last_fetched(
         self, source_id: str, status: str = "success"
     ) -> bool:
@@ -446,19 +459,9 @@ class NocoDBTrendsClient:
 
             # Insert only sources not already present
             to_insert = [
-                {
-                    "id": s.id,
-                    "name": s.name,
-                    "platform": s.platform,
-                    "endpoint": s.endpoint,
-                    "params": json.dumps(s.params) if s.params else "{}",
-                    "check_interval_minutes": s.check_interval_minutes,
-                    "enabled": s.enabled,
-                    "last_fetched_at": None,
-                    "last_fetch_status": "",
-                }
-                for s in sources
-                if s.id not in existing_ids
+                self._source_to_record(source)
+                for source in sources
+                if source.id not in existing_ids
             ]
 
             if not to_insert:
@@ -467,13 +470,39 @@ class NocoDBTrendsClient:
                 )
                 return 0
 
-            await self._request(
-                "POST",
-                f"/api/v2/tables/{self.sources_table_id}/records",
-                json_body=to_insert,
-            )
-            print(f"[NocoDBTrends] sync_sources: inserted {len(to_insert)} new sources")
-            return len(to_insert)
+            inserted = 0
+            for record in to_insert:
+                try:
+                    await self._request(
+                        "POST",
+                        f"/api/v2/tables/{self.sources_table_id}/records",
+                        json_body=[record],
+                    )
+                    inserted += 1
+                except httpx.HTTPStatusError as exc:
+                    status_code = (
+                        exc.response.status_code if exc.response is not None else "?"
+                    )
+                    detail = ""
+                    if exc.response is not None:
+                        try:
+                            detail = str(exc.response.json().get("msg") or "")
+                        except Exception:
+                            detail = exc.response.text
+                    suffix = f": {detail}" if detail else ""
+                    print(
+                        "[NocoDBTrends] sync_sources skipped "
+                        f"{record.get('id', '')}: HTTP {status_code}{suffix}"
+                    )
+                except Exception as exc:
+                    print(
+                        "[NocoDBTrends] sync_sources skipped "
+                        f"{record.get('id', '')}: {exc}"
+                    )
+
+            if inserted:
+                print(f"[NocoDBTrends] sync_sources: inserted {inserted} new sources")
+            return inserted
 
         except Exception as e:
             print(f"[NocoDBTrends] sync_sources warning (non-fatal): {e}")

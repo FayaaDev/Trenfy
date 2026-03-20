@@ -46,7 +46,7 @@
       "check_interval_minutes": 10,
       "enabled": true,
       "min_metric_value": 500,
-      "blocked_keywords": ["massage", "escort"]
+      "blocked_keywords": ["massage", "مساج"]
     }
   ]
 }
