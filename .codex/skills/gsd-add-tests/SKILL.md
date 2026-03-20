@@ -34,7 +34,7 @@ GSD workflows use `Task(...)` (Claude Code syntax). Translate to Codex collabora
 
 Direct mapping:
 - `Task(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
-- `Task(model="...")` → omit (Codex uses per-role config, not inline model selection)
+- `Task(model="...")` → omit entirely in Codex. Never pass `model` to `spawn_agent`; ignore workflow model values like `inherit`, `opus`, `sonnet`, and `haiku` because they are Claude-oriented and can fail in Codex.
 - `fork_context: false` by default — GSD agents load their own context via `<files_to_read>` blocks
 
 Parallel fan-out:

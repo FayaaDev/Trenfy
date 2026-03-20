@@ -572,29 +572,51 @@ const MODEL_ALIAS_MAP = {
   'haiku': 'claude-haiku-3-5',
 };
 
+const CODEX_MODEL_MAP = {
+  'inherit': 'gpt-5.4',
+  'opus': 'gpt-5.4',
+  'sonnet': 'gpt-5.4-mini',
+  'haiku': 'gpt-5.4-mini',
+  'claude-opus-4-0': 'gpt-5.4',
+  'claude-sonnet-4-5': 'gpt-5.4-mini',
+  'claude-haiku-3-5': 'gpt-5.4-mini',
+};
+
+function isCodexRuntime() {
+  return !!(process.env.CODEX_CI || process.env.CODEX_THREAD_ID || process.env.CODEX_SANDBOX);
+}
+
+function mapModelForRuntime(model) {
+  if (!model) return model;
+  if (!isCodexRuntime()) return model;
+
+  const normalized = String(model).trim();
+  return CODEX_MODEL_MAP[normalized] || normalized;
+}
+
 function resolveModelInternal(cwd, agentType) {
   const config = loadConfig(cwd);
 
   // Check per-agent override first
   const override = config.model_overrides?.[agentType];
   if (override) {
-    return override;
+    return mapModelForRuntime(override);
   }
 
   // Fall back to profile lookup
   const profile = String(config.model_profile || 'balanced').toLowerCase();
   const agentModels = MODEL_PROFILES[agentType];
-  if (!agentModels) return 'sonnet';
-  if (profile === 'inherit') return 'inherit';
+  if (!agentModels) return mapModelForRuntime('sonnet');
+  if (profile === 'inherit') return mapModelForRuntime('inherit');
   const alias = agentModels[profile] || agentModels['balanced'] || 'sonnet';
 
   // If resolve_model_ids is true, map alias to full model ID
   // This prevents 404s when the Task tool passes aliases directly to the API
   if (config.resolve_model_ids) {
-    return MODEL_ALIAS_MAP[alias] || alias;
+    return mapModelForRuntime(MODEL_ALIAS_MAP[alias] || alias);
   }
 
-  return alias;
+  return mapModelForRuntime(alias);
 }
 
 // ─── Misc utilities ───────────────────────────────────────────────────────────

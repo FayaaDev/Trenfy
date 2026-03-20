@@ -1,6 +1,6 @@
 # Model Profiles
 
-Model profiles control which Claude model each GSD agent uses. This allows balancing quality vs token spend, or inheriting the currently selected session model.
+Model profiles control which subagent model each GSD agent uses. In Claude-native runtimes this maps to Claude models directly. In Codex, GSD should either omit `model` when spawning subagents or resolve to Codex-supported GPT model IDs.
 
 ## Profile Definitions
 
@@ -38,7 +38,8 @@ Model profiles control which Claude model each GSD agent uses. This allows balan
 - Use when: conserving quota, high-volume work, less critical phases
 
 **inherit** - Follow the current session model
-- All agents resolve to `inherit`
+- Claude-native runtimes resolve agents to `inherit`
+- Codex should omit the `model` parameter entirely when translating `Task(...)` to `spawn_agent(...)`
 - Best when you switch models interactively (for example OpenCode `/model`)
 - **Required when using non-Anthropic providers** (OpenRouter, local models, etc.) — otherwise GSD may call Anthropic models directly, incurring unexpected costs
 - Use when: you want GSD to follow your currently selected runtime model
@@ -68,7 +69,8 @@ Orchestrators resolve model before spawning:
 1. Read .planning/config.json
 2. Check model_overrides for agent-specific override
 3. If no override, look up agent in profile table
-4. Pass model parameter to Task call
+4. Claude-native runtimes: pass model parameter to Task call
+5. Codex: omit model when spawning subagents; if a model must be materialized, map it to a valid Codex model ID
 ```
 
 ## Per-Agent Overrides
@@ -85,7 +87,7 @@ Override specific agents without changing the entire profile:
 }
 ```
 
-Overrides take precedence over the profile. Valid values: `opus`, `sonnet`, `haiku`, `inherit`.
+Overrides take precedence over the profile. Claude-oriented values are `opus`, `sonnet`, `haiku`, `inherit`. In Codex, these should be omitted at spawn time or translated to supported GPT model IDs.
 
 ## Switching Profiles
 
@@ -117,3 +119,6 @@ Claude Code's `"opus"` alias maps to a specific model version. Organizations may
 
 **Why `inherit` profile?**
 Some runtimes (including OpenCode) let users switch models at runtime (`/model`). The `inherit` profile keeps all GSD subagents aligned to that live selection.
+
+**Why does Codex need different handling?**
+Codex `spawn_agent` only accepts Codex-supported GPT model IDs. Passing Claude-oriented values like `inherit`, `opus`, `sonnet`, or `haiku` can fail with errors such as `Model not found: inherit/.`
