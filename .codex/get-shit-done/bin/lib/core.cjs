@@ -582,13 +582,20 @@ const CODEX_MODEL_MAP = {
   'claude-haiku-3-5': 'gpt-5.4-mini',
 };
 
-function isCodexRuntime() {
-  return !!(process.env.CODEX_CI || process.env.CODEX_THREAD_ID || process.env.CODEX_SANDBOX);
+function getRuntimeFlavor() {
+  const runtimePath = toPosixPath(__filename);
+
+  if (runtimePath.includes('/.codex/')) return 'codex';
+  if (runtimePath.includes('/.config/opencode/') || runtimePath.includes('/.opencode/')) return 'opencode';
+  if (process.env.CODEX_CI || process.env.CODEX_THREAD_ID || process.env.CODEX_SANDBOX) return 'codex';
+  if (process.env.OPENCODE_CONFIG_DIR || process.env.OPENCODE_CONFIG || process.env.OPENCODE_CONFIG_CONTENT) return 'opencode';
+
+  return null;
 }
 
 function mapModelForRuntime(model) {
   if (!model) return model;
-  if (!isCodexRuntime()) return model;
+  if (getRuntimeFlavor() !== 'codex') return model;
 
   const normalized = String(model).trim();
   return CODEX_MODEL_MAP[normalized] || normalized;
