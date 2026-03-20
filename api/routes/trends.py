@@ -20,6 +20,17 @@ sources_router = APIRouter(prefix="/api", tags=["sources"])
 VALID_SORT_FIELDS = {"fetched_at", "metric_value", "published_date"}
 
 
+def _build_mockup_sections(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
+    latest = list(rows)
+    hero = latest[0] if latest else None
+    highlights = latest[1:2] if len(latest) > 1 else []
+    return {
+        "hero": hero,
+        "highlights": highlights,
+        "latest": latest,
+    }
+
+
 @trends_router.get("")
 async def list_trends(
     platform: Optional[str] = None,
@@ -85,6 +96,22 @@ async def list_trends(
             "has_more": has_more,
         },
     }
+
+
+@trends_router.get("/mockup")
+async def get_trends_mockup(
+    limit: int = Query(default=12, ge=1, le=50),
+    platform: Optional[str] = None,
+    category: Optional[str] = None,
+):
+    rows = await nocodb_trends.query_trends(
+        platform=platform,
+        category=category,
+        limit=limit,
+        offset=0,
+        sort="-fetched_at",
+    )
+    return _build_mockup_sections(rows)
 
 
 @trends_router.get("/stats")
