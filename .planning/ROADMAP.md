@@ -279,7 +279,7 @@ Tasks:
 
 | Phase | Goal | Requirements | Est. Plans |
 |-------|------|-------------|-----------|
-| 07 | Backend readiness (status field, CORS, 3 new endpoints) | DB-01/02, BAPI-01..07 | 4 |
+| 07 | 2/4 | Complete    | 2026-03-20 |
 | 08 | Web scaffold, API client, auth gate | WEB-01..09, AUTH-01..04 | 3 |
 | 09 | Admin panel (trends, sources, categories) | ADMIN-01..12, SRC-01..04, CAT-01..03 | 6 |
 | 10 | Demo feed page | DEMO-01..08 | 2 |

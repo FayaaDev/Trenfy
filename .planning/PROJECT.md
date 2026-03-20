@@ -14,6 +14,7 @@ Users can open the app and immediately see what's trending right now across gami
 - Requirements baseline repaired: 59 v1.0 IDs reconciled across CLEN/CORE/PLAT/API/FILT/APP/INFRA categories.
 - CORE-02, CORE-03 formally closed as validated (Phase 2 VERIFICATION.md confirmed); INFRA-03 confirmed satisfied-pending one human NocoDB check.
 - 24/59 v1.0 requirements are fully validated; 24 remain satisfied-evidence-pending (code done, missing VERIFICATION.md artifacts); 12 (APP-01..12) remain deferred to next milestone.
+- **Phase 07 (Backend Readiness) complete**: 4 plans, 138 tests green, all 7 BAPI requirements verified. FastAPI backend now exposes status-filtered reads, trend PATCH/DELETE mutations, source enable/disable toggling, and explicit CORS allowlist.
 
 ## Current Milestone: v1.2 Web Admin + Demo Feed
 
@@ -50,7 +51,8 @@ Users can open the app and immediately see what's trending right now across gami
 
 - [ ] ADMIN-01..ADMIN-0x: React web admin panel — API controls, content management, category management, sources panel, auth.
 - [ ] DEMO-01..DEMO-0x: Public demo feed page — approved content only.
-- [ ] DB-01: Add `status` field (pending/approved/rejected) to Trenfy NocoDB table.
+- [x] DB-01: `status` field (pending/approved/rejected) live in Trenfy NocoDB table — confirmed via MCP.
+- [x] BAPI-01..BAPI-07: Backend API backend-readiness endpoints — complete (Phase 07).
 
 ### Deferred (next milestone)
 
@@ -100,4 +102,4 @@ Users can open the app and immediately see what's trending right now across gami
 | Repair traceability in v1.1 before mobile work | 24 satisfied-evidence-pending items needed reconciliation before adding new scope | ✓ Completed v1.1 |
 
 ---
-*Last updated: 2026-03-20 after v1.2 milestone start*
+*Last updated: 2026-03-20 after Phase 07 (Backend Readiness) complete*
