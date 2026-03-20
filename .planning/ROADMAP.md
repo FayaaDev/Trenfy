@@ -1,7 +1,7 @@
 # Trenfy Roadmap
 
 **Generated:** 2026-03-19
-**Phases:** 8
+**Phases:** 7
 **Requirements covered:** 41/41
 **v1 Platform Scope:** YouTube + X (future platforms deferred)
 
@@ -102,16 +102,10 @@
 
 ---
 
-## Phase 7: (Planned)
-**Goal:** TBD — to be defined
-**Status:** Not started
-
----
-
-## Phase 8: React Native App
+## Phase 7: React Native App
 **Goal:** Expo app with a fully functional, filterable trend feed that deep-links to native platforms and persists user preferences
 **Requirements:** APP-01, APP-02, APP-03, APP-04, APP-05, APP-06, APP-07, APP-08, APP-09, APP-10, APP-11, APP-12
-**Status:** Deferred — to be planned after phases 6 and 7
+**Status:** Deferred — to be planned after phase 6
 
 ### Success Criteria
 1. The feed loads and displays trend cards (thumbnail, title, platform icon, metric label, time-ago) within 2 seconds of app open; scrolling 200+ items produces no visible jank (FlashList recycling confirmed)
