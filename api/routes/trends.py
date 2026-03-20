@@ -17,6 +17,8 @@ from workflows.trends_scheduler import workflow
 trends_router = APIRouter(prefix="/api/trends", tags=["trends"])
 sources_router = APIRouter(prefix="/api", tags=["sources"])
 
+VALID_SORT_FIELDS = {"fetched_at", "metric_value", "published_date"}
+
 
 @trends_router.get("")
 async def list_trends(
@@ -27,16 +29,33 @@ async def list_trends(
     end_date: Optional[str] = None,
     limit: Optional[int] = Query(default=None, ge=1),
     cursor: Optional[str] = None,
+    q: Optional[str] = None,
+    sort_by: Optional[str] = None,
+    min_metric_value: Optional[str] = Query(default=None),
 ):
     effective_limit = normalize_limit(limit)
-    offset = 0
-    sort = "-fetched_at"
 
+    # Validate min_metric_value before anything else
+    min_metric_int: Optional[int] = None
+    if min_metric_value is not None:
+        try:
+            min_metric_int = int(min_metric_value)
+        except ValueError:
+            return JSONResponse(
+                status_code=400, content={"error": "invalid_min_metric_value"}
+            )
+
+    # Build sort from sort_by (cursor sort overrides when paginating)
+    sort = "-fetched_at"
+    if sort_by and sort_by in VALID_SORT_FIELDS:
+        sort = f"-{sort_by}"
+
+    offset = 0
     if cursor:
         try:
             decoded = decode_cursor(cursor)
             offset = decoded.get("offset", 0)
-            sort = decoded.get("sort") or "-fetched_at"
+            sort = decoded.get("sort") or sort
         except ValueError:
             return JSONResponse(status_code=400, content={"error": "invalid_cursor"})
 
@@ -49,6 +68,8 @@ async def list_trends(
         limit=effective_limit,
         offset=offset,
         sort=sort,
+        q=q,
+        min_metric_value=min_metric_int,
     )
 
     has_more = len(items) == effective_limit
