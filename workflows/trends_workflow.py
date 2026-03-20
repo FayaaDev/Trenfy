@@ -7,6 +7,7 @@ from typing import Dict
 
 from trend_agents.shared.models import TrendSource
 from tools.nocodb_trends_client import NocoDBTrendsClient
+from tools.translation import translate_items
 from tools.trend_clients import get_trend_client
 from tools.trend_clients.common import compute_content_hash
 
@@ -89,6 +90,7 @@ class TrendsWorkflow:
             result["duplicates"] = len(valid_items) - len(new_items)
 
             if new_items:
+                await translate_items(new_items)
                 created = await self.trends_client.batch_create_trends(new_items)
                 result["stored"] = len(created)
 
