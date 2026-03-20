@@ -15,7 +15,20 @@ Users can open the app and immediately see what's trending right now across gami
 - CORE-02, CORE-03 formally closed as validated (Phase 2 VERIFICATION.md confirmed); INFRA-03 confirmed satisfied-pending one human NocoDB check.
 - 24/59 v1.0 requirements are fully validated; 24 remain satisfied-evidence-pending (code done, missing VERIFICATION.md artifacts); 12 (APP-01..12) remain deferred to next milestone.
 
-## Next Milestone Goals
+## Current Milestone: v1.2 Web Admin + Demo Feed
+
+**Goal:** Build a React web admin panel for full content control and a public demo feed page.
+
+**Target features:**
+- API control panel (health, stats, refresh, mock endpoints as interactive buttons)
+- Trend content list showing both original and Arabic translation columns
+- Content review workflow: approve/reject, edit, delete (requires adding `status` field to Trenfy table)
+- Category management: enforce controlled category list, move content between categories
+- Trend sources panel: view sources, toggle enabled/disabled
+- Simple password/token protection on the admin page
+- Public demo feed page showing approved-only trends
+
+## Deferred Milestone Goals
 
 - Deliver React Native mobile app: APP-01..APP-12 (scaffold, FlashList feed, filtering, deep links, RTL support, pull-to-refresh, error/loading states).
 - Close verification debt: create 01/03/04-VERIFICATION.md artifacts covering CLEN/PLAT/API/INFRA satisfied-evidence-pending requirements.
@@ -34,6 +47,12 @@ Users can open the app and immediately see what's trending right now across gami
 - [x] INFRA-03 NocoDB schema confirmed satisfied-pending human table check. — v1.1
 
 ### Active (v1.2 targets)
+
+- [ ] ADMIN-01..ADMIN-0x: React web admin panel — API controls, content management, category management, sources panel, auth.
+- [ ] DEMO-01..DEMO-0x: Public demo feed page — approved content only.
+- [ ] DB-01: Add `status` field (pending/approved/rejected) to Trenfy NocoDB table.
+
+### Deferred (next milestone)
 
 - [ ] Verification debt closure: create 01/03/04-VERIFICATION.md for CLEN/PLAT/API/INFRA groups.
 - [ ] INFRA-03 human verification: confirm NocoDB `trends` and `trend_sources` table existence.
@@ -81,4 +100,4 @@ Users can open the app and immediately see what's trending right now across gami
 | Repair traceability in v1.1 before mobile work | 24 satisfied-evidence-pending items needed reconciliation before adding new scope | ✓ Completed v1.1 |
 
 ---
-*Last updated: 2026-03-20 after v1.1 milestone*
+*Last updated: 2026-03-20 after v1.2 milestone start*
