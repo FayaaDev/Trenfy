@@ -169,6 +169,8 @@ class NocoDBTrendsClient:
         limit: int = 100,
         offset: int = 0,
         sort: str = "-fetched_at",
+        q: Optional[str] = None,
+        min_metric_value: Optional[int] = None,
     ) -> List[Dict[str, Any]]:
         params: Dict[str, Any] = {"limit": limit, "offset": offset}
         if sort:
@@ -176,7 +178,10 @@ class NocoDBTrendsClient:
 
         where_parts: List[str] = []
         if platform:
-            where_parts.append(f"(platform,eq,{platform})")
+            if "," in platform:
+                where_parts.append(f"(platform,anyof,{platform})")
+            else:
+                where_parts.append(f"(platform,eq,{platform})")
         if category:
             where_parts.append(f"(category,eq,{category})")
         if region_code:
@@ -185,6 +190,13 @@ class NocoDBTrendsClient:
             where_parts.append(f"(published_date,gte,{start_date})")
         if end_date:
             where_parts.append(f"(published_date,lte,{end_date})")
+        if q and q.strip():
+            q_clean = q.strip()
+            where_parts.append(
+                f"(title,like,%{q_clean}%)~or(description,like,%{q_clean}%)"
+            )
+        if min_metric_value is not None:
+            where_parts.append(f"(metric_value,gte,{min_metric_value})")
 
         if where_parts:
             params["where"] = "~and".join(where_parts)
