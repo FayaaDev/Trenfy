@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 
 from api.contracts import (
     INVALID_REFRESH_SELECTOR,
+    PatchSourceRequest,
     PatchTrendRequest,
     decode_cursor,
     encode_cursor,
@@ -294,6 +295,18 @@ async def list_sources(platform: Optional[str] = None):
         }
         for row in rows
     ]
+
+
+@sources_router.patch("/sources/{source_id}")
+@trends_router.patch("/sources/{source_id}")
+async def patch_source(source_id: str, payload: PatchSourceRequest):
+    result = await nocodb_trends.update_source(source_id, payload.enabled)
+    if result is None:
+        return JSONResponse(
+            status_code=404,
+            content={"error": "source_not_found", "id": source_id},
+        )
+    return result
 
 
 router = APIRouter()

@@ -122,6 +122,12 @@ class PatchTrendRequest(BaseModel):
         return self.model_dump(exclude_unset=True)
 
 
+class PatchSourceRequest(BaseModel):
+    """Partial update payload for PATCH /api/sources/{id}."""
+
+    enabled: bool
+
+
 def normalize_limit(value: Optional[int]) -> int:
     if value is None:
         return DEFAULT_LIMIT

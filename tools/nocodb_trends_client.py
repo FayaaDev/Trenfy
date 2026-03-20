@@ -579,6 +579,42 @@ class NocoDBTrendsClient:
             print(f"[NocoDBTrends] sync_sources warning (non-fatal): {e}")
             return 0
 
+    async def update_source(
+        self, source_id: str, enabled: bool
+    ) -> Optional[Dict[str, Any]]:
+        """Toggle enabled flag on a source by its stable string ID.
+
+        Returns the normalized source row on success, None if the source is not found.
+        """
+        if not self.sources_table_id:
+            return None
+
+        try:
+            lookup = await self._request(
+                "GET",
+                f"/api/v2/tables/{self.sources_table_id}/records",
+                params={"where": f"(id,eq,{source_id})", "limit": 1},
+            )
+            if lookup is None:
+                return None
+            rows = lookup.json().get("list", [])
+            if not rows:
+                return None
+
+            nocodb_row_id = rows[0].get("Id") or rows[0].get("id")
+            await self._request(
+                "PATCH",
+                f"/api/v2/tables/{self.sources_table_id}/records",
+                json_body=[{"Id": nocodb_row_id, "enabled": enabled}],
+            )
+            # Return normalized row with updated enabled value
+            updated_row = dict(rows[0])
+            updated_row["enabled"] = enabled
+            return self._normalize_source_row(updated_row)
+        except Exception as e:
+            print(f"[NocoDBTrends] Error updating source: {e}")
+            return None
+
     async def update_source_status(
         self, source_id: str, status: str = "success"
     ) -> bool:

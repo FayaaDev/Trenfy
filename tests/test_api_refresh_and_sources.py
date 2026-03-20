@@ -302,6 +302,55 @@ def test_delete_trend_returns_404_when_not_found() -> None:
     assert payload["id"] == "999"
 
 
+def test_patch_source_updates_enabled_and_returns_source() -> None:
+    from api.routes import trends as trends_route
+
+    updated_source = {
+        "id": "youtube_us",
+        "name": "YouTube US",
+        "platform": "youtube",
+        "last_fetched_at": None,
+        "last_fetch_status": "",
+        "enabled": False,
+    }
+
+    async def fake_update_source(source_id, enabled):
+        return updated_source
+
+    original_update = trends_route.nocodb_trends.update_source
+    trends_route.nocodb_trends.update_source = fake_update_source
+
+    client = _make_client()
+    response = client.patch("/api/sources/youtube_us", json={"enabled": False})
+
+    trends_route.nocodb_trends.update_source = original_update
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["id"] == "youtube_us"
+    assert payload["enabled"] is False
+
+
+def test_patch_source_returns_404_when_not_found() -> None:
+    from api.routes import trends as trends_route
+
+    async def fake_update_source(source_id, enabled):
+        return None
+
+    original_update = trends_route.nocodb_trends.update_source
+    trends_route.nocodb_trends.update_source = fake_update_source
+
+    client = _make_client()
+    response = client.patch("/api/sources/nonexistent", json={"enabled": True})
+
+    trends_route.nocodb_trends.update_source = original_update
+
+    assert response.status_code == 404
+    payload = response.json()
+    assert payload["error"] == "source_not_found"
+    assert payload["id"] == "nonexistent"
+
+
 if __name__ == "__main__":
     test_refresh_rejects_payload_with_both_source_id_and_platform()
     test_refresh_by_source_id_runs_exactly_one_source()

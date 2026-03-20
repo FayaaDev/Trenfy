@@ -171,6 +171,88 @@ async def test_delete_trend_sends_delete_with_correct_body():
     assert body[0]["Id"] == "7"
 
 
+class FakeSourceClient(NocoDBTrendsClient):
+    """Fake NocoDB client for testing source update helper."""
+
+    def __init__(self, existing_rows=None):
+        self.sources_table_id = "sources"
+        self.calls = []
+        self._existing_rows = existing_rows or []
+
+    async def _request(
+        self,
+        method,
+        path,
+        *,
+        params=None,
+        json_body=None,
+        allow_404=False,
+    ):
+        self.calls.append(
+            {
+                "method": method,
+                "path": path,
+                "params": params,
+                "json_body": json_body,
+            }
+        )
+        if method == "GET":
+            return _FakeResponse({"list": self._existing_rows})
+        if method == "PATCH":
+            return _FakeResponse({"success": True})
+        return _FakeResponse({})
+
+
+async def test_update_source_returns_none_when_not_found():
+    """update_source returns None when the source does not exist."""
+    client = FakeSourceClient(existing_rows=[])
+    result = await client.update_source("YOUTUBE_TRENDING_US", True)
+    assert result is None
+
+
+async def test_update_source_sends_patch_with_correct_body():
+    """update_source PATCHes by NocoDB row ID, not by stable string ID."""
+    rows = [
+        {
+            "Id": 18,
+            "id": "YOUTUBE_TRENDING_US",
+            "enabled": True,
+            "name": "YT US",
+            "platform": "youtube",
+            "last_fetched_at": None,
+            "last_fetch_status": "",
+        }
+    ]
+    client = FakeSourceClient(existing_rows=rows)
+    await client.update_source("YOUTUBE_TRENDING_US", False)
+    patch_calls = [c for c in client.calls if c["method"] == "PATCH"]
+    assert len(patch_calls) == 1
+    body = patch_calls[0]["json_body"]
+    assert isinstance(body, list)
+    assert body[0]["Id"] == 18
+    assert body[0]["enabled"] is False
+
+
+async def test_update_source_returns_normalized_row():
+    """update_source returns a normalized source row on success."""
+    rows = [
+        {
+            "Id": 18,
+            "id": "YOUTUBE_TRENDING_US",
+            "enabled": True,
+            "name": "YT US",
+            "platform": "youtube",
+            "last_fetched_at": None,
+            "last_fetch_status": "",
+        }
+    ]
+    client = FakeSourceClient(existing_rows=rows)
+    result = await client.update_source("YOUTUBE_TRENDING_US", False)
+    assert result is not None
+    assert result["id"] == "YOUTUBE_TRENDING_US"
+    assert "enabled" in result
+
+
 if __name__ == "__main__":
     asyncio.run(test_sync_sources_inserts_valid_rows_and_skips_invalid_platforms())
     print("test_nocodb_trends_client.py: ok")
