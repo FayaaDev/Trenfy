@@ -161,6 +161,17 @@ class NocoDBTrendsClient:
             print(f"[NocoDBTrends] Error batch creating trends: {e}")
             return []
 
+    def _normalize_trend_status(self, row: Dict[str, Any]) -> str:
+        """Return normalized status string for a NocoDB row.
+
+        Treats None, missing, empty, or whitespace-only status as 'pending'.
+        """
+        raw = row.get("status")
+        if raw is None:
+            return "pending"
+        normalized = str(raw).strip().lower()
+        return normalized if normalized else "pending"
+
     async def query_trends(
         self,
         platform: Optional[str] = None,
@@ -173,6 +184,7 @@ class NocoDBTrendsClient:
         sort: str = "-fetched_at",
         q: Optional[str] = None,
         min_metric_value: Optional[int] = None,
+        status: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         params: Dict[str, Any] = {"limit": limit, "offset": offset}
         if sort:
@@ -200,6 +212,11 @@ class NocoDBTrendsClient:
         if min_metric_value is not None:
             where_parts.append(f"(metric_value,gte,{min_metric_value})")
 
+        # Status filter: approved/rejected use NocoDB where clause;
+        # pending requires post-filtering because legacy rows have null/empty status.
+        if status in ("approved", "rejected"):
+            where_parts.append(f"(status,eq,{status})")
+
         if where_parts:
             params["where"] = "~and".join(where_parts)
 
@@ -211,7 +228,18 @@ class NocoDBTrendsClient:
             )
             if response is None:
                 return []
-            return response.json().get("list", [])
+            rows: List[Dict[str, Any]] = response.json().get("list", [])
+
+            # For pending filter: include rows with null/empty/missing status
+            if status == "pending":
+                rows = [r for r in rows if self._normalize_trend_status(r) == "pending"]
+
+            # Normalize status field in response so callers always see a string
+            if status is not None:
+                for row in rows:
+                    row["status"] = self._normalize_trend_status(row)
+
+            return rows
         except Exception as e:
             print(f"[NocoDBTrends] Error querying trends: {e}")
             return []

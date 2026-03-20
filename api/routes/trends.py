@@ -9,6 +9,7 @@ from api.contracts import (
     encode_cursor,
     normalize_limit,
     validate_refresh_selector,
+    validate_status_filter,
 )
 from trend_agents.shared import source_registry
 from tools.nocodb_trends_client import nocodb_trends
@@ -98,8 +99,15 @@ async def list_trends(
     q: Optional[str] = None,
     sort_by: Optional[str] = None,
     min_metric_value: Optional[str] = Query(default=None),
+    status: Optional[str] = Query(default=None),
 ):
     effective_limit = normalize_limit(limit)
+
+    # Validate status before anything else
+    try:
+        status = validate_status_filter(status)
+    except ValueError:
+        return JSONResponse(status_code=400, content={"error": "invalid_status"})
 
     # Validate min_metric_value before anything else
     min_metric_int: Optional[int] = None
@@ -136,6 +144,7 @@ async def list_trends(
         sort=sort,
         q=q,
         min_metric_value=min_metric_int,
+        status=status,
     )
 
     has_more = len(items) == effective_limit

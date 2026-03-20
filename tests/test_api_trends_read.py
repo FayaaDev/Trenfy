@@ -211,3 +211,55 @@ if __name__ == "__main__":
     test_get_trends_stats_returns_platform_totals_and_recency()
     test_health_integrations_reports_config_without_leaking_secrets()
     print("test_api_trends_read.py: ok")
+
+
+# ---------------------------------------------------------------------------
+# Phase 07 — status filter tests
+# ---------------------------------------------------------------------------
+
+
+def test_get_trends_with_valid_status_forwards_to_client() -> None:
+    """GET /api/trends?status=approved passes status='approved' into query_trends."""
+    from api.routes import trends as trends_route
+
+    calls = {}
+
+    async def fake_query_trends(**kwargs):
+        calls.update(kwargs)
+        return []
+
+    original = trends_route.nocodb_trends.query_trends
+    trends_route.nocodb_trends.query_trends = fake_query_trends
+
+    client = _make_client()
+    response = client.get("/api/trends", params={"status": "approved"})
+
+    trends_route.nocodb_trends.query_trends = original
+
+    assert response.status_code == 200
+    assert calls.get("status") == "approved"
+
+
+def test_get_trends_with_invalid_status_returns_400() -> None:
+    """GET /api/trends?status=invalid returns 400 with error 'invalid_status'."""
+    client = _make_client()
+    response = client.get("/api/trends", params={"status": "archived"})
+
+    assert response.status_code == 400
+    assert response.json() == {"error": "invalid_status"}
+
+
+def test_normalize_trend_status_treats_null_as_pending() -> None:
+    """_normalize_trend_status returns 'pending' for None, empty, and whitespace."""
+    from tools.nocodb_trends_client import NocoDBTrendsClient
+
+    client_instance = NocoDBTrendsClient.__new__(NocoDBTrendsClient)
+
+    assert client_instance._normalize_trend_status({}) == "pending"
+    assert client_instance._normalize_trend_status({"status": None}) == "pending"
+    assert client_instance._normalize_trend_status({"status": ""}) == "pending"
+    assert client_instance._normalize_trend_status({"status": "  "}) == "pending"
+    assert client_instance._normalize_trend_status({"status": "approved"}) == "approved"
+    assert (
+        client_instance._normalize_trend_status({"status": " Rejected "}) == "rejected"
+    )
