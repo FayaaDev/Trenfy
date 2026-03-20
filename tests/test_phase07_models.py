@@ -1,4 +1,4 @@
-"""Phase 07 — Status contract tests for TrendItem and NocoDB serialization."""
+"""Phase 07 — Status contract tests for TrendItem, NocoDB serialization, and validation."""
 
 import pytest
 
@@ -98,3 +98,55 @@ def test_item_to_record_contains_all_existing_keys():
         "status",
     }
     assert expected_keys.issubset(record.keys())
+
+
+# ---------------------------------------------------------------------------
+# validate_status_filter contract (api/contracts.py)
+# ---------------------------------------------------------------------------
+
+
+def test_validate_status_filter_none_returns_none():
+    """validate_status_filter(None) passes through as None."""
+    from api.contracts import validate_status_filter
+
+    assert validate_status_filter(None) is None
+
+
+def test_validate_status_filter_blank_returns_none():
+    """validate_status_filter('  ') returns None."""
+    from api.contracts import validate_status_filter
+
+    assert validate_status_filter("   ") is None
+
+
+def test_validate_status_filter_normalizes_case():
+    """validate_status_filter(' Approved ') returns 'approved'."""
+    from api.contracts import validate_status_filter
+
+    assert validate_status_filter(" Approved ") == "approved"
+
+
+def test_validate_status_filter_pending_passes():
+    """validate_status_filter('pending') returns 'pending'."""
+    from api.contracts import validate_status_filter
+
+    assert validate_status_filter("pending") == "pending"
+
+
+def test_validate_status_filter_rejected_passes():
+    """validate_status_filter('rejected') returns 'rejected'."""
+    from api.contracts import validate_status_filter
+
+    assert validate_status_filter("rejected") == "rejected"
+
+
+def test_validate_status_filter_invalid_raises():
+    """validate_status_filter('archived') raises ValueError('invalid_status')."""
+    from api.contracts import validate_status_filter
+
+    try:
+        validate_status_filter("archived")
+    except ValueError as e:
+        assert str(e) == "invalid_status"
+    else:
+        raise AssertionError("expected ValueError('invalid_status')")

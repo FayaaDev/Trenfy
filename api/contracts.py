@@ -29,6 +29,24 @@ class TrendsStatsResponse(TypedDict):
 
 
 INVALID_REFRESH_SELECTOR = "invalid_refresh_selector"
+INVALID_STATUS = "invalid_status"
+VALID_STATUSES = {"pending", "approved", "rejected"}
+
+
+def validate_status_filter(value: Optional[str]) -> Optional[str]:
+    """Normalize and validate a status filter value.
+
+    Returns None for None or blank input. Raises ValueError('invalid_status')
+    for values not in VALID_STATUSES.
+    """
+    if value is None:
+        return None
+    normalized = value.strip().lower()
+    if not normalized:
+        return None
+    if normalized not in VALID_STATUSES:
+        raise ValueError(INVALID_STATUS)
+    return normalized
 
 
 class RefreshRequest(TypedDict):
