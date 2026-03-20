@@ -7,7 +7,8 @@
       "endpoint": "videos.list",
       "params": {"chart": "mostPopular", "regionCode": "US", "part": "snippet,contentDetails,statistics"},
       "check_interval_minutes": 15,
-      "enabled": true
+      "enabled": true,
+      "min_metric_value": 100000
     },
     {
       "id": "YOUTUBE_TRENDING_JP",
@@ -43,7 +44,9 @@
       "endpoint": "tweets.search.recent",
       "params": {"query": "(saudi OR riyadh OR ksa) lang:ar -is:retweet", "region_code": "SA", "category": "news", "sort_order": "recency", "max_results": 20},
       "check_interval_minutes": 10,
-      "enabled": true
+      "enabled": true,
+      "min_metric_value": 500,
+      "blocked_keywords": ["massage", "escort"]
     }
   ]
 }
