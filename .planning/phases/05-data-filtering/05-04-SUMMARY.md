@@ -1,13 +1,13 @@
 ---
-phase: 06-data-filtering
+phase: 05-data-filtering
 plan: 04
 subsystem: api
 tags: [nocodb, fastapi, filtering, search, pagination, query]
 
 # Dependency graph
 requires:
-  - phase: 06-data-filtering
-    provides: "06-01 and 06-02 ingestion filter infrastructure; query_trends() base implementation"
+  - phase: 05-data-filtering
+    provides: "05-01 and 05-02 ingestion filter infrastructure; query_trends() base implementation"
 provides:
   - "query_trends() with multi-platform anyof, q full-text like, min_metric_value gte filters"
   - "list_trends() API route with sort_by, min_metric_value, q, multi-platform params"
@@ -48,7 +48,7 @@ duration: 3min
 completed: 2026-03-20
 ---
 
-# Phase 06 Plan 04: API Filter Extensions Summary
+# Phase 05 Plan 04: API Filter Extensions Summary
 
 **Multi-platform anyof, q full-text search, configurable sort, and metric floor added to GET /api/trends with 28 tests all passing**
 
@@ -99,12 +99,12 @@ None
 None - no external service configuration required.
 
 ## Next Phase Readiness
-- Phase 06 complete (4/4 plans done) — all data filtering capabilities implemented
+- Phase 05 complete (4/4 plans done) — all data filtering capabilities implemented
 - Ready for Phase 05 (React Native App) which will consume these filter params
 - All API-08 through API-12 requirements fulfilled
 
 ---
-*Phase: 06-data-filtering*
+*Phase: 05-data-filtering*
 *Completed: 2026-03-20*
 
 ## Self-Check: PASSED

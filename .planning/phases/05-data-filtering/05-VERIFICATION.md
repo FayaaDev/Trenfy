@@ -1,5 +1,5 @@
 ---
-phase: 06-data-filtering
+phase: 05-data-filtering
 verified: 2026-03-20T05:15:00Z
 status: passed
 score: 17/17 must-haves verified
@@ -66,7 +66,7 @@ human_verification:
 | `tests/test_phase06_translation.py` | 18 translation behavior tests | ✓ VERIFIED | 18 tests, all pass |
 | `tools/nocodb_trends_client.py` | _item_to_record includes ar_translation; query_trends extended | ✓ VERIFIED | Line 112 (ar_translation), lines 173–200 (q, min_metric_value, anyof platform) |
 | `api/routes/trends.py` | list_trends() with q, sort_by, min_metric_value; VALID_SORT_FIELDS | ✓ VERIFIED | Lines 20, 33–34, 39–46, 50–51: all extensions present |
-| `tests/test_phase06_api_filters.py` | 19 tests for new API filter behaviors | ✓ VERIFIED | 19 tests (55 phase-06 total), all pass |
+| `tests/test_phase06_api_filters.py` | 19 tests for new API filter behaviors | ✓ VERIFIED | 19 tests (55 phase-05 total), all pass |
 
 ---
 
@@ -89,23 +89,23 @@ human_verification:
 
 | Requirement | Source Plan | Description | Status | Evidence |
 |-------------|------------|-------------|--------|----------|
-| FILT-01 | 06-01 | TrendSource has min_metric_value field; JSON sources may specify it | ✓ SATISFIED | `models.py` line 50; `trend_sources.json` YOUTUBE_TRENDING_US |
-| FILT-02 | 06-01, 06-02 | scan_source() drops items below threshold; count in below_threshold | ✓ SATISFIED | `trends_workflow.py` lines 59–67 |
-| FILT-03 | 06-01, 06-02 | min_metric_value=0 passes all items | ✓ SATISFIED | Guard: `if source.min_metric_value > 0:` |
-| FILT-04 | 06-01 | TrendSource has blocked_keywords field | ✓ SATISFIED | `models.py` line 51 |
-| FILT-05 | 06-02 | scan_source() drops items with blocked keywords (case-insensitive substring) | ✓ SATISFIED | `trends_workflow.py` lines 69–82 |
-| FILT-06 | 06-01, 06-02 | blocked_keywords=[] passes all items | ✓ SATISFIED | Guard: `if source.blocked_keywords:` |
-| FILT-07 | 06-03 | NocoDB trends table has ar_translation LongText nullable column | ✓ SATISFIED | MCP confirmed: field ci4dsfrpc9s1p7b, type=LongText |
-| FILT-08 | 06-01, 06-03 | TrendItem has ar_translation; _item_to_record includes it | ✓ SATISFIED | `models.py` line 26; `nocodb_trends_client.py` line 112 |
-| FILT-09 | 06-03 | Arabic items (lang=ar, SA) stored with ar_translation=None (no API call) | ✓ SATISFIED | `translation.py` lines 36–40: is_arabic() sets None |
-| FILT-10 | 06-03 | Non-Arabic items get ar_translation populated via OpenRouter | ✓ SATISFIED | `translation.py` lines 52–75 |
-| FILT-11 | 06-03 | No API key / call failure → ar_translation=None, ingestion continues | ✓ SATISFIED | `translation.py` lines 49, 77–80 |
-| FILT-12 | 06-03 | translation.py module owns logic; workflow calls it, no OpenRouter in workflow | ✓ SATISFIED | `trends_workflow.py` only has `from tools.translation import translate_items` |
-| API-08 | 06-04 | ?platform=youtube,x returns both platforms (anyof); single value still eq | ✓ SATISFIED | `nocodb_trends_client.py` lines 181–185 |
-| API-09 | 06-04 | ?q=taylor searches title+description (like, case-insensitive) | ✓ SATISFIED | `nocodb_trends_client.py` lines 194–198 |
-| API-10 | 06-04 | ?sort_by=metric_value|published_date sorts descending by that field | ✓ SATISFIED | `api/routes/trends.py` lines 50–51; VALID_SORT_FIELDS line 20 |
-| API-11 | 06-04 | Invalid sort_by silently falls back to fetched_at; cursor preserves sort | ✓ SATISFIED | `api/routes/trends.py` lines 50–51 (fallback) and 57–58 (cursor sort wins) |
-| API-12 | 06-04 | ?min_metric_value=N filters by gte; non-int returns 400 | ✓ SATISFIED | `api/routes/trends.py` lines 39–46; `nocodb_trends_client.py` line 199–200 |
+| FILT-01 | 05-01 | TrendSource has min_metric_value field; JSON sources may specify it | ✓ SATISFIED | `models.py` line 50; `trend_sources.json` YOUTUBE_TRENDING_US |
+| FILT-02 | 05-01, 05-02 | scan_source() drops items below threshold; count in below_threshold | ✓ SATISFIED | `trends_workflow.py` lines 59–67 |
+| FILT-03 | 05-01, 05-02 | min_metric_value=0 passes all items | ✓ SATISFIED | Guard: `if source.min_metric_value > 0:` |
+| FILT-04 | 05-01 | TrendSource has blocked_keywords field | ✓ SATISFIED | `models.py` line 51 |
+| FILT-05 | 05-02 | scan_source() drops items with blocked keywords (case-insensitive substring) | ✓ SATISFIED | `trends_workflow.py` lines 69–82 |
+| FILT-06 | 05-01, 05-02 | blocked_keywords=[] passes all items | ✓ SATISFIED | Guard: `if source.blocked_keywords:` |
+| FILT-07 | 05-03 | NocoDB trends table has ar_translation LongText nullable column | ✓ SATISFIED | MCP confirmed: field ci4dsfrpc9s1p7b, type=LongText |
+| FILT-08 | 05-01, 05-03 | TrendItem has ar_translation; _item_to_record includes it | ✓ SATISFIED | `models.py` line 26; `nocodb_trends_client.py` line 112 |
+| FILT-09 | 05-03 | Arabic items (lang=ar, SA) stored with ar_translation=None (no API call) | ✓ SATISFIED | `translation.py` lines 36–40: is_arabic() sets None |
+| FILT-10 | 05-03 | Non-Arabic items get ar_translation populated via OpenRouter | ✓ SATISFIED | `translation.py` lines 52–75 |
+| FILT-11 | 05-03 | No API key / call failure → ar_translation=None, ingestion continues | ✓ SATISFIED | `translation.py` lines 49, 77–80 |
+| FILT-12 | 05-03 | translation.py module owns logic; workflow calls it, no OpenRouter in workflow | ✓ SATISFIED | `trends_workflow.py` only has `from tools.translation import translate_items` |
+| API-08 | 05-04 | ?platform=youtube,x returns both platforms (anyof); single value still eq | ✓ SATISFIED | `nocodb_trends_client.py` lines 181–185 |
+| API-09 | 05-04 | ?q=taylor searches title+description (like, case-insensitive) | ✓ SATISFIED | `nocodb_trends_client.py` lines 194–198 |
+| API-10 | 05-04 | ?sort_by=metric_value|published_date sorts descending by that field | ✓ SATISFIED | `api/routes/trends.py` lines 50–51; VALID_SORT_FIELDS line 20 |
+| API-11 | 05-04 | Invalid sort_by silently falls back to fetched_at; cursor preserves sort | ✓ SATISFIED | `api/routes/trends.py` lines 50–51 (fallback) and 57–58 (cursor sort wins) |
+| API-12 | 05-04 | ?min_metric_value=N filters by gte; non-int returns 400 | ✓ SATISFIED | `api/routes/trends.py` lines 39–46; `nocodb_trends_client.py` line 199–200 |
 
 **Note:** FILT-01 through FILT-12 and API-08 through API-12 are defined in `06-CONTEXT.md` (lines 208–244), not in REQUIREMENTS.md. REQUIREMENTS.md only covers v1 requirements (CLEN, CORE, PLAT, API-01–07, APP, INFRA). Phase 6 introduced a new FILT requirement namespace specific to this phase. This is a documentation gap — the requirements exist and are implemented, but are not tracked in REQUIREMENTS.md's traceability table.
 

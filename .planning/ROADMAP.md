@@ -1,7 +1,7 @@
 # Trenfy Roadmap
 
 **Generated:** 2026-03-19
-**Phases:** 5
+**Phases:** 8
 **Requirements covered:** 41/41
 **v1 Platform Scope:** YouTube + X (future platforms deferred)
 
@@ -78,9 +78,40 @@
 
 ---
 
-## Phase 5: React Native App
+## Phase 5: Data Filtering
+**Goal:** Harden the data pipeline with ingestion filters (metric threshold, keyword blocklist, Arabic translation enrichment) and extend the REST API with multi-value platform, full-text search, sort order, and metric floor query params
+**Requirements:** FILT-01, FILT-02, FILT-03, FILT-04, FILT-05, FILT-06, FILT-07, FILT-08, FILT-09, FILT-10, FILT-11, FILT-12, API-08, API-09, API-10, API-11, API-12
+**Plans:** 4/4 plans complete
+
+### Plans
+- [x] 05-01-PLAN.md — Extend TrendItem + TrendSource models; update trend_sources.json with example filter config ✓
+- [x] 05-02-PLAN.md — Ingestion filters: metric threshold + keyword blocklist in scan_source() ✓
+- [x] 05-03-PLAN.md — Arabic translation enrichment: translation.py module + workflow wiring + NocoDB column ✓
+- [x] 05-04-PLAN.md — API filter hardening: multi-platform anyof, ?q= search, ?sort_by=, ?min_metric_value= ✓
+
+### Success Criteria
+1. Items below `min_metric_value` or matching `blocked_keywords` are dropped before dedup; default sources (0 threshold, empty blocklist) are unaffected
+2. Arabic-language trend items have `ar_translation` populated via OpenRouter; failures leave the field null without blocking ingestion
+3. `GET /api/trends` accepts `?platform=youtube,x`, `?q=`, `?sort_by=`, `?min_metric_value=` and returns correctly filtered/sorted results
+
+---
+
+## Phase 6: (Planned)
+**Goal:** TBD — to be defined
+**Status:** Not started
+
+---
+
+## Phase 7: (Planned)
+**Goal:** TBD — to be defined
+**Status:** Not started
+
+---
+
+## Phase 8: React Native App
 **Goal:** Expo app with a fully functional, filterable trend feed that deep-links to native platforms and persists user preferences
 **Requirements:** APP-01, APP-02, APP-03, APP-04, APP-05, APP-06, APP-07, APP-08, APP-09, APP-10, APP-11, APP-12
+**Status:** Deferred — to be planned after phases 6 and 7
 
 ### Success Criteria
 1. The feed loads and displays trend cards (thumbnail, title, platform icon, metric label, time-ago) within 2 seconds of app open; scrolling 200+ items produces no visible jank (FlashList recycling confirmed)
@@ -88,19 +119,6 @@
 3. Tapping a trend card opens the correct source URL in the device's native app or browser; Arabic-titled trends from the SA region render with correct RTL text direction
 4. Pull-to-refresh triggers `POST /api/trends/refresh` for the active platform filter; skeleton loaders appear during fetch; an unreachable API shows an error state with a working retry button
 
-### Phase 6: data-filtering
-
-**Goal:** Harden the data pipeline with ingestion filters (metric threshold, keyword blocklist, Arabic translation enrichment) and extend the REST API with multi-value platform, full-text search, sort order, and metric floor query params
-**Requirements:** FILT-01, FILT-02, FILT-03, FILT-04, FILT-05, FILT-06, FILT-07, FILT-08, FILT-09, FILT-10, FILT-11, FILT-12, API-08, API-09, API-10, API-11, API-12
-**Depends on:** Phase 5
-**Plans:** 4 plans
-
-Plans:
-- [ ] 06-01-PLAN.md — Extend TrendItem + TrendSource models; update trend_sources.json with example filter config
-- [ ] 06-02-PLAN.md — Ingestion filters: metric threshold + keyword blocklist in scan_source()
-- [ ] 06-03-PLAN.md — Arabic translation enrichment: translation.py module + workflow wiring + NocoDB column
-- [ ] 06-04-PLAN.md — API filter hardening: multi-platform anyof, ?q= search, ?sort_by=, ?min_metric_value=
-
 ---
 
-*Roadmap generated: 2026-03-19*
+*Roadmap updated: 2026-03-20*

@@ -245,5 +245,5 @@ What this phase does NOT do: cross-platform same-story dedup, language detection
 
 ---
 
-*Phase: 06-data-filtering*
+*Phase: 05-data-filtering*
 *Context gathered: 2026-03-20*

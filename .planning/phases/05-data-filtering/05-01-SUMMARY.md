@@ -1,5 +1,5 @@
 ---
-phase: 06-data-filtering
+phase: 05-data-filtering
 plan: 01
 subsystem: database
 tags: [pydantic, models, data-contracts, filtering, trend-sources]
@@ -13,9 +13,9 @@ provides:
   - Extended TrendItem model with ar_translation field
   - Updated trend_sources.json with example per-source filter config
 affects:
-  - 06-02 (pipeline filter uses min_metric_value and blocked_keywords)
-  - 06-03 (Arabic translation populates ar_translation)
-  - 06-04 (API exposes ar_translation and filter metadata)
+  - 05-02 (pipeline filter uses min_metric_value and blocked_keywords)
+  - 05-03 (Arabic translation populates ar_translation)
+  - 05-04 (API exposes ar_translation and filter metadata)
 
 # Tech tracking
 tech-stack:
@@ -103,12 +103,12 @@ None - no external service configuration required.
 
 ## Self-Check: PASSED
 
-- FOUND: .planning/phases/06-data-filtering/06-01-SUMMARY.md
+- FOUND: .planning/phases/06-data-filtering/05-01-SUMMARY.md
 - FOUND: trend_agents/shared/models.py
 - FOUND: config/trend_sources.json
 - FOUND: tests/test_phase06_models.py
 - FOUND commits: ba1697d (test/RED), 0dedef3 (feat/GREEN), b2847ba (feat/Task 2), 1724252 (docs/metadata)
 
 ---
-*Phase: 06-data-filtering*
+*Phase: 05-data-filtering*
 *Completed: 2026-03-20*

@@ -1,20 +1,20 @@
 ---
-phase: 06-data-filtering
+phase: 05-data-filtering
 plan: 02
 subsystem: api
 tags: [pipeline, filtering, ingestion, tdd, pytest, asyncio]
 
 # Dependency graph
 requires:
-  - phase: 06-data-filtering
-    provides: TrendSource model with min_metric_value and blocked_keywords fields (06-01)
+  - phase: 05-data-filtering
+    provides: TrendSource model with min_metric_value and blocked_keywords fields (05-01)
 provides:
   - Metric threshold filter in scan_source() — items below per-source floor dropped before dedup
   - Keyword blocklist filter in scan_source() — items with blocked title keywords dropped before dedup
   - "below_threshold" and "blocked" counts always present in scan_source() result dict
 affects:
-  - 06-03 (Arabic translation enrichment inserts after these filters)
-  - 06-04 (API filter hardening; scan_source result shape now includes new keys)
+  - 05-03 (Arabic translation enrichment inserts after these filters)
+  - 05-04 (API filter hardening; scan_source result shape now includes new keys)
 
 # Tech tracking
 tech-stack:
@@ -124,11 +124,11 @@ None - no external service configuration required.
 
 ## Self-Check: PASSED
 
-- FOUND: .planning/phases/06-data-filtering/06-02-SUMMARY.md
+- FOUND: .planning/phases/06-data-filtering/05-02-SUMMARY.md
 - FOUND: tests/test_phase06_ingestion_filters.py
 - FOUND: workflows/trends_workflow.py (contains below_threshold)
 - FOUND commits: c9732a5 (test/RED), 5757911 (feat/GREEN)
 
 ---
-*Phase: 06-data-filtering*
+*Phase: 05-data-filtering*
 *Completed: 2026-03-20*

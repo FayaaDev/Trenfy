@@ -1,12 +1,12 @@
 ---
-phase: 06-data-filtering
+phase: 05-data-filtering
 plan: 03
 subsystem: api
 tags: [translation, arabic, openrouter, nocodb, tdd, enrichment]
 
 # Dependency graph
 requires:
-  - phase: 06-data-filtering
+  - phase: 05-data-filtering
     provides: TrendItem.ar_translation field (Plan 01), ingestion pipeline (Plan 02)
   - phase: 02-data-foundation
     provides: NocoDBTrendsClient and _item_to_record
@@ -114,5 +114,5 @@ The `ar_translation` LongText nullable column was added to the NocoDB trends tab
 - Phase 6 Plan 4 (API filter extensions) is already complete — Phase 6 is now fully done
 
 ---
-*Phase: 06-data-filtering*
+*Phase: 05-data-filtering*
 *Completed: 2026-03-20*
