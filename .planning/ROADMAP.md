@@ -1,133 +1,17 @@
 # Trenfy Roadmap
 
-**Generated:** 2006-03-19
-**Phases:** 8
-**Requirements covered:** 42/42
-**v1 Platform Scope:** YouTube + X (future platforms deferred)
+## Milestones
 
----
+- ✅ v1.0 MVP - Phases 1-5 shipped 2026-03-20 (`.planning/milestones/v1.0-ROADMAP.md`)
+- 🚧 v1.1 Verification and Mobile Delivery - Phases 6-8 planned
 
-## Phase 1: Clean Slate
-**Goal:** Remove all SehaRadar code and establish the Trenfy project skeleton
-**Requirements:** CLEN-01, CLEN-02, CLEN-03, CLEN-04, CLEN-05
-**Plans:** 2 plans
+## Current Milestone Scope (v1.1)
 
-### Plans
-- [x] 01-01-PLAN.md — Delete SehaRadar files, clean tools/ and config/ (CLEN-01, CLEN-02) ✓ ca0b621
-- [x] 01-02-PLAN.md — Rewrite pyproject.toml, docker-compose.yml, create app.py skeleton (CLEN-03, CLEN-04, CLEN-05) ✓ cb3c5e9
+- [ ] Phase 6: Requirements Baseline Repair (0 plans)
+- [ ] Phase 7: Verification Recovery and Backend Flow Closure (0 plans)
+- [ ] Phase 8: Mobile App Delivery and E2E Validation (0 plans)
 
-### Success Criteria
-1. The repository contains zero SehaRadar files — no health_agents/, no server.py, no bridge-service.js, no promed scripts; `git ls-files` shows only Trenfy-relevant paths
-2. `python -c "import app"` succeeds from the repo root with no import errors from deleted modules
-3. `pyproject.toml` identifies the project as `trenfy` with only Trenfy dependencies; `pip install -e .` completes cleanly
-4. `docker-compose.yml` and `.env.example` reference only Trenfy services and environment variables — no RSSHub, no Caddy, no SehaRadar keys
+## Notes
 
----
-
-## Phase 2: Data Foundation
-**Goal:** FastAPI core, NocoDB schema, source registry, Pydantic models, and per-source async scheduler running end-to-end
-**Requirements:** CORE-01, CORE-02, CORE-03, CORE-04, CORE-05, CORE-06, INFRA-03
-**Plans:** 4/4 plans complete
-
-### Plans
-- [ ] 02-01-PLAN.md — NocoDB table creation via MCP (trends verify + trend_sources create, capture NOCODB_SOURCES_TABLE_ID)
-- [ ] 02-02-PLAN.md — Source registry (source_registry.py loading trend_sources.json into List[TrendSource])
-- [ ] 02-03-PLAN.md — NocoDB client extension (sync_sources, update_source_status) + TrendsWorkflow stub
-- [ ] 02-04-PLAN.md — TrendsScheduler + app.py lifespan wiring + real /health scheduler state
-
-### Success Criteria
-1. `GET /health` returns `{"status": "ok", "scheduler_running": true}` within 200ms after server startup
-2. The NocoDB `trends` and `trend_sources` tables exist with all columns matching the Trenfy.md schema; the NocoDB client can write a test TrendItem and read it back without error
-3. The scheduler starts two sources (YouTube and X) on their configured intervals; killing one source's task with a simulated exception leaves the other source running unaffected
-4. `config/trend_sources.json` loads via the source registry and returns a typed list of `TrendSource` objects with correct intervals and enabled flags
-
----
-
-## Phase 3: Platform Clients
-**Goal:** Both platform clients fetch, normalize, and persist real trend data with deduplication and failure isolation
-**Requirements:** PLAT-01, PLAT-02, PLAT-03, PLAT-04, PLAT-05, PLAT-06, PLAT-07, PLAT-08
-**Plans:** 4/4 plans complete
-
-### Plans
-- [x] 03-01-PLAN.md — Contract foundation (BaseTrendClient, normalization helpers, hash tests) (PLAT-07, PLAT-08) ✓ f0ed8d0
-- [x] 03-02-PLAN.md — YouTube + X clients with auth/normalization and tests (PLAT-01, PLAT-02, PLAT-07) ✓ 1be7515
-- [x] 03-03-PLAN.md — X client resilience controls (retry/circuit-breaker) and tests (PLAT-03, PLAT-04, PLAT-05, PLAT-06) ✓ e33d3c5
-- [x] 03-04-PLAN.md — Trends workflow wiring (dispatch, dedup, status handling, isolation tests) (PLAT-06, PLAT-07, PLAT-08) ✓ 12fc748
-
-### Success Criteria
-1. YouTube client fetches trending videos for US, SA, and JP regions and persists them to NocoDB; running the scheduler twice within 15 minutes produces zero duplicate rows (content_hash dedup confirmed)
-2. X uses /2/tweets/search/recent endpoint
-
----
-
-## Phase 4: API & Infrastructure
-**Goal:** All REST endpoints live and reachable, Docker Compose stack deployable with a single `docker compose up`
-**Requirements:** API-01, API-02, API-03, API-04, API-05, API-06, API-07, INFRA-01, INFRA-02, INFRA-04
-**Plans:** 3/3 plans complete
-
-### Plans
-- [x] 04-01-PLAN.md — Read API contracts and trends/stats endpoints (`/api/trends`, `/api/trends/{id}`, `/api/trends/stats`) with cursor pagination ✓ 8453f52
-- [ ] 04-02-PLAN.md — Refresh + sources endpoints (`POST /api/trends/refresh`, `GET /api/sources`) with selector validation and status payloads
-- [ ] 04-03-PLAN.md — Docker/Compose/env hardening for one-command backend + nocodb deployment
-
-### Success Criteria
-1. `GET /api/trends?platform=youtube&region_code=US&limit=20` returns a paginated JSON response with correct filtering; `GET /api/trends/{id}` returns the matching row; `GET /api/trends/stats` returns per-platform counts
-2. `POST /api/trends/refresh` with a valid `source_id` triggers an immediate fetch and returns within 5 seconds; `GET /api/sources` reflects the updated `last_fetched_at` for that source
-3. `docker compose up` starts both the `trenfy-backend` and `nocodb` services; the FastAPI health endpoint is reachable from the host and backend-to-NocoDB calls use the internal Docker network URL
-4. A React Native app running on a local device can call `GET /api/trends` and receive a response — CORS headers present, NocoDB token never visible in any mobile-side network request
-
----
-
-## Phase 5: Data Filtering
-**Goal:** Harden the data pipeline with ingestion filters (metric threshold, keyword blocklist, Arabic translation enrichment) and extend the REST API with multi-value platform, full-text search, sort order, and metric floor query params
-**Requirements:** FILT-01, FILT-02, FILT-03, FILT-04, FILT-05, FILT-06, FILT-07, FILT-08, FILT-09, FILT-10, FILT-11, FILT-12, API-08, API-09, API-10, API-11, API-12
-**Plans:** 4/4 plans complete
-
-### Plans
-- [x] 05-01-PLAN.md — Extend TrendItem + TrendSource models; update trend_sources.json with example filter config ✓
-- [x] 05-02-PLAN.md — Ingestion filters: metric threshold + keyword blocklist in scan_source() ✓
-- [x] 05-03-PLAN.md — Arabic translation enrichment: translation.py module + workflow wiring + NocoDB column ✓
-- [x] 05-04-PLAN.md — API filter hardening: multi-platform anyof, ?q= search, ?sort_by=, ?min_metric_value= ✓
-
-### Success Criteria
-1. Items below `min_metric_value` or matching `blocked_keywords` are dropped before dedup; default sources (0 threshold, empty blocklist) are unaffected
-2. Arabic-language trend items have `ar_translation` populated via OpenRouter; failures leave the field null without blocking ingestion
-3. `GET /api/trends` accepts `?platform=youtube,x`, `?q=`, `?sort_by=`, `?min_metric_value=` and returns correctly filtered/sorted results
-
----
-
-## Phase 6: Requirements Baseline Repair
-**Goal:** Repair milestone requirement traceability and baseline requirement status so all gap work is mapped and auditable before re-verification
-**Requirements:** CORE-02, CORE-03, INFRA-03
-**Plans:** 0 plans
-
-### Success Criteria
-1. `REQUIREMENTS.md` traceability has no coverage mismatch and correctly maps all v1 requirement IDs
-2. Audit-flagged unsatisfied requirements are set to pending and assigned to gap-closure phases
-3. Gap-closure phase assignments are internally consistent across roadmap and requirements docs
-
----
-
-## Phase 7: Verification Recovery and Backend Flow Closure
-**Goal:** Close orphaned backend requirements by recreating missing verification evidence and cross-phase integration proof for milestone v1.0
-**Requirements:** CLEN-01, CLEN-02, CLEN-03, CLEN-04, CLEN-05, PLAT-01, PLAT-02, PLAT-03, PLAT-04, PLAT-05, PLAT-06, PLAT-07, PLAT-08, API-01, API-02, API-03, API-04, API-05, API-06, API-07, INFRA-01, INFRA-02, INFRA-04
-**Plans:** 0 plans
-
-### Success Criteria
-1. Missing verification artifacts for phases 1, 3, and 4 exist and map requirements to evidence
-2. Integration evidence proves Phase 2 scheduler/workflow to Phase 3 clients and Phase 3 clients to Phase 4 API wiring
-3. End-to-end backend flow from scheduled fetch to `/api/trends` is verified with reproducible evidence
-
----
-
-## Phase 8: Mobile App Delivery and E2E Validation
-**Goal:** Deliver pending mobile v1 requirements and verify mobile-to-backend flow in milestone artifacts
-**Requirements:** APP-01, APP-02, APP-03, APP-04, APP-05, APP-06, APP-07, APP-08, APP-09, APP-10, APP-11, APP-12
-**Plans:** 0 plans
-
-### Success Criteria
-1. APP-01 through APP-12 are implemented and mapped to verification evidence
-2. Mobile flow to backend endpoints is validated with CORS-safe behavior and no NocoDB token exposure
-3. Milestone re-audit no longer reports APP requirements as orphaned
-
----
+- v1.0 shipped with accepted audit gaps; see `.planning/milestones/v1.0-MILESTONE-AUDIT.md`.
+- Start fresh milestone requirements with `/gsd-new-milestone`.

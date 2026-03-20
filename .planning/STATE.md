@@ -2,41 +2,41 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 05
-current_phase_name: data-filtering
-current_plan: 4
-status: completed
-stopped_at: Completed quick-260320-bpk-calling-x-and-youtube-apis-is-expensive-01-PLAN.md
-last_updated: "2026-03-20T05:40:51.615Z"
+current_phase: 06
+current_phase_name: requirements-baseline-repair
+current_plan: 0
+status: planning
+stopped_at: Ready to start 06-01 planning
+last_updated: "2026-03-20T06:54:24.538Z"
 last_activity: 2026-03-20
 progress:
-  total_phases: 5
+  total_phases: 8
   completed_phases: 5
   total_plans: 17
   completed_plans: 17
-  percent: 100
+  percent: 62
 ---
 
 # Trenfy — Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-19)
+See: .planning/PROJECT.md (updated 2026-03-20)
 
 **Core value:** Users can open the app and immediately see what's trending right now across gaming, music, and entertainment — filtered to what they care about, tappable to the source.
-**Current focus:** Phase 05 — data-filtering (complete)
+**Current focus:** Plan and execute v1.1 closure phases (06-08)
 
 ## Current Position
 
-**Current Phase:** 05
-**Current Phase Name:** data-filtering
-**Current Plan:** 4
-**Total Plans in Phase:** 4
-**Total Phases:** 5
-**Status:** Completed
-**Progress:** 100%
-**Last Activity:** 2026-03-20 - Completed quick task 260320-bpk: calling X and YouTube APIs is expensive, let's use the existing data in nocodb to create a mockup
-**Stopped At:** Completed quick-260320-bpk-calling-x-and-youtube-apis-is-expensive-01-PLAN.md
+**Current Phase:** 06
+**Current Phase Name:** requirements-baseline-repair
+**Current Plan:** 0
+**Total Plans in Phase:** 0
+**Total Phases:** 8
+**Status:** Planning v1.1 after v1.0 archival
+**Progress:** 62%
+**Last Activity:** 2026-03-20 - Archived v1.0 and accepted audit gaps with follow-up phases
+**Stopped At:** Ready to start 06-01 planning
 
 ## Progress
 
@@ -46,6 +46,9 @@ Phase 2: Data Foundation ██████████████████�
 Phase 3: Platform Clients ████████████████████ 4/4 plans  ✓
 Phase 4: API & Infra      ████████████████████ 3/3 plans  ✓
 Phase 5: Data Filtering   ████████████████████ 4/4 plans  ✓
+Phase 6: Req Baseline     ░░░░░░░░░░░░░░░░░░░░ 0/0 plans  -
+Phase 7: Verification     ░░░░░░░░░░░░░░░░░░░░ 0/0 plans  -
+Phase 8: Mobile App       ░░░░░░░░░░░░░░░░░░░░ 0/0 plans  -
 ```
 
 ## Roadmap Status
@@ -57,6 +60,9 @@ Phase 5: Data Filtering   ██████████████████
 | 3 | Platform Clients | ✓ Complete | PLAT-01 through PLAT-08 |
 | 4 | API & Infrastructure | ✓ Complete | API-01 through API-07, INFRA-01, INFRA-02, INFRA-04 |
 | 5 | Data Filtering | ✓ Complete | FILT-01 through FILT-12, API-08 through API-12 |
+| 6 | Requirements Baseline Repair | ○ Planned | CORE-02, CORE-03, INFRA-03 |
+| 7 | Verification Recovery and Backend Flow Closure | ○ Planned | CLEN-01..05, PLAT-01..08, API-01..07, INFRA-01/02/04 |
+| 8 | Mobile App Delivery and E2E Validation | ○ Planned | APP-01 through APP-12 |
 
 ### Quick Tasks Completed
 

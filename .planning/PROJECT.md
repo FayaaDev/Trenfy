@@ -2,44 +2,38 @@
 
 ## What This Is
 
-Trenfy is a trend-catching platform that monitors YouTube and X for what's trending in gaming, music, and entertainment. A Python FastAPI backend polls platform APIs on a schedule, normalizes and deduplicates the data, and stores it in NocoDB. A React Native mobile app lets users browse and discover trends filtered by platform or category, and tap through to the original content on its platform.
+Trenfy is a trend-catching platform for gaming, music, and entertainment. The shipped v1.0 scope delivers a Python FastAPI backend that polls YouTube and X, normalizes and deduplicates trend data, and persists it to NocoDB for API consumption. Mobile app delivery remains the next milestone focus.
 
 ## Core Value
 
 Users can open the app and immediately see what's trending right now across gaming, music, and entertainment — filtered to what they care about, tappable to the source.
 
-## Requirements
+## Current State
+
+- v1.0 MVP shipped on 2026-03-20 across Phases 1-5 (17 plans, 33 tasks).
+- Backend pipeline is live: source registry, per-source scheduler isolation, YouTube/X clients, trend APIs, and filtering/enrichment extensions.
+- Milestone was archived with accepted verification debt and deferred mobile app scope. See `.planning/milestones/v1.0-MILESTONE-AUDIT.md` and `.planning/milestones/v1.0-REQUIREMENTS.md`.
+
+## Next Milestone Goals
+
+- Phase 6: Repair requirements baseline and traceability consistency.
+- Phase 7: Rebuild missing milestone verification artifacts and backend E2E proof.
+- Phase 8: Deliver React Native v1 scope and verify mobile-to-backend flow.
+
+## Requirements Snapshot
 
 ### Validated
 
-*(Validated in Phase 2: data-foundation)*
-- [x] NocoDB schema created — `trends` and `trend_sources` tables live in base `ps82pgir3bbih55`
-- [x] Source registry loads all configured sources from `config/trend_sources.json`
-- [x] Per-source async scheduler with failure isolation (`asyncio.create_task` per source)
-- [x] FastAPI app starts scheduler + syncs sources on startup via lifespan hook
-- [x] `/health` reports real scheduler state
+- [x] NocoDB-backed ingestion pipeline and source lifecycle are implemented.
+- [x] YouTube and X clients fetch, normalize, and deduplicate trend data.
+- [x] Trend APIs and Docker runtime contracts are implemented and available.
+- [x] Filtering and Arabic enrichment capabilities are integrated into ingestion/query paths.
 
-### Active
+### Active (v1.1 Carry-Over)
 
-- [ ] Backend polls YouTube and X for trending content
-- [ ] Trends are normalized, deduplicated, and stored in NocoDB
-- [ ] FastAPI server exposes REST endpoints to query trends
-- [ ] React Native app displays a browsable, filterable trend feed
-- [ ] Users can filter trends by platform (YouTube / X) and category (gaming / music / entertainment)
-- [ ] Tapping a trend opens it on its native platform
-- [ ] Regions covered: Global (US baseline) + Saudi Arabia focus
-- [ ] No user authentication required — fully public app
-- [ ] Deployed via Docker Compose (no reverse proxy in v1)
-- [ ] Platform scope for v1 remains YouTube + X only; additional platforms are deferred to later milestones
-
-### Validated in Phase 6: data-filtering
-
-*(Validated in Phase 6: data-filtering)*
-- [x] Metric threshold filter drops items below `min_metric_value` before dedup
-- [x] Keyword blocklist filter drops items with blocked terms (case-insensitive)
-- [x] Arabic items enriched with `ar_translation` via OpenRouter (best-effort, non-blocking)
-- [x] `ar_translation` LongText column exists in NocoDB Trends table
-- [x] `GET /api/trends` supports multi-value platform OR filter, full-text `?q=` search, `sort_by`, and `min_metric_value` floor
+- [ ] Verification debt closure for CLEN/PLAT/API/INFRA requirement groups.
+- [ ] CORE-02, CORE-03, and INFRA-03 closure evidence.
+- [ ] APP-01..APP-12 mobile delivery and verification.
 
 ### Out of Scope
 
@@ -54,12 +48,10 @@ Users can open the app and immediately see what's trending right now across gami
 
 ## Context
 
-- **Existing codebase**: Repo is currently SehaRadar (health surveillance). All SehaRadar code must be removed. A `Trenfy.md` spec document already exists with backend architecture, NocoDB schema, platform client designs, and an implementation order — this is the primary design reference.
-- **Partially built**: `trend_agents/shared/models.py` (data models) and `tools/nocodb_trends_client.py` (NocoDB CRUD) are already implemented and should be kept.
-- **Infrastructure**: NocoDB is already running (self-hosted Docker). The `trends` and `trend_sources` NocoDB tables need to be created per the schema in `Trenfy.md`.
-- **X caveat**: API availability and rate limits vary by account tier; scheduler behavior must remain quota-aware and degrade gracefully.
-- **Regions**: YouTube sources already configured for US, SA, JP in `Trenfy.md`. Extend X similarly where API supports it.
-- **React Native app**: New addition not in existing spec. Needs Expo or bare RN decision, navigation library, API integration layer.
+- Backend codebase is approximately 4.3k lines of Python focused on ingestion/workflow/API paths.
+- NocoDB base and source table IDs are already established for local runtime.
+- Quick-task work exists for cost-safe mockup payload usage without live refresh pressure.
+- Current risk is process quality (traceability + verification completeness), not backend feature absence.
 
 ## Constraints
 
@@ -73,18 +65,15 @@ Users can open the app and immediately see what's trending right now across gami
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Remove all SehaRadar code | Clean slate — dual-system coexistence causes confusion and bloat | — Pending |
+| Remove all SehaRadar code | Clean slate reduces ambiguity and maintenance overhead | ✓ Validated v1.0 |
 | NocoDB as database | Already self-hosted and running; existing client code reusable | ✓ Validated Phase 2 |
-| X via official API (tier-aware) | Keep v1 stable with explicit rate-limit handling and graceful degradation | — Pending |
-| No auth in v1 | Simplifies architecture; trends are public data | — Pending |
-| Docker only (no Caddy) | Reduce infra complexity for v1 | — Pending |
-| React Native for mobile | User specified; cross-platform (iOS + Android) | — Pending |
+| X via official API (tier-aware) | Keep v1 stable with explicit rate-limit handling and graceful degradation | ✓ Implemented v1.0 |
+| No auth in v1 | Simplifies architecture; trends are public data | ✓ Kept in v1.0 |
+| Docker only (no Caddy) | Reduce infra complexity for v1 | ✓ Kept in v1.0 |
+| React Native for mobile | User-specified cross-platform client | ⚠ Deferred to v1.1 |
 | Upsert by source id on startup | JSON is additive source of truth; preserves last_fetched_at | ✓ Validated Phase 2 |
 | lifespan context manager | Modern FastAPI pattern over @app.on_event | ✓ Validated Phase 2 |
-
-## Current State
-
-Phase 6 complete (2026-03-20) — data filtering, Arabic translation enrichment, and API query extensions are in place. This is the final backend phase; the milestone (v1.0) is now complete.
+| Ship v1.0 with accepted audit gaps | Preserve release cadence while tracking debt explicitly | ⚠ Requires closure in Phases 6-8 |
 
 ---
-*Last updated: 2026-03-20 after Phase 6 completion*
+*Last updated: 2026-03-20 after v1.0 milestone archival*
