@@ -1,14 +1,14 @@
 ---
-status: partial
+status: complete
 phase: 07-backend-readiness
 source: [07-01-SUMMARY.md, 07-02-SUMMARY.md, 07-03-SUMMARY.md, 07-04-SUMMARY.md]
 started: 2026-03-20T20:33:13Z
-updated: 2026-03-20T21:05:14Z
+updated: 2026-03-20T21:07:43Z
 ---
 
 ## Current Test
 
-[testing paused - 1 items outstanding]
+[testing complete]
 
 ## Tests
 
@@ -54,18 +54,16 @@ result: pass
 
 ### 11. CORS Allowlist and Preflight
 expected: Browser/API preflight from http://localhost:5173 succeeds for PATCH/DELETE/OPTIONS, wildcard origins are not used, and any extra origins from CORS_ORIGINS are honored explicitly.
-result: blocked
-blocked_by: server
-reason: "the docker server is running at http://localhost:8080/health, not 5173"
+result: pass
 
 ## Summary
 
 total: 11
-passed: 10
+passed: 11
 issues: 0
 pending: 0
 skipped: 0
-blocked: 1
+blocked: 0
 
 ## Gaps
 
