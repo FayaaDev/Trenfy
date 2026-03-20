@@ -1,129 +1,127 @@
-# Trenfy Feature Research — Content Discovery Platform
+# Feature Research
 
-## Scope
+**Domain:** React admin panel + public demo feed for content moderation
+**Researched:** 2026-03-20
+**Confidence:** HIGH
 
-Platform: YouTube + X (v1 X tentative)  
-Regions: US (global baseline) + Saudi Arabia  
-Users: No auth — fully public app  
-Entry point: React Native mobile app
+## Feature Landscape
 
----
+### Table Stakes (Users Expect These)
 
-## Backend API Features
+| Feature | Why Expected | Complexity | Notes |
+|---------|--------------|------------|-------|
+| Content list with pagination | You can't act on content you can't see | MEDIUM | Server-side pagination via cursor already supported by GET /api/trends |
+| Status badges (pending/approved/rejected) | Visual scanability — know state at a glance | LOW | Color-coded Badge component from shadcn |
+| Approve / Reject actions | Core workflow — without this, publish control doesn't exist | MEDIUM | Requires PATCH /api/trends/{id} + status field in DB |
+| Edit content (title, description, category, ar_translation) | Fix scraped content errors before publishing | MEDIUM | Modal form with React Hook Form |
+| Delete content | Remove irrelevant or duplicate trends | LOW | DELETE /api/trends/{id} + confirmation dialog |
+| API action buttons (health, stats, refresh, mock) | Admin needs operational control without opening terminal | LOW | Button → fetch → show response in expandable panel |
+| Sources list with enable/disable toggle | Control which platforms fetch without code changes | LOW | PATCH /api/sources/{id} with enabled field |
+| Category filter in content list | Admin works category by category | LOW | Dropdown filter on list view |
+| Search by title | Find specific content quickly | LOW | Uses existing q= param on GET /api/trends |
+| Platform filter | Separate YouTube from X content | LOW | Uses existing platform= param |
 
-### Table Stakes (must have or users won't trust the data)
+### Differentiators (Competitive Advantage)
 
-| Feature | Description | Complexity |
-|---|---|---|
-| `GET /api/trends` with filters | Filter by platform, category, region_code, date range. Without this the app can't display anything useful | Low |
-| `GET /api/trends/{id}` | Single trend detail. Required for deep-link routing | Low |
-| Deduplication | `content_hash` prevents the same trend appearing multiple times when scheduler re-runs. Without this, feed floods with duplicates | Low |
-| Health endpoint (`/health`) | Required for Docker health checks and monitoring | Low |
-| Per-source scheduler | Each source polls on its own interval (YouTube 15m, X 60m, X 30m). Stale data is the worst outcome | Medium |
-| Error isolation per source | A failing X scraper must not block YouTube/X polling. Circuit-breaker on each source | Low |
-| `fetched_at` timestamp on every record | Users need to know how fresh the data is. "Trending 6 hours ago" is meaningless | Low |
-| Pagination on `/api/trends` | Large result sets without pagination crash mobile apps | Low |
+| Feature | Value Proposition | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| Side-by-side original + Arabic translation | Key for Arabic content review without switching columns | MEDIUM | Expandable row or split-pane view in table |
+| Inline thumbnail preview | Visually identify content without clicking through | LOW | thumbnail_url in table column |
+| Bulk approve / bulk reject | Process many items at once after a big fetch | MEDIUM | Checkbox select + bulk action bar |
+| Category management panel | Add/rename/delete categories, see item counts per category | MEDIUM | Separate tab; categories derived from DB distinct values + allow adding new |
+| Content move (reassign category) | Move items to correct category after batch review | MEDIUM | Select field in edit modal or bulk action |
+| API response viewer | See actual JSON from each endpoint call | LOW | Collapsible pre-formatted JSON display |
 
-### Differentiators
+### Anti-Features (Commonly Requested, Often Problematic)
 
-| Feature | Description | Complexity |
-|---|---|---|
-| Region-aware trends (SA focus) | US-only trending apps exist everywhere. Saudi Arabia + Japan coverage makes Trenfy immediately useful to underserved markets | Low (config-level for YouTube; X has region param; X is global) |
-| `POST /api/trends/refresh` | Manual refresh trigger lets users force-pull fresh data from the app. Real-time feel without real-time infrastructure | Low |
-| `GET /api/trends/stats` | Aggregate counts by platform — enables a dashboard view showing relative platform activity | Low |
-| Source health visibility (`GET /api/sources`) | Expose `last_fetched_at` and `last_fetch_status` per source. Users (and you) can see if X scraper is broken | Low |
-| Multi-platform single response | One API call returns trends across all platforms, ranked by `fetched_at`. No per-platform round trips needed | Low (query-level) |
-| Trend velocity (v2) | Track `metric_value` over time by storing snapshots. "This song gained 2M streams in 3 hours" is high-signal | High |
-| Cross-platform dedup (v2) | Detect when the same song/game appears on multiple platforms simultaneously — strong trend signal | High |
+| Feature | Why Requested | Why Problematic | Alternative |
+|---------|---------------|-----------------|-------------|
+| Real-time auto-refresh | "See new trends appear" | Polling hammers NocoDB; causes mid-edit refreshes; not needed for solo admin | Manual refresh button + toast "Updated" |
+| Drag-and-drop category reorder | "Nicer UX" | High complexity, categories have no order concept in DB | Simple list with move-to-category dropdown |
+| Rich text editor for descriptions | "Better editing" | Overkill; descriptions are short text | Textarea with character count |
+| Multi-user roles | "Team moderation" | No user table, adds massive complexity | Single admin token; not in v1 scope |
+| Undo/delete recovery | "Safe deletes" | Requires soft-delete or audit log | Add confirmation dialog before delete |
 
-### Anti-Features (do not build in v1)
-
-| Feature | Why not |
-|---|---|
-| User authentication | Spec explicitly excludes it. Adds weeks of work for zero user-facing value in a public app |
-| Push notifications | Defer to v2. Requires APNs/FCM setup, device token management, a notifications table — disproportionate to v1 |
-| LLM trend classification | Spec excludes it. Platform APIs return structured metadata (views, streams, players). Classification adds latency and cost with unclear benefit |
-| Webhook receivers | Trenfy is a poller, not an event-driven system. No platform sends webhooks for trending data |
-| Admin UI | NocoDB already serves as the admin UI. Don't build a second one |
-| Rate limit bypass attempts | Don't build retry hammering for YouTube quota. Schedule conservatively (96 units/day for 3 regions at 15m intervals vs 10,000 daily quota) |
-| `/api/trends/delete` | No reason to delete trends from a discovery app. Immutable append-only history is valuable |
-
----
-
-## React Native App Features
-
-### Table Stakes
-
-| Feature | Description | Complexity |
-|---|---|---|
-| Scrollable trend feed | Main screen. Infinite-scroll list of trends sorted by `fetched_at` desc. Without this there is no app | Low |
-| Platform filter tabs | YouTube / X tabs or chips at top. Core UX pattern for this type of app | Low |
-| Trend card with thumbnail | Title, platform icon, metric (e.g. "4.2M views"), time ago, thumbnail image. Cards without thumbnails look broken | Low |
-| Tap to open source | Deep link to YouTube video, X track, X store page on the native platform app. This is the core user action | Low |
-| Pull-to-refresh | Users expect this on any feed. Triggers a new fetch from FastAPI | Low |
-| Category filter | Gaming / Music / Video / Entertainment. Lets users narrow to their interest | Low |
-| Loading + error states | Skeleton loaders while fetching. Error message with retry when FastAPI is unreachable | Low |
-| Empty state | Clear message when no trends match the current filter | Low |
-| Region selector | US / SA (the two supported regions). Allows the Saudi Arabia user segment to see locally relevant content | Low |
-
-### Differentiators
-
-| Feature | Description | Complexity |
-|---|---|---|
-| "Right now" freshness indicator | Show time since last poll per platform ("Updated 4 min ago"). Builds trust that data is live | Low |
-| Cross-platform "hot right now" section | A curated top section showing the single hottest trend per platform. Quick scan without scrolling | Low |
-| Metric display that makes sense per platform | "4.2M views" (YouTube), "89 popularity" (X), "124K players" (X). Not a generic number — contextual label | Low |
-| Platform source health indicator | Small dot (green/red) next to platform tab showing if last fetch succeeded. Users know immediately if X is broken | Low |
-| Share trend | Native share sheet to share a trend card. Cheap feature, high virality potential | Low |
-| Offline graceful degradation | Cache last-fetched trends in async storage. Show stale data with "last updated X hours ago" rather than blank screen | Medium |
-| Saudi Arabia as default region for SA users | Detect device locale (`ar-SA`) and default region to SA. First-run experience for target market | Low |
-| Filter persistence | Remember the user's last filter selection across app restarts (AsyncStorage). Users shouldn't re-filter every launch | Low |
-
-### Anti-Features
-
-| Feature | Why not |
-|---|---|
-| User accounts / favorites / bookmarks | Spec explicitly out of scope for v1. Adds auth complexity, backend user table, sync logic |
-| In-app video/audio playback | Trenfy is a discovery app, not a media player. Deep link to native apps is the right pattern |
-| Comments / social features | Not a social network. Adding comments requires moderation, auth, and a separate backend surface |
-| Algorithmic personalization | No user data = no personalization. Don't fake it with "you might like" patterns |
-| Notifications (trending alerts) | Spec deferred to v2. APNs/FCM setup is significant work |
-| Search | Not a search engine. Trenfy shows what's trending now, not what a user is looking for. Search would return cold/stale results anyway |
-| Dark mode (v1) | Nice to have but not table stakes for a v1 launch. NativeWind makes it easy to add later |
-| App store ratings prompt | Don't beg for ratings on a v1 app that hasn't proven value yet |
-
----
-
-## Feature Priority Order for v1
+## Feature Dependencies
 
 ```
-P0 (launch blockers):
-  Backend: trends endpoint + filters + pagination + dedup + scheduler
-  App: feed + platform tabs + trend card + tap to source + pull-to-refresh
+Demo feed (approved-only)
+    └──requires──> status field in Trenfy table
+                       └──requires──> DB schema migration (add status column)
 
-P1 (launch with if cheap):
-  Backend: source health endpoints + manual refresh endpoint + stats endpoint
-  App: category filter + region selector + loading/error/empty states + freshness indicator
+Approve/Reject workflow
+    └──requires──> status field in Trenfy table
+    └──requires──> PATCH /api/trends/{id} backend endpoint
 
-P2 (post-launch, low effort):
-  App: filter persistence + share trend + SA locale default + metric labels per platform
+Category management
+    └──requires──> categories derived from DB (GET distinct category values)
+    └──enhances──> Content move (reassign category)
 
-V2 (after validation):
-  Backend: trend velocity + cross-platform dedup
-  App: offline cache + push notifications + favorites
+Bulk actions
+    └──requires──> Checkbox selection state
+    └──requires──> Approve/Reject single action (reuses same PATCH endpoint)
+
+Sources toggle
+    └──requires──> PATCH /api/sources/{id} backend endpoint (currently missing — only GET exists)
 ```
 
+### Dependency Notes
+
+- **Status field must be in DB before approve/reject UI**: DB migration is the foundation phase — everything else builds on it.
+- **PATCH endpoints must exist before content editing**: FastAPI currently has no PATCH or DELETE for trends. These must be added before the admin UI's write features work.
+- **Categories are derived from DB**: No separate categories table — GET distinct values from the category column. Admin can add new categories by typing them when editing content. Default fallback list: gaming, music, entertainment.
+
+## MVP Definition
+
+### Launch With (v1.2)
+
+- [ ] Status field migration (pending/approved/rejected) — foundation for everything
+- [ ] PATCH /api/trends/{id} and DELETE /api/trends/{id} backend endpoints
+- [ ] PATCH /api/sources/{id} backend endpoint (for toggle)
+- [ ] Status filter support on GET /api/trends (for demo feed)
+- [ ] Content list with platform + category + status filters, search, pagination
+- [ ] Original + Arabic translation columns visible in list
+- [ ] Approve / Reject / Edit / Delete per item
+- [ ] Category management: see categories with counts, reassign content
+- [ ] API control panel: health, stats, refresh, mock buttons with response display
+- [ ] Sources panel: view sources, toggle enabled
+- [ ] Simple token auth on admin page (env var token check, sessionStorage)
+- [ ] Public demo feed showing approved-only content
+
+### Add After Validation (v1.x)
+
+- [ ] Bulk approve/reject — add once single-item flow is stable
+- [ ] Inline thumbnail preview — minor enhancement
+
+### Future Consideration (v2+)
+
+- [ ] Auto-refresh with new-item notification
+- [ ] Multi-user roles / audit log
+- [ ] Trend analytics charts on admin dashboard
+
+## Feature Prioritization Matrix
+
+| Feature | User Value | Implementation Cost | Priority |
+|---------|------------|---------------------|----------|
+| Status field + migration | HIGH | LOW | P1 |
+| PATCH/DELETE backend endpoints | HIGH | LOW | P1 |
+| Content list (filtered, searchable) | HIGH | MEDIUM | P1 |
+| Approve/reject/edit/delete per item | HIGH | MEDIUM | P1 |
+| Original + AR translation view | HIGH | LOW | P1 |
+| Category management + move | MEDIUM | MEDIUM | P1 |
+| API control panel | MEDIUM | LOW | P1 |
+| Sources panel | MEDIUM | LOW | P1 |
+| Admin token auth | HIGH | LOW | P1 |
+| Demo feed (approved-only) | HIGH | LOW | P1 |
+| Bulk actions | MEDIUM | MEDIUM | P2 |
+| Thumbnail previews | LOW | LOW | P2 |
+
+## Sources
+
+- User requirements (conversation above)
+- NocoDB Trenfy table schema (verified via NocoDB API)
+- FastAPI routes (verified via codebase exploration)
+
 ---
-
-## Saudi Arabia Considerations
-
-The SA market focus has specific implications:
-
-| Platform | SA Coverage | Notes |
-|---|---|---|
-| YouTube | Yes — `YOUTUBE_TRENDING_SA` source already in `trend_sources.json` | No extra work |
-| X | Partial — `featured-playlists` accepts `country=SA` param; `new-releases` supports `country` param | Add SA sources to `trend_sources.json` |
-| X | Global only — no regional trending | X top sellers is global; no SA-specific data |
-| X | Unknown — scraper coverage of SA trending unclear | Test before committing |
-
-Arabic content will appear in trend `title` and `description` fields. The RN app must handle RTL text rendering correctly — use the `rtler` skill when implementing text components.
+*Feature research for: Trenfy v1.2 React admin panel*
+*Researched: 2026-03-20*

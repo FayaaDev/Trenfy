@@ -1,320 +1,185 @@
-# Trenfy — Architecture Research
+# Architecture Research
 
-## 1. Component Boundaries
+**Domain:** React admin panel + demo feed over existing FastAPI/NocoDB
+**Researched:** 2026-03-20
+**Confidence:** HIGH
 
-### Platform Pollers (`tools/trend_clients/`)
-**Owns:**
-- All HTTP communication with external platform APIs (YouTube Data API v3, X Web API, X Store API/scraper, X via RapidAPI)
-- Platform-specific auth (YouTube API key, X OAuth2 token lifecycle, X key, RapidAPI header)
-- Response parsing: raw API JSON → `TrendItem` list
-- Per-client caching (TTL-based, in-memory)
-- Retry logic for transient failures
+## Standard Architecture
 
-**Does NOT own:**
-- Deduplication (that's the workflow)
-- Persistence (that's NocoDB client)
-- Scheduling (that's the scheduler)
-- Business-level error recovery (that's the workflow caller)
-
----
-
-### Trends Workflow (`workflows/trends_workflow.py`)
-**Owns:**
-- Orchestrating one full scan cycle for a single `TrendSource`
-- Calling the correct platform client based on `source.platform`
-- Generating `content_hash` per item
-- Batch dedup check against NocoDB
-- Storing new items via NocoDB client
-- Writing `last_fetched_at` + `last_fetch_status` back to `trend_sources`
-- Returning structured stats (`{fetched, stored, duplicates}`)
-
-**Does NOT own:**
-- Knowing when to run (that's the scheduler)
-- HTTP transport (that's the platform clients)
-- NocoDB REST mechanics (that's the NocoDB client)
-
----
-
-### Scheduler (`workflows/trends_scheduler.py`)
-**Owns:**
-- In-process asyncio loop, checking every 60 seconds
-- Per-source due-time calculation using `check_interval_minutes`
-- Launching `asyncio.create_task(workflow.scan_source(source))` for due sources
-- Not blocking on individual source runs (tasks are fire-and-forget)
-- Tracking consecutive failure counts per source (for backoff/disable logic)
-
-**Does NOT own:**
-- The scan logic itself (that's the workflow)
-- HTTP transport (that's the clients)
-- Exposing a manual trigger endpoint (that's FastAPI)
-
----
-
-### NocoDB Client (`tools/nocodb_trends_client.py`)
-**Owns:**
-- All NocoDB REST API calls for `trends` and `trend_sources` tables
-- URL fallback chain (internal Docker URL → public URL → fallback)
-- Translating `TrendItem` Pydantic models to/from NocoDB row format
-- Bulk insert, dedup hash lookup, source status updates
-
-**Does NOT own:**
-- Business logic (whether a trend is a duplicate is decided by the workflow)
-- Scheduling or polling
-- Serving data to the mobile app (that's FastAPI)
-
----
-
-### FastAPI Server (`app.py`)
-**Owns:**
-- HTTP REST API contract for the mobile app
-- Query parameter validation and pagination
-- Translating NocoDB responses to clean API response shapes
-- Rate limiting on `/api/trends/refresh` (POST)
-- Health check endpoint
-
-**Does NOT own:**
-- Polling logic or scheduling (never directly calls platform clients)
-- Persistence mechanics (delegates entirely to NocoDB client)
-- Business dedup logic
-
----
-
-### React Native App
-**Owns:**
-- All UI: trend feed, filters, detail view
-- Local state management (filter selections, pagination cursor)
-- Deep linking to native platform apps (YouTube and X)
-- Image caching for thumbnails
-
-**Does NOT own:**
-- Any data storage (stateless consumer of FastAPI)
-- Polling logic
-- Any direct NocoDB communication (see §3 for rationale)
-
----
-
-## 2. Data Flow Diagram
+### System Overview
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  External Platform APIs                                       │
-│  YouTube Data API v3 │ X Web API │ X Store / HTML  │
-│  X (RapidAPI)                                           │
-└───────────────┬─────────────────────────────────────────────┘
-                │  HTTP (async httpx)
-                ▼
-┌─────────────────────────────────────────────────────────────┐
-│  Platform Clients  (tools/trend_clients/)                    │
-│  youtube_client │ X_client │ X_client │ X_client│
-│  • Auth / token refresh                                      │
-│  • Raw API response → TrendItem list                        │
-│  • Per-client cache (TTL)                                    │
-└───────────────┬─────────────────────────────────────────────┘
-                │  List[TrendItem]
-                ▼
-┌─────────────────────────────────────────────────────────────┐
-│  Trends Workflow  (workflows/trends_workflow.py)             │
-│  • generate content_hash per item                           │
-│  • batch dedup check → NocoDB client                        │
-│  • store new items → NocoDB client                          │
-│  • update source last_fetched_at + status                   │
-└───────────────┬─────────────────────────────────────────────┘
-                │  NocoDB REST (httpx)
-                ▼
-┌─────────────────────────────────────────────────────────────┐
-│  NocoDB  (self-hosted Docker, port 8080)                     │
-│  tables: trends, trend_sources                              │
-└───────────────┬─────────────────────────────────────────────┘
-                │  NocoDB REST (httpx)
-                ▼
-┌─────────────────────────────────────────────────────────────┐
-│  FastAPI Server  (app.py, port 8080)                         │
-│  GET /api/trends  (filters: platform, category, region, date)│
-│  GET /api/trends/{id}                                        │
-│  POST /api/trends/refresh                                    │
-│  GET /api/trends/stats                                       │
-└───────────────┬─────────────────────────────────────────────┘
-                │  HTTPS/JSON
-                ▼
-┌─────────────────────────────────────────────────────────────┐
-│  React Native App  (Expo)                                    │
-│  Trend feed → filter → detail → deep link to platform       │
-└─────────────────────────────────────────────────────────────┘
-
-Scheduler (in-process asyncio, within FastAPI process):
-  Every 60s → checks due sources → fires scan_source() tasks
+┌──────────────────────────────────────────────────────────────┐
+│                     Browser (React SPA)                       │
+├───────────────────────────┬──────────────────────────────────┤
+│    /admin (protected)     │     /demo (public)               │
+│  ┌───────────────────┐    │  ┌──────────────────────┐        │
+│  │  ContentTable     │    │  │  DemoFeed            │        │
+│  │  CategoryPanel    │    │  │  (approved only)     │        │
+│  │  SourcesPanel     │    │  └──────────────────────┘        │
+│  │  APIControlPanel  │    │                                  │
+│  └───────────────────┘    │                                  │
+├───────────────────────────┴──────────────────────────────────┤
+│                  TanStack Query (cache + mutations)            │
+├──────────────────────────────────────────────────────────────┤
+│                   API Client (src/api/)                        │
+│  trendsApi  sourcesApi  categoriesApi  healthApi              │
+└──────────────────────────┬───────────────────────────────────┘
+                           │ HTTP (CORS)
+┌──────────────────────────▼───────────────────────────────────┐
+│                  FastAPI (localhost:8000)                      │
+│  GET/PATCH/DELETE /api/trends   GET/PATCH /api/sources        │
+│  GET /api/trends/stats          GET /health                   │
+│  POST /api/trends/refresh       GET /api/trends/mockup        │
+└──────────────────────────┬───────────────────────────────────┘
+                           │
+┌──────────────────────────▼───────────────────────────────────┐
+│                  NocoDB (localhost:8080)                       │
+│  Trenfy table (+ new status field)   trend_sources table      │
+└──────────────────────────────────────────────────────────────┘
 ```
 
----
+### Component Responsibilities
 
-## 3. React Native ↔ Backend Communication
+| Component | Responsibility | Typical Implementation |
+|-----------|----------------|------------------------|
+| AdminPage | Layout + route protection (token check) | Wrapper that renders children only if token is valid |
+| ContentTable | Paginated list, filters, per-row actions | shadcn Table + TanStack Query + filter state |
+| CategoryPanel | List categories + item counts, move content | Derived from GET /api/trends distinct categories |
+| SourcesPanel | View sources, toggle enabled | shadcn Table + PATCH mutation |
+| APIControlPanel | Buttons per endpoint, response display | Button → mutation/query → expandable pre-JSON |
+| DemoFeed | Public grid of approved trends | GET /api/trends?status=approved, card grid |
+| api/ | Typed fetch wrappers | One file per resource (trends.ts, sources.ts, health.ts) |
 
-### Recommendation: RN app hits FastAPI only. Never hit NocoDB directly.
-
-**Rationale:**
-
-| Concern | NocoDB Direct | FastAPI |
-|---|---|---|
-| API token exposure | NocoDB token would be in the mobile bundle — readable by anyone who decompiles the APK/IPA | Token stays server-side |
-| Response shape control | NocoDB returns raw row format with internal fields (`nc_*`, `CreatedAt`, etc.) | FastAPI returns clean, versioned JSON |
-| Pagination | NocoDB's `limit`/`offset` is exposed as-is; no cursor-based pagination | FastAPI can implement cursor pagination suited to infinite scroll |
-| Filtering | NocoDB filter syntax (`(field,eq,value)`) is an implementation detail | FastAPI validates and translates query params |
-| CORS | NocoDB CORS config is global; tightening it breaks internal tooling | FastAPI CORS is a single middleware setting |
-| Rate limiting | No rate limiting on NocoDB REST | FastAPI can throttle `/refresh` and other heavy endpoints |
-| Future flexibility | Swapping NocoDB for Postgres would require updating the mobile app | App never knows or cares what the data store is |
-
-**The one-liner rule:** FastAPI is the only client of NocoDB. The mobile app is the only client of FastAPI.
-
----
-
-## 4. Build Order (Dependency Graph)
+## Recommended Project Structure
 
 ```
-Phase 1 — Foundation (no external calls)
-  [1] pyproject.toml, requirements.txt, .env.example
-  [2] trend_agents/shared/models.py          (already done)
-  [3] config/trend_sources.json              (already done)
-  [4] trend_agents/shared/source_registry.py
-  [5] tools/nocodb_trends_client.py          (already done)
-
-Phase 2 — First working data pipeline (YouTube only)
-  [6] tools/trend_clients/base.py            (abstract base + cache mixin)
-  [7] tools/trend_clients/youtube_client.py  (reference impl)
-  [8] workflows/trends_workflow.py           (depends on [5][6][7])
-      ↳ end-to-end smoke test possible here
-
-Phase 3 — API server (enables mobile app development)
-  [9] app.py (FastAPI)                       (depends on [5])
-      ↳ mobile dev can start against this with YouTube data
-
-Phase 4 — Scheduler (automated polling)
-  [10] workflows/trends_scheduler.py         (depends on [8][9])
-       ↳ polling is now fully autonomous
-
-Phase 5 — Remaining platform clients
-  [11] tools/trend_clients/X_client.py (depends on [6])
-  [12] tools/trend_clients/X_client.py   (depends on [6])
-  [13] tools/trend_clients/X_client.py  (depends on [6], highest risk)
-  [14] tools/trend_clients/__init__.py        (client factory, depends on [11][12][13])
-
-Phase 6 — Cleanup + hardening
-  [15] Remove all SehaRadar code
-  [16] main.py (CLI entry point)
-  [17] Dockerfile + docker-compose.yml
-  [18] .env validation at startup (pydantic-settings)
-  [19] Structured logging (replace print() with logging module)
-
-Phase 7 — Tests
-  [20] test_youtube_client.py
-  [21] test_X_client.py
-  [22] test_X_client.py
-  [23] test_trends_workflow.py
-
-Phase 8 — React Native app
-  [24] Expo project init + navigation setup   (depends on [9])
-  [25] API client layer (typed, axios/fetch)
-  [26] Trend feed screen + filter bar
-  [27] Trend detail screen + deep link
-  [28] Image caching + FlashList optimization
-```
-
-**Critical path:** [2] → [5] → [7] → [8] → [9] → mobile development can begin in parallel with [11][12][13].
-
----
-
-## 5. Codebase Structure
-
-### Python Backend
-
-```
-trenfy/
-├── app.py                        # FastAPI application, lifespan startup
-├── main.py                       # CLI: run server or one-shot scan
-├── Dockerfile
-├── docker-compose.yml
-├── pyproject.toml
-├── requirements.txt
-├── .env.example
-│
-├── trend_agents/
-│   └── shared/
-│       ├── __init__.py
-│       ├── models.py             # TrendItem, SourceType, *Metadata models
-│       └── source_registry.py   # Loads + filters TrendSource from JSON
-│
-├── tools/
-│   ├── nocodb_trends_client.py   # NocoDB CRUD: trends + trend_sources tables
-│   └── trend_clients/
-│       ├── __init__.py           # get_client(platform) factory
-│       ├── base.py               # BaseTrendClient + CacheMixin
-│       ├── youtube_client.py
-│       ├── X_client.py
-│       ├── X_client.py
-│       └── X_client.py
-│
-├── workflows/
-│   ├── trends_workflow.py        # fetch → normalize → hash → dedup → store
-│   └── trends_scheduler.py      # asyncio loop, per-source interval dispatch
-│
-├── config/
-│   └── trend_sources.json        # Source definitions with intervals
-│
-└── tests/
-    ├── conftest.py               # pytest fixtures (mock NocoDB, mock clients)
-    ├── test_youtube_client.py
-    ├── test_X_client.py
-    ├── test_X_client.py
-    ├── test_X_client.py
-    └── test_trends_workflow.py
-```
-
-**Notes:**
-- No `parsers/`, `health_agents/`, `server.py` — those are SehaRadar, removed
-- `tools/` is flat; only trend-related tooling survives
-- `openai_client.py` and `html_extraction.py` stay only if referenced by Trenfy code; delete otherwise
-- One `app.py` at root (not `server.py`); it owns both the REST routes and the scheduler lifespan
-
-### React Native App (Expo, recommended)
-
-```
-trenfy-app/
-├── app.json                      # Expo config
-├── package.json
-├── tsconfig.json
-├── .env                          # EXPO_PUBLIC_API_URL=...
-│
+web/
+├── public/
 ├── src/
 │   ├── api/
-│   │   ├── client.ts             # Base axios/fetch instance (baseURL from env)
-│   │   ├── trends.ts             # getTrends(filters), getTrend(id), getStats()
-│   │   └── types.ts              # Trend, TrendFilters, PaginatedResponse
-│   │
+│   │   ├── client.ts          # base fetch with base URL + token header
+│   │   ├── trends.ts          # getTrends, getTrend, patchTrend, deleteTrend
+│   │   ├── sources.ts         # getSources, patchSource
+│   │   ├── health.ts          # getHealth, getIntegrations, getStats, triggerRefresh, getMockup
+│   │   └── categories.ts      # getCategories (distinct values from trends)
 │   ├── components/
-│   │   ├── TrendCard.tsx         # Single trend item (thumbnail, title, metric)
-│   │   ├── TrendList.tsx         # FlashList wrapper with pagination
-│   │   ├── FilterBar.tsx         # Platform + category filter chips
-│   │   └── PlatformBadge.tsx     # Colored badge: YouTube / X
-│   │
-│   ├── screens/
-│   │   ├── FeedScreen.tsx        # Main trend feed, filter state
-│   │   ├── DetailScreen.tsx      # Single trend + deep link button
-│   │   └── StatsScreen.tsx       # Optional: platform aggregate stats
-│   │
-│   ├── navigation/
-│   │   └── RootNavigator.tsx     # React Navigation stack/tab setup
-│   │
+│   │   ├── admin/
+│   │   │   ├── ContentTable.tsx
+│   │   │   ├── ContentEditModal.tsx
+│   │   │   ├── CategoryPanel.tsx
+│   │   │   ├── SourcesPanel.tsx
+│   │   │   └── APIControlPanel.tsx
+│   │   ├── demo/
+│   │   │   └── TrendCard.tsx
+│   │   └── ui/                # shadcn generated components live here
 │   ├── hooks/
-│   │   ├── useTrends.ts          # Data fetching + pagination hook
-│   │   └── useFilters.ts         # Filter state management
-│   │
-│   └── utils/
-│       ├── deepLinks.ts          # Platform URL → native app deep link
-│       └── formatters.ts         # Format metric values (1.2M views, etc.)
-│
-└── assets/
-    └── platform-icons/           # YouTube and X icons
+│   │   ├── useTrends.ts       # TanStack Query hooks for trends
+│   │   ├── useSources.ts      # TanStack Query hooks for sources
+│   │   └── useAuth.ts         # simple token check from sessionStorage
+│   ├── pages/
+│   │   ├── AdminPage.tsx      # protected wrapper
+│   │   ├── LoginPage.tsx      # token entry form (one field)
+│   │   └── DemoPage.tsx       # public feed
+│   ├── lib/
+│   │   ├── config.ts          # VITE_API_URL, VITE_ADMIN_TOKEN
+│   │   └── utils.ts           # cn() from shadcn, date formatters
+│   ├── App.tsx                # React Router routes
+│   ├── main.tsx
+│   └── index.css              # Tailwind directives
+├── .env.local                 # VITE_API_URL=http://localhost:8000
+│                              # VITE_ADMIN_TOKEN=<secret> (never committed)
+├── .env.example               # Same keys, empty values (committed to git)
+├── index.html
+├── vite.config.ts
+├── tailwind.config.ts
+└── package.json
 ```
 
-**Expo vs bare RN:** Use Expo (managed workflow). Rationale: no native modules required (no camera, no BLE, etc.), `expo-image` handles thumbnail caching, EAS Build handles iOS/Android distribution. Ejecting to bare is always possible later if needed.
+## Architectural Patterns
 
-**Navigation:** React Navigation v7 (stack navigator with a bottom tab for Feed / Stats).
+### Pattern 1: Token Guard on Admin Route
+
+**What:** Check sessionStorage for token on AdminPage mount. Redirect to /login if missing or invalid.
+**When to use:** Always — admin page must never render without auth check.
+**Trade-offs:** Token is client-side (can be inspected by devtools), but for a local/single-admin tool this is acceptable.
+
+**Example:**
+```tsx
+// hooks/useAuth.ts
+export function useAuth() {
+  const stored = sessionStorage.getItem('admin_token')
+  const expected = import.meta.env.VITE_ADMIN_TOKEN
+  return { isAuthenticated: stored === expected }
+}
+```
+
+### Pattern 2: Mutation + Cache Invalidation
+
+**What:** After any write (PATCH status, DELETE, edit), invalidate the relevant TanStack Query key so the list re-fetches.
+**When to use:** All mutations.
+**Trade-offs:** Causes a refetch on every action (acceptable; list is small).
+
+```tsx
+const mutation = useMutation({
+  mutationFn: (data) => patchTrend(id, data),
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['trends'] })
+    toast.success('Updated')
+  }
+})
+```
+
+### Pattern 3: Status Field Default
+
+**What:** All existing trends in NocoDB have no status value. New status field defaults to 'pending'.
+**Trade-offs:** Admin must review all existing content. Alternative default='approved' skips the review backlog.
+
+## Integration Points — FastAPI Changes Required
+
+| Change | Why | Notes |
+|--------|-----|-------|
+| Add CORSMiddleware | React dev server (localhost:5173) will be blocked without it | `allow_origins` from env var |
+| Add PATCH /api/trends/{id} | Update status, title, description, category, ar_translation | Accept partial update body |
+| Add DELETE /api/trends/{id} | Admin needs to remove content | |
+| Add PATCH /api/sources/{id} | Toggle enabled on sources | Only `enabled` field needed |
+| Add status filter to GET /api/trends | Demo feed needs ?status=approved | Add to existing query params |
+| Add `status` to Pydantic Trend model | Python model needs the new field | Default='pending' |
+
+### NocoDB Schema Change
+
+| Change | How | Risk |
+|--------|-----|------|
+| Add `status` SingleSelect field to Trenfy table | Via NocoDB UI or NocoDB API | Low — additive; existing rows get NULL, treated as pending |
+
+## Data Flow
+
+### Approve Action
+```
+Admin clicks "Approve"
+  → useMutation(patchTrend(id, {status:'approved'}))
+  → PATCH /api/trends/{id} {status: 'approved'}
+  → FastAPI → updates NocoDB row
+  → onSuccess: invalidateQueries(['trends'])
+  → ContentTable re-renders with approved badge
+```
+
+### Demo Feed
+```
+User opens /demo
+  → useQuery(getTrends({status:'approved'}))
+  → GET /api/trends?status=approved
+  → FastAPI → NocoDB filter where status='approved'
+  → DemoPage renders TrendCard grid
+```
+
+## Sources
+
+- FastAPI CORS docs — add_middleware(CORSMiddleware)
+- TanStack Query v5 docs — mutations, invalidateQueries
+- Vite env variables docs — VITE_ prefix required for client-side exposure
+- shadcn/ui docs — component installation
+
+---
+*Architecture research for: Trenfy v1.2 React admin + demo*
+*Researched: 2026-03-20*

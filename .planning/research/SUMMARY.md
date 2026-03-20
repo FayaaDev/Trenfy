@@ -1,150 +1,123 @@
-# Research Summary: Trenfy
+# Research Summary: Trenfy v1.2 — Web Admin + Demo Feed
 
 ## Recommended Stack
 
-**Backend**
-- **FastAPI `>=0.115`** — native `lifespan` context manager needed for scheduler startup
-- **Pydantic v2 (`>=2.7`) + pydantic-settings** — faster validation, env loading without python-dotenv
-- **httpx `>=0.27`** — async-first HTTP; already in use for NocoDB client
-- **beautifulsoup4 + lxml** — BS4 for X HTML scraping; lxml is faster than html.parser
-- **Custom asyncio scheduler loop** — `while True` + `asyncio.sleep(60)`; APScheduler adds complexity for zero benefit at 7 sources
-- **uvicorn[standard]** — pulls in uvloop + httptools for async/HTTP performance
-- **RapidAPI X (tikapi) + circuit-breaker** — only viable v1 option; treat as degradable, budget ~$10-15/month
+**Frontend (web/)**
+- **Vite + React 18 + TypeScript** — fast dev server, HMR, typed codebase
+- **TanStack Query v5** — server-state management, caching, background refetch, optimistic updates
+- **shadcn/ui + Tailwind CSS v3** — copy-paste component library on Radix primitives; Tailwind v3 required (shadcn incompatible with v4)
+- **React Hook Form + Zod** — typed form validation; used for trend editing and source management
+- **sonner** — toast notifications for PATCH/DELETE feedback
+- **date-fns** — lightweight date formatting for `published_date`, `fetched_at`, `last_fetched_at`
 
-**React Native App**
-- **Expo managed workflow** — no native modules needed; EAS Build for iOS/Android; eject path available if needed
-- **React Navigation v7 (native stack)** — tab + stack hierarchy; better perf than JS stack
-- **axios (configured instance)** — base URL + consistent error handling over raw fetch
-- **NativeWind v4** — Tailwind utility classes for RN; ideal for feed + card + filter-chip UI
-- **Zustand** — ~3kb, minimal boilerplate; sufficient for filter state + trend cache + loading state
-- **FlashList (`@shopify/flash-list`)** — cell recycling; measurably faster than FlatList above 50 items
-- **expo-image** — memory-capped disk caching for thumbnails; use instead of `<Image>`
+**Backend additions (existing FastAPI)**
+- `PATCH /api/trends/{id}` — status approve/reject, field edits
+- `DELETE /api/trends/{id}` — hard delete from NocoDB
+- `PATCH /api/sources/{id}` — toggle enabled/disabled
+- `status` filter param on `GET /api/trends`
+- CORS origins updated to include `http://localhost:5173` (Vite dev) and production domain
 
-**Infrastructure**
-- **Docker Compose: `backend` + `nocodb` services** — NocoDB internal URL (`http://nocodb:8080`) for backend-to-DB calls; `NOCODB_API_URL` in `.env` keeps it configurable
-- **FastAPI BFF (mandatory)** — NocoDB `xc-token` never in mobile bundle; FastAPI is the sole NocoDB client
+**NocoDB schema change**
+- Add `status` SingleSelect field (`pending` / `approved` / `rejected`) to `trends` table (md3c6cy09fvz2jg)
 
 ---
 
-## Table Stakes Features (v1 must-haves)
+## Table Stakes Features (v1.2 must-haves)
 
-**Backend**
-- `GET /api/trends` with filters: `platform`, `category`, `region_code`, date range + pagination
-- `GET /api/trends/{id}` — single trend detail for deep-link routing
-- `POST /api/trends/refresh` — manual refresh trigger with rate limiting
-- `GET /api/sources` — expose `last_fetched_at` + `last_fetch_status` per source
-- `GET /api/trends/stats` — aggregate counts by platform
-- `/health` endpoint — Docker health checks
-- Per-source scheduler: YouTube 15m, X 60m, X 30m, X 60m
-- `content_hash` deduplication — prevents duplicate rows on scheduler re-runs
-- Error isolation per source — X failure must not block YouTube/X
-- `fetched_at` timestamp on every trend record
+**Admin Panel**
+- Password/token gate (env var `VITE_ADMIN_TOKEN`, checked at load, stored in `sessionStorage`)
+- Trends table: list with filters (platform, category, status, region), sortable columns
+- Per-trend actions: approve, reject, edit fields, delete
+- Bulk approve/reject for pending trends
+- Sources panel: list all sources with status chips; toggle enabled/disabled
+- Category management: view distinct categories; rename/reassign content
 
-**React Native App**
-- Scrollable trend feed — FlashList, sorted by `fetched_at` desc, infinite scroll
-- Platform filter tabs — YouTube / X
-- Trend card — title, platform icon, contextual metric label, time-ago, thumbnail
-- Tap to open source — deep link to native platform app (YouTube and X)
-- Pull-to-refresh — triggers new fetch from FastAPI
-- Category filter — Gaming / Music / Video / Entertainment
-- Region selector — US / SA
-- Loading, error, and empty states — skeleton loaders + retry on error
-- "Updated N min ago" freshness indicator per platform
-- SA locale default — detect `ar-SA` device locale and set region to SA on first run
-- Filter persistence — AsyncStorage across app restarts
+**Demo Feed Page**
+- Public-facing, no auth
+- Displays only `status = approved` trends
+- Filterable by platform, category, region
+- Read-only trend cards linking to source URLs
 
 ---
 
 ## Architecture Overview
 
 ```
-External APIs (YouTube / X RapidAPI)
-    │ httpx async
-    ▼
-Platform Clients  [tools/trend_clients/]
-    │ List[TrendItem]
-    ▼
-Trends Workflow  [workflows/trends_workflow.py]
-    │ content_hash → dedup → store
-    ▼
-NocoDB  (self-hosted Docker, internal URL)
-    │ NocoDB REST
-    ▼
-FastAPI Server  [app.py]  ←── Scheduler (in-process asyncio loop)
-    │ HTTPS/JSON
-    ▼
-React Native App  (Expo)
-    trend feed → filter → detail → deep link to platform
+React Web App (web/)
+    ├── /admin   → Auth-gated admin panel
+    │     ├── TrendsTable (list, filter, bulk actions)
+    │     ├── TrendEditModal (approve/reject/edit/delete)
+    │     ├── SourcesPanel (list + toggle enabled)
+    │     └── CategoriesPanel (view + reassign)
+    └── /demo    → Public demo feed
+          ├── DemoFeed (approved trends, filters)
+          └── TrendCard (read-only, link to source URL)
+
+FastAPI (existing)
+    ├── GET /api/trends          ← add status filter param
+    ├── PATCH /api/trends/{id}   ← NEW
+    ├── DELETE /api/trends/{id}  ← NEW
+    ├── PATCH /api/sources/{id}  ← NEW
+    └── CORS update
+
+NocoDB
+    └── trends table: add `status` field (pending/approved/rejected)
 ```
 
-The scheduler runs inside the FastAPI process as an asyncio background task, firing `scan_source()` tasks per-source on independent intervals. FastAPI is the only process that reads from NocoDB; the mobile app never touches NocoDB directly. Platform clients own auth and parsing; the workflow owns dedup and persistence; FastAPI owns the API contract.
+The admin token is checked client-side only — not a security model for production, but sufficient for an internal dashboard. The `status` field in NocoDB is the authoritative approval state.
 
 ---
 
-## Build Order
+## Build Order (within v1.2)
 
-1. **`pyproject.toml`, `requirements.txt`, `.env.example`** — project scaffolding
-2. **`trend_agents/shared/models.py`** — already done; verify TrendItem shape
-3. **`config/trend_sources.json`** — already done; add SA X sources
-4. **`trend_agents/shared/source_registry.py`** — loads + filters TrendSource from JSON
-5. **`tools/nocodb_trends_client.py`** — already done; keep as-is
-6. **`tools/trend_clients/base.py`** — abstract base class + CacheMixin
-7. **`tools/trend_clients/youtube_client.py`** — reference implementation; add quota-exceeded handling from day one
-8. **`workflows/trends_workflow.py`** — fetch → normalize → hash → dedup → store; end-to-end smoke test possible here
-9. **`app.py` (FastAPI)**  — REST API with pagination + response cache; mobile dev can start against YouTube data
-10. **`workflows/trends_scheduler.py`** — asyncio loop with per-source backoff + disable logic
-11. **`tools/trend_clients/X_client.py`** — asyncio.Lock on token refresh from first implementation
-12. **`tools/trend_clients/X_client.py`** — scrape robustness, SCRAPE_DEGRADED logging, graceful degradation
-13. **`tools/trend_clients/X_client.py`** — build last; treat as optional; circuit-breaker required
-14. **`tools/trend_clients/__init__.py`** — `get_client(platform)` factory
-15. **Codebase cleanup** — remove all SehaRadar code in a single auditable commit; verify with `python -c "import app"`
-16. **`main.py`** — CLI entry point (run server or one-shot scan)
-17. **`Dockerfile` + `docker-compose.yml`** — two services; internal NocoDB URL
-18. **`.env` validation at startup** — pydantic-settings; fail fast on missing keys
-19. **Structured logging** — replace `print()` with `logging` module throughout
-20. **Tests** — `test_youtube_client`, `test_X_client`, `test_X_client`, `test_trends_workflow`
-21. **Expo project init** — navigation setup, NativeWind config, depends on step 9
-22. **`src/api/` layer** — typed axios instance, `getTrends()`, `getTrend()`, `getStats()`
-23. **`FeedScreen` + `FilterBar` + `TrendCard`** — FlashList + expo-image from the start
-24. **`DetailScreen` + deep links** — `deepLinks.ts` for platform URL → native app routing
-25. **Polish** — filter persistence, SA locale default, share sheet, metric label formatting
+1. **NocoDB `status` field** — add SingleSelect to trends table before any frontend work
+2. **FastAPI CORS update** — add `http://localhost:5173` to allowed origins
+3. **FastAPI new endpoints** — `PATCH /trends/{id}`, `DELETE /trends/{id}`, `PATCH /sources/{id}`; update `GET /trends` status filter
+4. **Pydantic model update** — add `status` to `TrendItem`; update `TrendResponse`
+5. **Vite + React scaffold** — `web/` directory, TypeScript config, Tailwind v3, shadcn init
+6. **API layer** — `web/src/api/` typed client wrappers for all endpoints
+7. **Admin auth gate** — token check at load, sessionStorage, redirect guard
+8. **Trends table + filters** — TanStack Query, sortable table, status/platform/category filters
+9. **Trend edit modal** — approve/reject/edit fields/delete with optimistic updates
+10. **Bulk actions** — multi-select checkbox + bulk approve/reject
+11. **Sources panel** — list sources, toggle enabled/disabled via PATCH
+12. **Category management** — distinct category list, reassign modal
+13. **Demo feed page** — public route, approved-only, filter bar, trend cards
+14. **Build + deploy config** — `vite.config.ts` with API proxy for dev, `VITE_API_URL` for prod
 
 ---
 
-## Top 5 Risks
+## Top Risks
 
-1. **YouTube quota exhaustion (10,000 units/day)** — Never schedule `fetch_rising` (100 units/call); handle `quotaExceeded 403` with same-day backoff and `last_fetch_status = quota_exceeded`; request quota increase before launch.
+1. **CORS blocking React → FastAPI** — CORS middleware must be updated before any frontend API call; whitelist Vite dev origin (`http://localhost:5173`) and production domain explicitly.
 
-2. **X scraper breakage** — Treat X as a degradable source with a circuit-breaker (disable after 3 consecutive failures); validate response schema on every call; set 60-min polling interval; app must function fully without X.
+2. **`status` field missing from Pydantic model** — If `status` is not added to `TrendItem` and `TrendResponse` simultaneously with NocoDB schema change, all `/api/trends` responses will silently omit the field.
 
-3. **X token refresh race condition** — Use `asyncio.Lock` in `X_client.py` for all token refresh operations; refresh proactively at `expires_at - 5min`, not reactively on 401; retry once after refresh before marking source errored.
+3. **Admin token in git** — `VITE_ADMIN_TOKEN` must only live in `.env.local` (gitignored); `.env.example` must show the key with a placeholder value, never a real token.
 
-4. **X HTML scraping fragility** — Assert scrape result count (< 5 items = `SCRAPE_DEGRADED` warning); pin CSS selectors as named constants; add browser-like `User-Agent` + random delay; accept periodic breakage and degrade gracefully.
+4. **shadcn/ui + Tailwind v4 incompatibility** — shadcn requires Tailwind v3. Using `npm install tailwindcss` without pinning installs v4 by default. Must pin `tailwindcss@^3`.
 
-5. **Silent scheduler failures** — Wrap every `scan_source` task in try/except; always write `last_fetch_status` on failure; implement exponential backoff + auto-disable after N consecutive failures; never allow one source to affect others.
+5. **Empty category list** — On first load, if no trends exist yet, the category dropdown is empty. Must fall back to hardcoded defaults: `["gaming", "music", "entertainment"]`.
+
+6. **Demo feed showing unapproved content** — The demo feed must always filter `status=approved` at the API level, not just client-side. If the filter is client-side only, a direct API call exposes unpublished content.
+
+7. **Missing PATCH /sources endpoint** — Existing codebase only has `GET /api/sources`. The toggle feature in the admin panel requires `PATCH /api/sources/{id}` to be built before the frontend panel is implemented.
 
 ---
 
 ## Decisions Made by Research
 
-These are settled. The roadmapper should treat them as fixed constraints, not open questions.
+These are settled. The roadmapper should treat them as fixed constraints.
 
 | Decision | Verdict |
 |---|---|
-| Mobile app → NocoDB | **Forbidden.** FastAPI BFF is mandatory; NocoDB token must never leave the server |
-| Expo vs bare React Native | **Expo managed workflow.** No native modules needed in v1 |
-| Scheduler design | **Custom asyncio loop (existing spec).** APScheduler adds complexity with no benefit |
-| List rendering | **FlashList.** FlatList degrades above 50 items; FlashList is non-negotiable for a trend feed |
-| State management | **Zustand.** Redux is overkill; Context causes full-tree re-renders on trend list updates |
-| HTTP client (backend) | **httpx.** Already in codebase; async-first; consistent with NocoDB client |
-| HTTP client (RN app) | **axios with configured instance.** Base URL set once; cleaner error handling than raw fetch |
-| UI library | **NativeWind v4.** Feed + cards + filter chips = utility-class territory; avoids fighting component library defaults |
-| X strategy (v1) | **RapidAPI tikapi + circuit-breaker, 60-min interval.** Unofficial path with controlled failure mode |
-| X strategy (v2) | **Re-evaluate** `XApi` (Playwright) after v1 validation |
-| Dedup hash inputs | **`platform + title.strip().lower() + published_date (YYYY-MM-DD normalized) + region_code`** — normalize before hashing, not inside clients |
-| `fetch_rising` scheduling | **Never scheduled.** 100 units/call exhausts quota. Manual/on-demand only |
-| `DELETE /api/trends` | **Not built.** Immutable append-only history; no deletion endpoint |
-| Auth in v1 | **Not built.** Spec-excluded; app is fully public |
-| Push notifications in v1 | **Deferred to v2.** APNs/FCM setup is disproportionate to v1 scope |
-| SehaRadar cleanup timing | **Phase 6, after core pipeline works.** Single auditable commit; keep `models.py`, `nocodb_trends_client.py`, `trend_sources.json` |
-| RTL text rendering | **Use `rtler` skill** when implementing text components — Arabic content will appear in trend titles (SA region) |
+| Admin auth model | Client-side env var token (`VITE_ADMIN_TOKEN`) stored in `sessionStorage`; not a production security model |
+| Web framework | Vite + React 18 + TypeScript |
+| UI component library | shadcn/ui with Tailwind v3 (v4 incompatible) |
+| State management | TanStack Query v5 for server state; no global state store needed |
+| Category source | Derived from DB distinct values; hardcoded fallback `["gaming","music","entertainment"]` |
+| Demo feed filtering | `status=approved` filter sent to API, not client-side only |
+| Source enable/disable | `PATCH /api/sources/{id}` — must be added to FastAPI |
+| `status` field values | `pending` / `approved` / `rejected` — SingleSelect in NocoDB |
+| Project location | `web/` at project root |
+| Mobile app (v1.2) | Deferred — not in this milestone |
