@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 06-02-PLAN.md
-last_updated: "2026-03-20T04:17:01.247Z"
+stopped_at: Completed 06-04-PLAN.md
+last_updated: "2026-03-20T04:23:56.881Z"
 progress:
   total_phases: 6
   completed_phases: 4
   total_plans: 17
-  completed_plans: 15
+  completed_plans: 16
 ---
 
 # Trenfy — Project State
@@ -74,6 +74,8 @@ Phase 5: React Native App ░░░░░░░░░░░░░░░░░░
 - [Phase 04]: .env.example now documents only required Phase 4 NocoDB/source/server variables.
 - [Phase 06-data-filtering]: Phase 6 data contracts: min_metric_value/blocked_keywords/ar_translation are typed Pydantic fields (not params dict) for type safety and downstream discoverability
 - [Phase 06-02]: below_threshold and blocked keys initialized to 0 unconditionally in result dict for predictable consumer access — Preserves pre-Phase-6 behavior for default sources (min=0, blocked=[]) via activation guards
+- [Phase 06-04]: q filter uses ~or inline in NocoDB where string without extra grouping parentheses
+- [Phase 06-04]: sort_by falls back silently to -fetched_at for invalid values — no 400 error per API-11 spec
 
 ## Performance Metrics
 
@@ -92,11 +94,12 @@ Phase 5: React Native App ░░░░░░░░░░░░░░░░░░
 | Phase 04-api-infrastructure P03 | 2min | 2 tasks | 4 files |
 | Phase 06-data-filtering P01 | 3min | 2 tasks | 3 files |
 | Phase 06-data-filtering P02 | 4min | 1 tasks | 4 files |
+| Phase 06-data-filtering P04 | 3min | 2 tasks | 3 files |
 
 ## Session Notes
 
-**Last session:** 2026-03-20T04:16:52.533Z
-**Stopped at:** Completed 06-02-PLAN.md
+**Last session:** 2026-03-20T04:23:17.775Z
+**Stopped at:** Completed 06-04-PLAN.md
 
 ## Accumulated Context
 
