@@ -110,6 +110,7 @@ class NocoDBTrendsClient:
             "fetched_at": datetime.now().isoformat(),
             "notification_sent": False,
             "ar_translation": item.ar_translation,
+            "status": item.status or "pending",
         }
 
     async def create_trend(self, item: TrendItem) -> Optional[Dict[str, Any]]:
