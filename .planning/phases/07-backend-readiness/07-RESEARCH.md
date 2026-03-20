@@ -1,7 +1,7 @@
 # Phase 07: Backend Readiness - Research
 
 **Researched:** 2026-03-20
-**Domain:** FastAPI + NocoDB backend preparation for web admin and public demo feed
+**Domain:** FastAPI + NocoDB backend readiness for web admin and demo feed
 **Confidence:** MEDIUM
 
 <user_constraints>
@@ -45,319 +45,339 @@ None — discussion stayed within phase scope.
 
 | ID | Description | Research Support |
 |----|-------------|-----------------|
-| DB-01 | Add `status` SingleSelect field (`pending`/`approved`/`rejected`) to NocoDB `trends` table | Use a real NocoDB Single Select field with default `pending`; avoid app-only pseudo-schema |
-| DB-02 | Default value for `status` is `pending` on all new and existing records | Plan both: NocoDB field default for new rows and one-time backfill or API null-as-pending fallback for existing rows |
-| BAPI-01 | Add `status` field to `TrendItem` Pydantic model with `Optional[str]` type | Pydantic v2 requires an explicit `= None` default for optional patch/read semantics |
-| BAPI-02 | Update `GET /api/trends` to accept `status` query param filter | Use route-level validation plus NocoDB `where` filtering; reject unsupported values with `400` |
-| BAPI-03 | Add `PATCH /api/trends/{id}` endpoint accepting partial field updates (status, title, category, etc.) | Use a dedicated partial request model and `model_dump(exclude_unset=True)` merge pattern |
-| BAPI-04 | `PATCH /api/trends/{id}` validates that `status` value is one of `pending`/`approved`/`rejected` | Centralize allowed-status validation in request model or helper and return explicit JSON `400` |
-| BAPI-05 | Add `DELETE /api/trends/{id}` endpoint — hard delete from NocoDB | Add dedicated client helper; confirm exact NocoDB delete call shape in local Swagger/API snippets before implementation |
-| BAPI-06 | Add `PATCH /api/sources/{id}` endpoint — updates `enabled` field on `trend_sources` table | Reuse existing string-id lookup pattern, resolve NocoDB row `Id`, then PATCH the row |
-| BAPI-07 | Update FastAPI CORS middleware to allow `http://localhost:5173` (Vite dev) and `CORS_ORIGINS` env var for production | Replace wildcard origins with explicit allowlist helper; allow PATCH/DELETE methods and keep `allow_credentials=False` |
+| DB-01 | Add `status` SingleSelect field (`pending`/`approved`/`rejected`) to NocoDB `trends` table | Requires an out-of-band NocoDB schema step plus live verification; no repo code currently manages table schema. |
+| DB-02 | Default value for `status` is `pending` on all new and existing records | Needs NocoDB default configuration plus explicit handling for legacy blank/null rows in backend reads and mutations. |
+| BAPI-01 | Add `status` field to `TrendItem` Pydantic model with `Optional[str]` type | Modify `trend_agents/shared/models.py`; add unit coverage for serialization/default semantics. |
+| BAPI-02 | Update `GET /api/trends` to accept `status` query param filter | Extend `api/routes/trends.py` and `tools/nocodb_trends_client.py`; add 200/400 route tests and pending-legacy behavior tests. |
+| BAPI-03 | Add `PATCH /api/trends/{id}` endpoint accepting partial field updates (status, title, category, etc.) | Add request model/constants, client update helper, and route handler; preserve explicit JSON error style. |
+| BAPI-04 | `PATCH /api/trends/{id}` validates that `status` value is one of `pending`/`approved`/`rejected` | Centralize allowed-status validation in request model/helper to avoid route-specific drift. |
+| BAPI-05 | Add `DELETE /api/trends/{id}` endpoint — hard delete from NocoDB | Add client delete helper plus 404/ack response tests. |
+| BAPI-06 | Add `PATCH /api/sources/{id}` endpoint — updates `enabled` field on `trend_sources` table | Reuse current source lookup-by-string-id pattern in the NocoDB client; must return updated source object, not just boolean success. |
+| BAPI-07 | Update FastAPI CORS middleware to allow `http://localhost:5173` (Vite dev) and `CORS_ORIGINS` env var for production | Limit CORS changes to `app.py` and `.env.example`; add preflight/config tests. |
 </phase_requirements>
 
 ## Summary
 
-Phase 07 should be planned as a focused backend contract phase, not a dependency-upgrade phase. The current code already has the right seams: FastAPI route logic lives in `api/routes/trends.py`, all NocoDB access is centralized in `tools/nocodb_trends_client.py`, and existing tests already enforce explicit JSON error payloads and query forwarding behavior. The missing work is narrowly scoped: add `status` to the trend model and read path, add three mutation endpoints, and replace the current wildcard CORS setup with an explicit allowlist that supports browser preflight for PATCH and DELETE.
+Phase 07 is mostly a contract-and-client phase, not an `app.py` phase. The current app already mounts all API work through [`api/routes/trends.py`](../../../../api/routes/trends.py), while [`app.py`](../../../../app.py) only wires lifespan and CORS. The roadmap wording that says “add endpoints in `app.py`” should be treated as outdated implementation guidance; the actual route work belongs in the router module, with NocoDB access remaining in [`tools/nocodb_trends_client.py`](../../../../tools/nocodb_trends_client.py).
 
-The most important planning nuance is the mismatch between the requirement that all existing records default to `pending` and the context decision that existing blank/null values are treated as `pending`. The safest plan is to include both a one-time NocoDB backfill and defensive API normalization. That avoids forcing the UI or demo feed to reason about legacy nulls, and it keeps `GET /api/trends?status=pending` behavior correct even before or during migration.
+The highest-risk work is not the FastAPI handler boilerplate. It is the data contract boundary around `status`, partial-update semantics, and ID handling. Trends currently pass through as raw NocoDB rows, while sources already prefer stable string IDs (`id`) over numeric row IDs. Phase 07 adds two mutation surfaces on top of that asymmetry, so the planner should explicitly budget helper methods and tests for row lookup, partial payload extraction, 404 handling, and legacy blank/null `status` behavior.
 
-NocoDB is the main uncertainty surface. The current client already proves the project’s table IDs, auth header, query parameters, and batch PATCH shape. But the public NocoDB docs are overview-level and do not fully document the exact delete/update payload shape this specific hosted instance expects. The planner should explicitly include a short Wave 0 contract check against the local NocoDB Swagger/API snippets before implementation of hard delete.
+The current baseline is stable. `uv run pytest tests/test_api_trends_read.py tests/test_api_refresh_and_sources.py tests/test_infra_config.py tests/test_nocodb_trends_client.py` passed locally on 2026-03-20 with 18 tests green. That gives Phase 07 a clean base to extend rather than rework.
 
-**Primary recommendation:** Plan Phase 07 around four concrete work items: NocoDB `status` field + backfill, `TrendItem`/query filter updates, trend/source mutation endpoints via dedicated request models and client helpers, and explicit CORS allowlist parsing for Vite plus deploy origins.
+**Primary recommendation:** Keep the roadmap’s four-plan shape, but implement in this dependency order: NocoDB schema verification first, then shared contracts/model/client changes, then trend mutations, then source mutation plus CORS.
 
 ## Standard Stack
 
 ### Core
 | Library | Version | Purpose | Why Standard |
 |---------|---------|---------|--------------|
-| FastAPI | 0.118.3 in current runtime; latest PyPI 0.135.1 (2026-03-01) | HTTP API framework | Existing app already uses FastAPI lifespan, APIRouter, TestClient, and CORSMiddleware patterns |
-| Pydantic | 2.12.3 in current runtime; latest PyPI 2.12.5 (2025-11-26) | Request and response models | Project is already on Pydantic v2 semantics (`model_dump`, `model_copy` family), which fit partial PATCH models cleanly |
-| httpx | 0.28.1 in current runtime and latest PyPI 0.28.1 (2024-12-06) | Async NocoDB HTTP client | Existing NocoDB client already uses `httpx.AsyncClient` and error handling around it |
-| NocoDB REST API | Current hosted instance via `/api/v2/tables/{table_id}/records` | Persistence layer | Existing backend already persists and queries trends/sources through NocoDB table APIs |
+| FastAPI | 0.135.1 | HTTP routing and app wiring | Already owns the backend surface and tests use `fastapi.testclient`. |
+| Pydantic | 2.12.5 | Shared data models and new PATCH request validation | Required for partial-update correctness without manual dict parsing. |
+| httpx | 0.28.1 | NocoDB REST client transport | Existing NocoDB client is already built on it. |
+| NocoDB REST API | repo-external | Trend/source persistence | Existing backend architecture is NocoDB-backed; Phase 07 extends that contract rather than replacing it. |
 
 ### Supporting
 | Library | Version | Purpose | When to Use |
 |---------|---------|---------|-------------|
-| Uvicorn | 0.38.0 in current runtime; latest PyPI 0.42.0 (2026-03-16) | ASGI server | Needed for local/manual smoke testing of CORS and browser preflight |
-| pytest | Declared in `pyproject.toml`; not installed in current shell; latest PyPI 9.0.2 (2025-12-06) | Test runner | Use for route, client, and config contract tests |
-| pytest-asyncio | Declared in `pyproject.toml`; not installed in current shell; latest PyPI 1.3.0 (2025-11-10) | Async test support | Use for direct `NocoDBTrendsClient` async tests |
+| uvicorn | 0.42.0 | Local server runtime | Runtime only; no Phase 07 behavior change expected. |
+| pytest | 9.0.2 | Route/config/client contract tests | Use for all API and config verification. |
+| pytest-asyncio | 1.3.0 | Async client helper tests | Needed for NocoDB client coroutine coverage. |
 
 ### Alternatives Considered
 | Instead of | Could Use | Tradeoff |
 |------------|-----------|----------|
-| Partial PATCH request models | Raw `dict` payloads in routes | Faster to type, but easier to accept typos, miss blank-title validation, and drift from Pydantic v2 behavior |
-| CORSMiddleware allowlist | Manual `OPTIONS` handlers | More brittle and duplicates framework behavior FastAPI/Starlette already provide |
-| NocoDB-side filtering | Fetch-all then Python filter | Simpler initially, but breaks pagination semantics and needlessly expands data transfer |
+| Adding new Phase 07 routes in `app.py` | Keep them in `api/routes/trends.py` | This matches the live router architecture and avoids splitting endpoint logic across files. |
+| Inline NocoDB PATCH/DELETE calls in route handlers | New client helpers in `tools/nocodb_trends_client.py` | Slightly more client code, but preserves thin handlers and keeps ID lookup logic reusable. |
+| Manual `dict` parsing for PATCH bodies | Pydantic request models with `exclude_unset=True` | Required to distinguish “field omitted” from `False` or empty-string updates. |
 
 **Installation:**
 ```bash
-python3 -m pip install fastapi uvicorn[standard] pydantic httpx pytest pytest-asyncio
+uv sync --dev
 ```
 
-**Version verification:** Verified against PyPI pages on 2026-03-20.
-- `fastapi` latest: `0.135.1` published 2026-03-01
-- `pydantic` latest: `2.12.5` published 2025-11-26
-- `httpx` latest: `0.28.1` published 2024-12-06
-- `uvicorn` latest: `0.42.0` published 2026-03-16
-- `pytest` latest: `9.0.2` published 2025-12-06
-- `pytest-asyncio` latest: `1.3.0` published 2025-11-10
+**Version verification:** Versions above were verified from `uv.lock` on 2026-03-20. Runtime dependencies are declared in `pyproject.toml`; exact locked versions come from the lockfile.
 
 ## Architecture Patterns
 
 ### Recommended Project Structure
 ```text
-app.py                         # CORS middleware config
+app.py                         # app wiring, lifespan, CORS only
 api/
-├── contracts.py               # shared validation helpers / constants
+├── contracts.py              # API constants, request models, shared validators
 └── routes/
-    └── trends.py              # list, get, refresh, trend mutations, source mutation
+    └── trends.py             # list/filter/read/mutate trend and source endpoints
 tools/
-└── nocodb_trends_client.py    # NocoDB query/update/delete helpers
+└── nocodb_trends_client.py   # all NocoDB query/update/delete logic
 trend_agents/shared/
-└── models.py                  # TrendItem and request/response model touchpoints
+└── models.py                 # TrendItem / TrendSource shared backend models
 tests/
 ├── test_api_trends_read.py
 ├── test_api_refresh_and_sources.py
 ├── test_infra_config.py
-└── test_phase07_*.py          # new Phase 07 route/client tests
+└── test_app_cors.py          # new for Phase 07
 ```
 
-### Pattern 1: Status Normalization at the Backend Boundary
-**What:** Treat legacy `null` or blank `status` as `pending` whenever the backend reads or filters data.
-**When to use:** Immediately in Phase 07, even if a backfill is also planned.
-**Example:**
-```typescript
-// Source: project-specific recommendation based on locked context + NocoDB null legacy state
-const normalizedStatus = rawStatus && rawStatus.trim() ? rawStatus : "pending"
-```
-
-### Pattern 2: Partial PATCH via Pydantic v2
-**What:** Define a dedicated patch model where every field is optional with an explicit `= None`, then apply `model_dump(exclude_unset=True)` and merge.
-**When to use:** `PATCH /api/trends/{id}` and `PATCH /api/sources/{id}`.
+### Pattern 1: Thin Router, Stateful Client
+**What:** Route handlers validate input, map HTTP status codes, and delegate all NocoDB access to `NocoDBTrendsClient`.
+**When to use:** All new `GET/PATCH/DELETE` work in Phase 07.
 **Example:**
 ```python
-# Source: https://fastapi.tiangolo.com/tutorial/body-updates/
-update_data = patch_model.model_dump(exclude_unset=True)
-updated_item = stored_item_model.model_copy(update=update_data)
+# Source: api/routes/trends.py + tools/nocodb_trends_client.py
+row = await nocodb_trends.get_trend_by_id(record_id)
+if row is None:
+    return JSONResponse(
+        status_code=404,
+        content={"error": "trend_not_found", "id": record_id},
+    )
+return row
 ```
 
-### Pattern 3: Route-Level Validation, Client-Level Persistence
-**What:** Keep HTTP semantics in FastAPI routes and NocoDB table operations in `NocoDBTrendsClient`.
-**When to use:** All new status/source mutation code.
+### Pattern 2: Centralized Contract Constants and Request Models
+**What:** Put `VALID_STATUSES`, `PatchTrendRequest`, `PatchSourceRequest`, and lightweight validators in `api/contracts.py`.
+**When to use:** Any Phase 07 endpoint that accepts or validates body/query input.
 **Example:**
 ```python
-# Source: project code pattern in api/routes/trends.py + tools/nocodb_trends_client.py
-if patch.status not in VALID_STATUSES:
-    return JSONResponse(status_code=400, content={"error": "invalid_status"})
+# Source target: api/contracts.py
+class PatchTrendRequest(BaseModel):
+    status: Optional[str] = None
+    title: Optional[str] = None
+    category: Optional[str] = None
+    description: Optional[str] = None
 
-updated = await nocodb_trends.update_trend(record_id, patch)
-if updated is None:
-    return JSONResponse(status_code=404, content={"error": "trend_not_found", "id": record_id})
-return updated
+    def updates(self) -> dict[str, object]:
+        return self.model_dump(exclude_unset=True)
 ```
 
-### Pattern 4: Explicit CORS Origin Helper
-**What:** Parse `CORS_ORIGINS` once, always include `http://localhost:5173`, and pass a concrete list to CORSMiddleware.
-**When to use:** `app.py` only.
+### Pattern 3: Reuse Lookup-by-Stable-ID for Sources
+**What:** Follow the existing `update_source_status()` pattern for source mutations: resolve string source ID to NocoDB row first, then patch by row ID.
+**When to use:** `PATCH /api/sources/{id}` and any future source mutation work.
 **Example:**
 ```python
-# Source: https://fastapi.tiangolo.com/tutorial/cors/
-origins = ["http://localhost:5173", *configured_origins]
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=False,
-    allow_methods=["GET", "POST", "PATCH", "DELETE"],
-    allow_headers=["*"],
+# Source: tools/nocodb_trends_client.py
+lookup = await self._request(
+    "GET",
+    f"/api/v2/tables/{self.sources_table_id}/records",
+    params={"where": f"(id,eq,{source_id})", "limit": 1},
 )
+rows = lookup.json().get("list", [])
+nocodb_row_id = rows[0].get("Id") or rows[0].get("id")
 ```
 
 ### Anti-Patterns to Avoid
-- **Wildcard CORS in production:** Current code uses `allow_origins=["*"]` and only `GET`/`POST` methods; that is wrong for the web admin contract and too open for deployed origins.
-- **Raw passthrough PATCH bodies:** Accepting arbitrary `dict` payloads makes blank-title rules and invalid status handling inconsistent.
-- **Python-side post-filtering by status:** It would break cursor paging and make demo-feed filtering unreliable.
-- **Using source string `id` directly as NocoDB row `Id`:** `trend_sources` updates already require resolving the real NocoDB row first.
+- **Routing in `app.py`:** Current app structure keeps endpoint logic out of the root module; mixing them will create duplicate ownership.
+- **Truthiness-based PATCH filtering:** `if value:` will silently drop valid updates like `enabled=False` or `description=""`.
+- **Per-route status strings:** Repeating `"pending"`, `"approved"`, and `"rejected"` inline across files will drift and weaken tests.
+- **Direct wildcard CORS for web admin:** Phase 07 needs an allowlist, not `"*"`.
+
+## Concrete Files To Modify
+
+| File | Why it changes | Notes |
+|------|----------------|-------|
+| `trend_agents/shared/models.py` | Add `TrendItem.status: Optional[str]` | Shared model only; no source model change required. |
+| `api/contracts.py` | Add status constants, query validation helper, and PATCH request models | Best place to centralize `400` validation behavior and partial-body extraction. |
+| `tools/nocodb_trends_client.py` | Add status-aware trend query support and new trend/source mutation helpers | This is the main Phase 07 logic file. |
+| `api/routes/trends.py` | Add `status` filter, `PATCH /api/trends/{id}`, `DELETE /api/trends/{id}`, `PATCH /api/sources/{id}` | Keep handlers thin and JSON error behavior explicit. |
+| `app.py` | Replace wildcard CORS with explicit localhost + env allowlist; add PATCH/DELETE/OPTIONS methods | No route definitions should move here. |
+| `.env.example` | Add `CORS_ORIGINS=` | Required for BAPI-07 and infra contract coverage. |
+| `tests/test_api_trends_read.py` | Extend GET/filter/read tests for `status` support and invalid status `400` | Existing coverage already owns list/read behavior. |
+| `tests/test_api_refresh_and_sources.py` | Add route tests for trend PATCH/DELETE and source PATCH | Existing file already owns refresh/source route contracts. |
+| `tests/test_nocodb_trends_client.py` | Add helper tests for update/delete/lookup behavior | Needed because most new risk sits in the client layer. |
+| `tests/test_infra_config.py` | Assert `.env.example` contains `CORS_ORIGINS=` | Existing infra file already checks env contract keys. |
+| `tests/test_app_cors.py` | New file for preflight and origin allowlist behavior | Current suite has no app-level CORS assertions. |
 
 ## Don't Hand-Roll
 
 | Problem | Don't Build | Use Instead | Why |
 |---------|-------------|-------------|-----|
-| Browser preflight handling | Custom `OPTIONS` routes and header juggling | FastAPI/Starlette `CORSMiddleware` | Official middleware already handles preflight and simple requests correctly |
-| Partial update merging | Manual per-field `if value is not None` chains everywhere | Pydantic v2 patch model + `model_dump(exclude_unset=True)` | Cleaner, safer, and matches official FastAPI update guidance |
-| Status filtering | Fetch-all and filter in Python | NocoDB `where` query with `eq`/`is` operators | Keeps pagination and DB-side filtering intact |
-| Source row resolution | Separate mapping store for source IDs | Existing NocoDB lookup-by-string-id pattern | Already proven in `update_source_status` |
-| Schema migration system | New ORM or migration framework for one field | NocoDB UI/API field creation + explicit backfill task | Phase 07 is additive and does not justify infrastructure churn |
+| Partial update semantics | Manual body dict cleanup in each route | Pydantic request models + `model_dump(exclude_unset=True)` | Avoids dropping `False` and empty-string values. |
+| Source row resolution | Ad-hoc source ID lookups per endpoint | Shared NocoDB client helper | Source business IDs and NocoDB row IDs are different. |
+| Status validation | Inline string checks scattered across routes/tests | Shared `VALID_STATUSES` constant and validator | Keeps query/body validation and tests aligned. |
+| CORS origin parsing | Repeated `split(",")` logic at import sites | One helper in `app.py` | Avoids whitespace/empty-origin bugs and preserves localhost default. |
 
-**Key insight:** This phase is mostly contract work. Every temptation to introduce a new settings layer, ORM, or custom middleware increases risk without solving the real acceptance criteria.
+**Key insight:** The deceptively hard part of this phase is not CRUD itself; it is preserving consistent API behavior while the backend mixes raw NocoDB rows, stable source IDs, and legacy blank/null status values.
 
 ## Common Pitfalls
 
-### Pitfall 1: `Optional[str]` Without `= None` in Pydantic v2
-**What goes wrong:** A patch model field annotated as `Optional[str]` but missing a default becomes required in Pydantic v2.
-**Why it happens:** Pydantic v2 no longer gives `Optional` fields an implicit `None` default.
-**How to avoid:** For every patchable field use `field: str | None = None`.
-**Warning signs:** FastAPI returns `422` for missing patch fields that should have been optional.
+### Pitfall 1: Treating the roadmap’s `app.py` wording literally
+**What goes wrong:** Endpoint code gets split between `app.py` and the router module.
+**Why it happens:** The roadmap task text says “add endpoint in `app.py`,” but the live app already delegates all API routes to `api/routes/trends.py`.
+**How to avoid:** Restrict `app.py` changes to CORS and app wiring only.
+**Warning signs:** New route decorators appear in both files or tests patch the wrong module.
 
-### Pitfall 2: Legacy Null Status Rows Leak Past `status=pending`
-**What goes wrong:** Existing rows with blank or null `status` disappear from admin moderation when filtering for `pending`.
-**Why it happens:** A plain `(status,eq,pending)` filter ignores legacy null/blank rows.
-**How to avoid:** Plan a one-time backfill and keep defensive normalization until data is clean.
-**Warning signs:** Admin sees fewer pending items after the migration than before.
+### Pitfall 2: Losing valid PATCH updates because of falsy values
+**What goes wrong:** `enabled=False`, `description=""`, or reversible `status="pending"` do not persist.
+**Why it happens:** Naive code filters updates with truthiness checks instead of presence checks.
+**How to avoid:** Use request models and `exclude_unset=True`; separately validate blank `title`.
+**Warning signs:** Tests pass for `enabled=True` but fail for `enabled=False` or clearing a text field.
 
-### Pitfall 3: CORS Is “Configured” but PATCH/DELETE Still Fail
-**What goes wrong:** Browser GET works, but PATCH or DELETE fails due to preflight rejection.
-**Why it happens:** Current middleware only allows `GET` and `POST`, and browsers use `OPTIONS` preflight for non-simple methods.
-**How to avoid:** Expand `allow_methods` to include mutation methods and keep explicit origins.
-**Warning signs:** Browser console shows CORS preflight errors on edit/delete actions.
+### Pitfall 3: Mis-handling legacy blank/null `status`
+**What goes wrong:** Old records disappear from `status=pending` moderation views or cannot be moved cleanly through moderation.
+**Why it happens:** Backend treats only literal `"pending"` as pending instead of applying the locked legacy fallback semantics.
+**How to avoid:** Encapsulate pending-filter behavior in the NocoDB client and verify it against live data.
+**Warning signs:** Existing rows without `status` vanish once the filter is introduced.
 
-### Pitfall 4: Trend and Source IDs Are Not the Same Kind of ID
-**What goes wrong:** `PATCH /api/sources/{id}` tries to PATCH the stable source string directly as if it were NocoDB row `Id`.
-**Why it happens:** Source API returns a business ID in `id`, but NocoDB writes need the system row identifier.
-**How to avoid:** Reuse the existing resolve-then-patch flow already present in `update_source_status`.
-**Warning signs:** Source lookup succeeds, but update calls 404 or silently fail at NocoDB.
+### Pitfall 4: Confusing trend IDs with source IDs
+**What goes wrong:** One mutation endpoint expects a NocoDB row ID while another expects a stable business ID, and frontend calls the wrong one.
+**Why it happens:** Trends currently pass through as raw rows, while sources are normalized to stable string IDs.
+**How to avoid:** Document the path-ID contract in tests and reuse helper methods for lookup.
+**Warning signs:** Source PATCH works only with numeric IDs, or trend PATCH receives string IDs that list responses never expose.
 
-### Pitfall 5: DELETE Contract Is Assumed, Not Verified
-**What goes wrong:** Planner assumes the NocoDB hard-delete path shape, but implementation discovers the hosted instance expects a different delete endpoint or payload.
-**Why it happens:** Public NocoDB docs are overview-heavy; the exact table-specific operation is easier to confirm from local Swagger/API snippets.
-**How to avoid:** Put a short contract-verification task before coding the delete helper.
-**Warning signs:** First implementation only fails at runtime against real NocoDB despite passing mocked tests.
+### Pitfall 5: CORS configuration that works for GET but blocks admin mutations
+**What goes wrong:** Browser reads succeed while PATCH/DELETE fail preflight from Vite.
+**Why it happens:** Current middleware only allows `GET` and `POST`, with wildcard origins.
+**How to avoid:** Allow `OPTIONS`, `PATCH`, and `DELETE`, keep `allow_credentials=False`, and test localhost plus configured origins explicitly.
+**Warning signs:** `curl` works but the browser console shows failed preflight checks.
 
 ## Code Examples
 
-Verified patterns from official sources:
+Verified patterns from repository sources:
 
-### Partial PATCH Merge
+### Explicit JSON 404 contract
 ```python
-# Source: https://fastapi.tiangolo.com/tutorial/body-updates/
-stored_item_model = Item(**stored_item_data)
-update_data = item.model_dump(exclude_unset=True)
-updated_item = stored_item_model.model_copy(update=update_data)
-items[item_id] = jsonable_encoder(updated_item)
-return updated_item
+# Source: api/routes/trends.py
+if row is None:
+    return JSONResponse(
+        status_code=404,
+        content={"error": "trend_not_found", "id": record_id},
+    )
 ```
 
-### Explicit CORS Allowlist
+### Query forwarding from route to client
 ```python
-# Source: https://fastapi.tiangolo.com/tutorial/cors/
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
+# Source: api/routes/trends.py
+items = await nocodb_trends.query_trends(
+    platform=platform,
+    category=category,
+    region_code=region_code,
+    start_date=start_date,
+    end_date=end_date,
+    limit=effective_limit,
+    offset=offset,
+    sort=sort,
+    q=q,
+    min_metric_value=min_metric_int,
 )
 ```
 
-### NocoDB Filter Operators Relevant to Phase 07
-```text
-# Source: https://nocodb.com/docs/product-docs/developer-resources/rest-apis
-(status,eq,pending)
-(status,is,null)
-(platform,anyof,youtube,x)
-(title,like,%foo%)
-```
-
-### Pydantic v2 Model Defaults for Optional Fields
+### Existing source lookup pattern to extend
 ```python
-# Source: https://docs.pydantic.dev/latest/concepts/models/
-class PatchTrendRequest(BaseModel):
-    status: str | None = None
-    title: str | None = None
-    category: str | None = None
-    description: str | None = None
+# Source: tools/nocodb_trends_client.py
+lookup = await self._request(
+    "GET",
+    f"/api/v2/tables/{self.sources_table_id}/records",
+    params={"where": f"(id,eq,{source_id})", "limit": 1},
+)
+rows = lookup.json().get("list", [])
+nocodb_row_id = rows[0].get("Id") or rows[0].get("id")
 ```
 
 ## State of the Art
 
 | Old Approach | Current Approach | When Changed | Impact |
 |--------------|------------------|--------------|--------|
-| Pydantic v1 `.dict()` / `.copy()` partial updates | Pydantic v2 `.model_dump()` / `.model_copy()` | Pydantic v2 era; repo is already on v2 | Phase 07 patch models should use v2 APIs, not legacy examples |
-| Wildcard CORS plus narrow methods | Explicit origin allowlist plus declared mutation methods | Current FastAPI CORS guidance | Required for browser-based admin PATCH/DELETE support |
-| Relying on implicit optional defaults | Explicit `= None` defaults for optional fields | Pydantic v2 | Prevents accidental required fields in patch models |
+| Wildcard CORS with `GET`/`POST` only | Explicit allowlist with Vite localhost default and mutation methods | Phase 07 | Enables browser admin writes without opening all origins. |
+| Read-only trend API plus refresh/source listing | CRUD-ready admin endpoints for trends and sources | Phase 07 | Backend becomes usable by Phase 08 web client. |
+| Trend model without moderation state | `TrendItem.status: Optional[str]` plus pending fallback | Phase 07 | Required for admin moderation and demo feed filtering. |
+| Separate roadmap wording pointing to `app.py` | Router-centric implementation in `api/routes/trends.py` | Existing codebase reality | Planner should target the live structure, not the stale wording. |
 
 **Deprecated/outdated:**
-- `allow_origins=["*"]` as the deployment answer for admin APIs: outdated for this phase because deployed web origins must be explicit.
-- Pydantic v1 patch snippets using `.dict(exclude_unset=True)`: outdated in this repo because the installed runtime is already on v2.
+- Adding Phase 07 endpoint handlers in `app.py`: outdated relative to the current router architecture.
+
+## Plan Split Recommendation
+
+Keep the roadmap’s four plans, but tighten the internal boundaries:
+
+1. **07-01: NocoDB Status Field**
+   Manual/live step only. Create the SingleSelect field, set the default, and verify existing data shape in NocoDB before any code relies on it.
+2. **07-02: Shared Contracts + Status Read Path**
+   Add `TrendItem.status`, status constants/request models in `api/contracts.py`, extend client query support, and ship `GET /api/trends?status=...` with tests.
+3. **07-03: Trend Mutations**
+   Add trend update/delete helpers in the client, then add `PATCH /api/trends/{id}` and `DELETE /api/trends/{id}` route handlers and tests.
+4. **07-04: Source Mutation + CORS**
+   Add `PATCH /api/sources/{id}`, finish `.env.example`/CORS helper work, and add preflight/config tests.
+
+This split matters because source/trend mutation handlers should not be written until the request-model and client-helper patterns are in place; otherwise the same validation and lookup logic gets duplicated.
 
 ## Open Questions
 
-1. **Does DB-02 require an actual backfill of existing trend rows, or is runtime null-as-pending behavior sufficient?**
-   - What we know: Requirements say existing records default to `pending`; context allows legacy blank/null values but requires they behave as `pending`.
-   - What's unclear: Whether human verification will accept null legacy storage if runtime behavior is correct.
-   - Recommendation: Plan a one-time backfill and keep runtime normalization anyway.
+1. **How should the NocoDB client express “pending includes blank/null status” in the live `where` filter?**
+   - What we know: locked behavior requires legacy blank/null rows to behave as pending.
+   - What's unclear: the exact NocoDB `where` syntax for blank/null matching is not exercised anywhere in the repo.
+   - Recommendation: validate against the live NocoDB table during 07-01 or early 07-02 and then encode the rule in a single helper.
 
-2. **What exact NocoDB delete/update call shape does the hosted instance expect for hard delete?**
-   - What we know: Current client already uses `/api/v2/tables/{table_id}/records`, query params, and batch PATCH for sources.
-   - What's unclear: The exact hard-delete path/body this instance exposes for trend rows.
-   - Recommendation: Add a Wave 0 contract-check task against local Swagger/API snippets before implementing delete.
+2. **What identifier do trend list rows reliably expose for frontend mutation calls?**
+   - What we know: `GET /api/trends/{record_id}` currently treats the path param as a direct NocoDB record identifier.
+   - What's unclear: whether list responses always expose `id`, `Id`, or both in live data.
+   - Recommendation: inspect a live trend row during planning/early implementation and lock the path-ID contract in tests.
 
-3. **Should unknown fields on `PATCH /api/trends/{id}` be ignored or rejected?**
-   - What we know: Broad editable payload is required, but only across known editable fields.
-   - What's unclear: Whether callers should get typo protection.
-   - Recommendation: Use a broad typed patch model with `extra="forbid"` if the team wants typo safety; otherwise document ignored extras explicitly.
+3. **Will the status field be created manually or through an external script/API?**
+   - What we know: the current repo contains no schema migration layer for NocoDB.
+   - What's unclear: whether the phase owner wants a one-time manual UI change or a repeatable automation step.
+   - Recommendation: plan 07-01 as a manual verification task unless an automation path already exists outside this repo.
 
 ## Validation Architecture
 
 ### Test Framework
 | Property | Value |
 |----------|-------|
-| Framework | `pytest` + `pytest-asyncio` (declared in `pyproject.toml`, not installed in current shell) |
+| Framework | pytest 9.0.2 + pytest-asyncio 1.3.0 |
 | Config file | `pyproject.toml` |
-| Quick run command | `pytest -q tests/test_phase07_api_backend_readiness.py tests/test_phase07_nocodb_backend_readiness.py tests/test_infra_config.py -x` |
-| Full suite command | `pytest -q` |
+| Quick run command | `uv run pytest tests/test_api_trends_read.py tests/test_api_refresh_and_sources.py tests/test_infra_config.py tests/test_nocodb_trends_client.py -q` |
+| Full suite command | `uv run pytest` |
 
 ### Phase Requirements → Test Map
 | Req ID | Behavior | Test Type | Automated Command | File Exists? |
 |--------|----------|-----------|-------------------|-------------|
-| DB-01 | `status` field exists in NocoDB with Single Select options | manual-only | `manual: verify in NocoDB UI or API snippets` | ❌ Wave 0 |
-| DB-02 | New rows default to `pending`; legacy rows behave as `pending` | integration/manual | `pytest -q tests/test_phase07_api_backend_readiness.py -k status_default -x` | ❌ Wave 0 |
-| BAPI-01 | `TrendItem` exposes `status: Optional[str] = None` | unit | `pytest -q tests/test_phase07_api_backend_readiness.py -k trend_item_status -x` | ❌ Wave 0 |
-| BAPI-02 | `GET /api/trends?status=` filters valid values and rejects invalid ones with `400` | route contract | `pytest -q tests/test_phase07_api_backend_readiness.py -k status_filter -x` | ❌ Wave 0 |
-| BAPI-03 | `PATCH /api/trends/{id}` accepts partial updates and returns updated trend | route contract | `pytest -q tests/test_phase07_api_backend_readiness.py -k patch_trend -x` | ❌ Wave 0 |
-| BAPI-04 | Invalid `status` in trend PATCH returns explicit `400` | route contract | `pytest -q tests/test_phase07_api_backend_readiness.py -k invalid_status -x` | ❌ Wave 0 |
-| BAPI-05 | `DELETE /api/trends/{id}` hard deletes and returns `{id, deleted: true}` | route/client contract | `pytest -q tests/test_phase07_api_backend_readiness.py -k delete_trend -x` | ❌ Wave 0 |
-| BAPI-06 | `PATCH /api/sources/{id}` resolves source string ID and updates `enabled` | route/client contract | `pytest -q tests/test_phase07_api_backend_readiness.py -k patch_source -x` | ❌ Wave 0 |
-| BAPI-07 | CORS allowlist includes Vite dev origin and mutation methods | config/route contract | `pytest -q tests/test_phase07_api_backend_readiness.py -k cors -x` | ❌ Wave 0 |
+| DB-01 | `status` field exists in live NocoDB `trends` table | manual-only | `none — verify in NocoDB UI/API` | ❌ Wave 0 |
+| DB-02 | New and legacy rows behave as `pending` by default | manual + api | `uv run pytest tests/test_api_trends_read.py -q` | ⚠️ extend existing |
+| BAPI-01 | `TrendItem` accepts optional `status` | unit | `uv run pytest tests/test_phase07_models.py -q` | ❌ Wave 0 |
+| BAPI-02 | `GET /api/trends` validates and forwards `status` filter | api | `uv run pytest tests/test_api_trends_read.py -q` | ⚠️ extend existing |
+| BAPI-03 | `PATCH /api/trends/{id}` supports partial multi-field updates | api + client | `uv run pytest tests/test_api_refresh_and_sources.py tests/test_nocodb_trends_client.py -q` | ⚠️ extend existing |
+| BAPI-04 | Trend PATCH rejects invalid `status` | api + unit | `uv run pytest tests/test_api_refresh_and_sources.py tests/test_phase07_models.py -q` | ❌ Wave 0 |
+| BAPI-05 | `DELETE /api/trends/{id}` hard deletes and returns ack | api + client | `uv run pytest tests/test_api_refresh_and_sources.py tests/test_nocodb_trends_client.py -q` | ⚠️ extend existing |
+| BAPI-06 | `PATCH /api/sources/{id}` toggles `enabled` and returns updated source | api + client | `uv run pytest tests/test_api_refresh_and_sources.py tests/test_nocodb_trends_client.py -q` | ⚠️ extend existing |
+| BAPI-07 | CORS allows localhost dev plus configured origins for browser mutations | api/config | `uv run pytest tests/test_app_cors.py tests/test_infra_config.py -q` | ❌ Wave 0 |
 
 ### Sampling Rate
-- **Per task commit:** `pytest -q tests/test_phase07_api_backend_readiness.py tests/test_phase07_nocodb_backend_readiness.py tests/test_infra_config.py -x`
-- **Per wave merge:** `pytest -q`
-- **Phase gate:** Full suite green before `/gsd:verify-work`
+- **Per task commit:** `uv run pytest tests/test_api_trends_read.py tests/test_api_refresh_and_sources.py tests/test_nocodb_trends_client.py -q`
+- **Per wave merge:** `uv run pytest tests/test_api_trends_read.py tests/test_api_refresh_and_sources.py tests/test_infra_config.py tests/test_nocodb_trends_client.py tests/test_app_cors.py -q`
+- **Phase gate:** `uv run pytest`
 
 ### Wave 0 Gaps
-- [ ] `tests/test_phase07_api_backend_readiness.py` — route coverage for status filter, patch/delete trend, patch source, explicit JSON errors, and CORS config
-- [ ] `tests/test_phase07_nocodb_backend_readiness.py` — NocoDB query/update/delete helper contracts, especially legacy null status and source row lookup
-- [ ] Manual NocoDB verification step — confirm `status` field type/options/default and hosted delete/update API snippets
-- [ ] Framework install in current shell — `pytest` command is missing, so automated validation was not runnable during research
+- [ ] `tests/test_phase07_models.py` — covers `TrendItem.status`, request-model partial update extraction, and invalid status rejection.
+- [ ] `tests/test_app_cors.py` — covers localhost default allowlist, `CORS_ORIGINS` merging, and PATCH/DELETE/OPTIONS preflight.
+- [ ] Extend `tests/test_api_trends_read.py` — status forwarding, invalid status `400`, pending legacy fallback behavior.
+- [ ] Extend `tests/test_api_refresh_and_sources.py` — trend PATCH/DELETE happy-path + 404 cases, source PATCH happy-path + 404 case.
+- [ ] Extend `tests/test_nocodb_trends_client.py` — NocoDB lookup/update/delete helper coverage for trend/source mutations.
 
 ## Sources
 
 ### Primary (HIGH confidence)
-- FastAPI CORS docs: https://fastapi.tiangolo.com/tutorial/cors/ - allowed origins, methods, preflight behavior, wildcard caveats
-- FastAPI body updates docs: https://fastapi.tiangolo.com/tutorial/body-updates/ - partial update pattern using `model_dump(exclude_unset=True)` and `model_copy(update=...)`
-- Pydantic models docs: https://docs.pydantic.dev/latest/concepts/models/ - v2 model behavior and serialization methods
-- NocoDB REST API overview: https://nocodb.com/docs/product-docs/developer-resources/rest-apis - v2/v3 endpoint structure, `where` operators, rate limits
-- NocoDB API access docs: https://nocodb.com/docs/product-docs/developer-resources/rest-apis/accessing-apis - API token auth guidance
-- PyPI FastAPI page: https://pypi.org/project/fastapi/ - latest version `0.135.1`, published 2026-03-01
-- PyPI Pydantic page: https://pypi.org/project/pydantic/ - latest version `2.12.5`, published 2025-11-26
-- PyPI httpx page: https://pypi.org/project/httpx/ - latest version `0.28.1`, published 2024-12-06
-- PyPI pytest page: https://pypi.org/project/pytest/ - latest version `9.0.2`, published 2025-12-06
-- PyPI pytest-asyncio page: https://pypi.org/project/pytest-asyncio/ - latest version `1.3.0`, published 2025-11-10
-- PyPI uvicorn page: https://pypi.org/project/uvicorn/ - latest version `0.42.0`, published 2026-03-16
+- Repository file `app.py` - current app wiring, lifespan, and CORS middleware.
+- Repository file `api/routes/trends.py` - live route structure, error style, and current source/trend handlers.
+- Repository file `tools/nocodb_trends_client.py` - NocoDB access patterns and source lookup behavior.
+- Repository file `trend_agents/shared/models.py` - canonical shared backend models.
+- Repository file `tests/test_api_trends_read.py` - current list/read contract coverage.
+- Repository file `tests/test_api_refresh_and_sources.py` - current refresh/source route coverage.
+- Repository file `tests/test_infra_config.py` - `.env.example` and infra contract coverage.
+- Repository file `tests/test_nocodb_trends_client.py` - existing NocoDB client test surface.
+- Repository file `pyproject.toml` - declared runtime/dev test framework.
+- Repository file `uv.lock` - locked package versions.
+- Repository file `.planning/phases/07-backend-readiness/07-CONTEXT.md` - locked Phase 07 decisions and discretion.
+- Repository files `.planning/ROADMAP.md`, `.planning/REQUIREMENTS.md`, `.planning/STATE.md` - phase scope, requirements, and state.
 
 ### Secondary (MEDIUM confidence)
-- Repository code inspection: `app.py`, `api/routes/trends.py`, `tools/nocodb_trends_client.py`, `trend_agents/shared/models.py`, and existing test files - used to ground recommendations in the actual codebase and existing conventions
+- Live NocoDB schema behavior for blank/null `status` fallback is inferred from phase decisions but not yet verified in this repo.
 
 ### Tertiary (LOW confidence)
-- NocoDB hard-delete endpoint specifics for this hosted instance - public docs were not detailed enough; local Swagger/API snippets should be treated as the source of truth before implementation
+- None.
 
 ## Metadata
 
 **Confidence breakdown:**
-- Standard stack: HIGH - verified against current repo code and official PyPI / framework docs
-- Architecture: HIGH - directly supported by current code seams and official FastAPI/Pydantic patterns
-- Pitfalls: MEDIUM - mostly grounded in code plus docs, but delete-contract details remain instance-specific
+- Standard stack: HIGH - backed by `pyproject.toml`, `uv.lock`, and current test execution.
+- Architecture: HIGH - backed by current route/client/app structure in the repository.
+- Pitfalls: MEDIUM - strongest risks are clear from code, but some NocoDB schema/filter behavior still needs live verification.
 
 **Research date:** 2026-03-20
-**Valid until:** 2026-04-19
+**Valid until:** 2026-04-03
