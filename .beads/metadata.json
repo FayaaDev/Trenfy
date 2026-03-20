@@ -2,6 +2,6 @@
   "database": "dolt",
   "backend": "dolt",
   "dolt_mode": "server",
-  "dolt_database": "SehaRadar",
+  "dolt_database": "trenfy",
   "project_id": "54861081-6bc3-4f92-b555-b1a18ecc69ff"
 }
