@@ -96,7 +96,7 @@ None
 None - no external service configuration required.
 
 ## Next Phase Readiness
-- Phase 3 (Platform Clients) can replace `scan_source()` stub with real YouTube/Spotify/Steam fetch logic
+- Phase 3 (Platform Clients) can replace `scan_source()` stub with real YouTube / X fetch logic
 - `sync_sources()` is ready for the startup sync called by the FastAPI lifespan event
 - `update_source_status()` is ready for use after each real scan completes
 - No blockers

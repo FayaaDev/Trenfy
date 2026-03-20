@@ -5,9 +5,9 @@ subsystem: api
 tags: [workflow, deduplication, scheduler-isolation, status-handling]
 requires:
   - phase: 03-02
-    provides: YouTube/Spotify platform clients
+    provides: YouTube/X platform clients
   - phase: 03-03
-    provides: Steam/TikTok platform clients and circuit-breaker semantics
+    provides: X platform clients and circuit-breaker semantics
 provides:
   - Fully wired scan_source ingestion pipeline with client dispatch
   - Canonical hash dedup filtering before NocoDB persistence

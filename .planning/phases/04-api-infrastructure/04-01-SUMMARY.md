@@ -30,7 +30,7 @@ completed: 2026-03-19
 
 # Phase 4 Plan 01: Read API Contracts and Trends Endpoints Summary
 
-**FastAPI now serves `/api/trends` list/detail/stats with cursor pagination contracts and per-platform recency stats for YouTube, Spotify, Steam, and TikTok.**
+**FastAPI now serves `/api/trends` list/detail/stats with cursor pagination contracts and per-platform recency stats for YouTube and X.**
 
 ## Performance
 

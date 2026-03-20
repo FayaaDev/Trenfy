@@ -9,8 +9,8 @@ requires:
 provides:
   - BaseTrendClient async fetch contract for platform clients
   - Shared category normalization and canonical hash delegation helpers
-  - Lazy platform resolver entrypoint covering youtube/spotify/steam/tiktok
-  - Contract tests that lock TikTok typing and content hash behavior
+  - Lazy platform resolver entrypoint covering YouTube / X
+  - Contract tests that lock X typing and content hash behavior
 affects: [phase-03-plan-02, phase-03-plan-03, phase-03-plan-04, workflows]
 tech-stack:
   added: []
@@ -36,7 +36,7 @@ completed: 2026-03-19
 
 # Phase 3 Plan 01: Contract Foundation Summary
 
-**Contract-first platform client foundations shipped with deterministic hash guarantees, TikTok typing support, and lazy client resolution.**
+**Contract-first platform client foundations shipped with deterministic hash guarantees, X typing support, and lazy client resolution.**
 
 ## Performance
 
@@ -47,9 +47,9 @@ completed: 2026-03-19
 - **Files modified:** 5
 
 ## Accomplishments
-- Added `SourceType.TIKTOK` while preserving the canonical `generate_trend_hash` algorithm shape.
+- Added `SourceType.X` while preserving the canonical `generate_trend_hash` algorithm shape.
 - Added `tools/trend_clients/base.py` and `tools/trend_clients/common.py` for shared client contract, category normalization, hash delegation, and retry utility.
-- Added `tools/trend_clients/__init__.py` resolver with lazy dispatch for youtube, spotify, steam, and tiktok.
+- Added `tools/trend_clients/__init__.py` resolver with lazy dispatch for YouTube and X.
 - Created and extended `tests/test_trend_client_contracts.py` to guard hash determinism/mutation sensitivity and client utility contracts.
 
 ## Task Commits
@@ -64,7 +64,7 @@ Each task was committed atomically:
 
 ## Files Created/Modified
 - `tests/test_trend_client_contracts.py` - Script-style contract tests for SourceType, hashing, normalization, and base contract shape.
-- `trend_agents/shared/models.py` - Added TikTok source enum entry.
+- `trend_agents/shared/models.py` - Added X source enum entry.
 - `tools/trend_clients/base.py` - Abstract base client contract with async `fetch` signature.
 - `tools/trend_clients/common.py` - Category normalization, canonical hash delegation, and async retry with exponential backoff.
 - `tools/trend_clients/__init__.py` - Lazy platform-to-client resolver entrypoint.
@@ -106,8 +106,8 @@ Each task was committed atomically:
 None - no external service configuration required.
 
 ## Next Phase Readiness
-- Shared abstractions are in place; Plan 03-02 can now implement YouTube/Spotify concrete clients against stable contract/test scaffolding.
-- Resolver dispatch includes TikTok and can be wired by workflow integration in later plans.
+- Shared abstractions are in place; Plan 03-02 can now implement YouTube/X concrete clients against stable contract/test scaffolding.
+- Resolver dispatch includes X and can be wired by workflow integration in later plans.
 
 ---
 *Phase: 03-platform-clients*

@@ -21,14 +21,14 @@
 
 ---
 
-## 2. Spotify Token Refresh (OAuth2 Client Credentials)
+## 2. X Token Refresh (OAuth2 Client Credentials)
 
 **What goes wrong:**  
-Client credentials tokens expire in 3,600 seconds (1 hour). If the refresh check is not thread-safe, two concurrent `scan_source` tasks can both detect expiry simultaneously, both request a new token, and the second response overwrites the first — causing a brief window where one task holds a now-invalidated token. Silent failures: Spotify returns `401 Unauthorized` and the source silently stores nothing.
+Client credentials tokens expire in 3,600 seconds (1 hour). If the refresh check is not thread-safe, two concurrent `scan_source` tasks can both detect expiry simultaneously, both request a new token, and the second response overwrites the first — causing a brief window where one task holds a now-invalidated token. Silent failures: X returns `401 Unauthorized` and the source silently stores nothing.
 
 **Warning signs:**
-- Intermittent `401` errors on Spotify calls, not reproducible on retry
-- `last_fetch_status = error` on Spotify sources without a clear pattern
+- Intermittent `401` errors on X calls, not reproducible on retry
+- `last_fetch_status = error` on X sources without a clear pattern
 - Errors clustered around the 1-hour mark after startup
 
 **Prevention strategy:**
@@ -38,42 +38,42 @@ Client credentials tokens expire in 3,600 seconds (1 hour). If the refresh check
 - On 401, do one token refresh and retry the request once before marking the source as errored.
 - Log token refresh events with expiry timestamp for debugging.
 
-**Build phase:** Phase 5 (`spotify_client.py`). The lock must be part of the initial implementation — retrofitting it after intermittent bugs appear is harder.
+**Build phase:** Phase 5 (`X_client.py`). The lock must be part of the initial implementation — retrofitting it after intermittent bugs appear is harder.
 
 ---
 
-## 3. Steam Scraping Fragility
+## 3. X Scraping Fragility
 
 **What goes wrong:**  
-Steam has no official top-sellers or trending API without a Steamworks partner account. The approach is scraping `store.steampowered.com/search/?sort_by=TRENDING_DESC`. Steam can and does:
+X has no official top-sellers or trending API without a Xworks partner account. The approach is scraping `store.Xpowered.com/search/?sort_by=TRENDING_DESC`. X can and does:
 - Change HTML structure without notice (CSS class renames, layout refactors)
 - Rate-limit scrapers (429, CAPTCHA, IP block)
 - Return different markup for bots vs. browsers (missing JS-rendered content)
 - Redirect the URL to a different page structure for certain regions
 
 **Warning signs:**
-- `steam_client` returns an empty list without errors
+- `X_client` returns an empty list without errors
 - BeautifulSoup selector returns `None` for elements that previously matched
-- `aiohttp`/`httpx` gets 429 or redirects to `store.steampowered.com/agegate/`
+- `aiohttp`/`httpx` gets 429 or redirects to `store.Xpowered.com/agegate/`
 - Player count fetches succeed but top-sellers list is empty
 
 **Prevention strategy:**
 - Add a scrape-result count assertion: if fewer than 5 items are parsed from a page that should have 20+, log a `SCRAPE_DEGRADED` warning and alert — don't silently store an empty list.
-- Use `ISteamApps/GetAppList` + `ISteamUserStats/GetNumberOfCurrentPlayers` (official JSON API) for what it covers; scraping is only for the top-sellers ranking, not app metadata.
+- Use `IXApps/GetAppList` + `IXUserStats/GetNumberOfCurrentPlayers` (official JSON API) for what it covers; scraping is only for the top-sellers ranking, not app metadata.
 - Add a `User-Agent` header mimicking a real browser; add a small random delay (0.5–2s) between requests.
-- Pin the CSS selectors in a config constant (not buried in code) so they're easy to update when Steam changes markup.
-- Accept that Steam scraping **will break** periodically. Build the workflow to degrade gracefully: mark source as `error`, continue with other sources, do not crash the scheduler.
+- Pin the CSS selectors in a config constant (not buried in code) so they're easy to update when X changes markup.
+- Accept that X scraping **will break** periodically. Build the workflow to degrade gracefully: mark source as `error`, continue with other sources, do not crash the scheduler.
 
-**Build phase:** Phase 5 (`steam_client.py`). Scrape robustness and degradation handling must be in the first implementation.
+**Build phase:** Phase 5 (`X_client.py`). Scrape robustness and degradation handling must be in the first implementation.
 
 ---
 
-## 4. TikTok Data Sourcing (RapidAPI)
+## 4. X Data Sourcing (RapidAPI)
 
 **What goes wrong:**  
-There is no official TikTok public API. RapidAPI TikTok scrapers are third-party services that:
+There is no official X public API. RapidAPI X scrapers are third-party services that:
 - Change their response schema without versioning
-- Hit TikTok rate limits and return empty results or errors silently
+- Hit X rate limits and return empty results or errors silently
 - Go down or disappear entirely (RapidAPI providers are community-maintained)
 - Charge per-call; unexpected polling frequency = unexpected billing
 
@@ -84,14 +84,14 @@ There is no official TikTok public API. RapidAPI TikTok scrapers are third-party
 - Monthly RapidAPI bill increases unexpectedly
 
 **Prevention strategy:**
-- Treat TikTok as a **degradable source**, not a required one. If it fails, the app still works with YouTube/Spotify/Steam.
+- Treat X as a **degradable source**, not a required one. If it fails, the app still works with YouTube / X.
 - Validate the response schema explicitly on every call — don't just `response["data"][0]["title"]`; use a schema check and log `SCHEMA_MISMATCH` if it fails.
 - Set a conservative polling interval (60+ minutes) to minimize RapidAPI call volume.
 - Keep a fallback: if the primary RapidAPI endpoint fails 3 times in a row, disable the source and alert — don't hammer a broken API.
-- Investigate `pyktok` (unofficial Python library using TikTok's internal web API) as an alternative. Test both before committing to one.
+- Investigate `pyktok` (unofficial Python library using X's internal web API) as an alternative. Test both before committing to one.
 - Budget: RapidAPI free tiers are typically 500–1,000 calls/month. At 60-min polling, that's ~720 calls/month — check the plan limit.
 
-**Build phase:** Phase 5, last (`tiktok_client.py`). Build it after YouTube/Spotify/Steam are solid. Treat as optional for v1.
+**Build phase:** Phase 5, last (`X_client.py`). Build it after YouTube / X are solid. Treat as optional for v1.
 
 ---
 
@@ -160,16 +160,16 @@ hash = hashlib.sha256(content).hexdigest()[:32]
 ```
 
 **False negatives (missed duplicates — same content stored twice):**
-- `published_date` format inconsistency: YouTube returns ISO 8601 (`2024-03-15T10:00:00Z`), Spotify returns `2024-03-15`, Steam scraping may return `March 15, 2024`. If not normalized to `YYYY-MM-DD` before hashing, the same item on the same day gets two different hashes.
+- `published_date` format inconsistency: YouTube returns ISO 8601 (`2024-03-15T10:00:00Z`), X returns `2024-03-15`, X scraping may return `March 15, 2024`. If not normalized to `YYYY-MM-DD` before hashing, the same item on the same day gets two different hashes.
 - Title normalization: `"Spider-Man 2"` vs `"Spider-Man 2 "` (trailing space) → different hash.
 
 **False positives (valid new trends blocked):**
 - A YouTube video re-appears in trending in a different region on a different day but has the same title and `published_date` as an older entry. Hash collision if `region_code` is not in the hash. (Current hash includes `region_code` — good. But `published_date` is the video's publish date, not today's date, so an old video trending again won't be re-stored. This is probably the desired behavior, but verify it explicitly.)
-- A track re-enters the Spotify charts after a long absence — same title + date → blocked. Whether this is correct or a bug depends on product intent.
+- A track re-enters the X charts after a long absence — same title + date → blocked. Whether this is correct or a bug depends on product intent.
 
 **Warning signs:**
 - NocoDB `trends` table has obvious duplicate rows (same title, platform, region)
-- Spotify or Steam items stop appearing entirely after the first poll
+- X items stop appearing entirely after the first poll
 - `stored` count drops to 0 on subsequent runs for all sources
 
 **Prevention strategy:**
@@ -230,7 +230,7 @@ SehaRadar and Trenfy share the same repo. A hasty "delete everything that isn't 
 - Delete in a single committed pass so the diff is auditable.
 - After deletion, run `python -c "import app"` (once `app.py` exists) to confirm no broken imports remain.
 - Update `pyproject.toml` packages to only include `trend_agents`, `tools`, `workflows`.
-- Check `tools/html_extraction.py`: it's listed in `Trenfy.md` (for Steam scraping) — keep it. `tools/openai_client.py`: only keep if Trenfy actively uses it; otherwise delete.
+- Check `tools/html_extraction.py`: it's listed in `Trenfy.md` (for X scraping) — keep it. `tools/openai_client.py`: only keep if Trenfy actively uses it; otherwise delete.
 - Audit `.env.example` post-cleanup: only variables in `Trenfy.md` §Environment Variables should remain.
 
 **Build phase:** Phase 6 (cleanup pass). Do this as a dedicated step after the core pipeline is working — not interleaved with feature development, and not as a first step before the new code is written.

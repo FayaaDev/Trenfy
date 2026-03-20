@@ -19,7 +19,7 @@
 
 ### 2. Trenfy Platform Clients Not Implemented
 
-**Issue**: `Trenfy.md` describes `tools/trend_clients/` with `youtube_client.py`, `spotify_client.py`, `steam_client.py`. **None of these files or the directory exist.**
+**Issue**: `Trenfy.md` describes `tools/trend_clients/` with `youtube_client.py`, `X_client.py`, `X_client.py`. **None of these files or the directory exist.**
 
 Also missing:
 - `trend_agents/shared/source_registry.py`
@@ -163,7 +163,7 @@ An empty token might still make some NocoDB requests succeed if NocoDB isn't con
 
 ### 13. No Rate Limiting on FastAPI Endpoints
 
-`server.py` exposes endpoints including `/api/trends/refresh` (POST) with no rate limiting. Could be abused to trigger excessive API calls to YouTube/Spotify/Steam.
+`server.py` exposes endpoints including `/api/trends/refresh` (POST) with no rate limiting. Could be abused to trigger excessive API calls to YouTube / X.
 
 ---
 
@@ -180,18 +180,18 @@ This gives the container full Docker daemon access — effectively root on the h
 
 ## Performance Concerns
 
-### 15. Spotify Token Expiry Check
+### 15. X Token Expiry Check
 
-Spotify OAuth token auto-refresh planned "when < 5 min remaining" — not implemented yet. When implemented, needs thread-safe token refresh to avoid race conditions under concurrent requests.
+X OAuth token auto-refresh planned "when < 5 min remaining" — not implemented yet. When implemented, needs thread-safe token refresh to avoid race conditions under concurrent requests.
 
 ---
 
 ## Missing Features (Trenfy Roadmap)
 
 Per `Trenfy.md`, the following are explicitly listed as not yet built:
-- TikTok integration (no public API)
+- X integration (no public API)
 - LLM trend analysis via OpenRouter
 - Trend velocity tracking (metric snapshots over time)
 - Digest emails for trends
 - Additional YouTube regions (GB, DE, BR, IN)
-- Spotify category-specific tracking (K-pop, Latin, etc.)
+- X category-specific tracking (K-pop, Latin, etc.)

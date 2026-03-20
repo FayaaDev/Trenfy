@@ -21,14 +21,14 @@ Plan Phase 03 so implementation delivers real platform trend ingestion with norm
 
 ## Locked Decisions to Honor
 
-- Keep four-platform phase boundary: YouTube, Spotify, Steam, TikTok.
+- Keep four-platform phase boundary: YouTube and X.
 - Keep source-region behavior from `config/trend_sources.json`.
 - Persist up to 20 items per source per fetch.
 - Normalize categories to `gaming`, `music`, `entertainment` only.
 - Category fallback is `entertainment` when mapping fails.
 - Skip invalid items (missing required title/url); persist valid items from mixed batches.
 - On source failure, mark error status and continue other sources.
-- TikTok circuit-breaker recovery is manual re-enable after auto-disable.
+- X circuit-breaker recovery is manual re-enable after auto-disable.
 
 ## Technical Approach
 
@@ -55,18 +55,18 @@ Category mapping policy:
 - Fallback to `entertainment`
 - Optional hint in metadata (`secondary_category_hint`)
 
-### 3) Spotify Client
+### 3) X Client
 
 Use Client Credentials OAuth flow and source-driven endpoints:
 
-- Token endpoint: `https://accounts.spotify.com/api/token`
-- Protected APIs: `https://api.spotify.com/v1/...`
+- Token endpoint: `https://accounts.X.com/api/token`
+- Protected APIs: `https://api.X.com/v1/...`
 - Lock refresh with `asyncio.Lock` to avoid concurrent refresh races.
 - Refresh token when absent or expiring within 60 seconds.
 
-### 4) Steam Client
+### 4) X Client
 
-Use publicly available Steam endpoints for real trend candidates:
+Use publicly available X endpoints for real trend candidates:
 
 - Featured categories endpoint for top sellers/new releases signal
 - App details endpoint for metadata enrichment
@@ -74,11 +74,11 @@ Use publicly available Steam endpoints for real trend candidates:
 
 Normalize output with `metric_type=current_players` and integer metrics.
 
-### 5) TikTok Client
+### 5) X Client
 
 Implement with a provider-backed API adapter and explicit circuit breaker:
 
-- Provider token env var required (`TIKTOK_PROVIDER_API_KEY`)
+- Provider token env var required (`X_PROVIDER_API_KEY`)
 - Backoff/retry with capped attempts
 - Circuit breaker trips after 3 consecutive failures per source id
 - On open breaker, client returns empty list and workflow writes `disabled_circuit_breaker`
@@ -100,7 +100,7 @@ Replace current Phase 2 stub in `TrendsWorkflow.scan_source()`:
 ## Risks and Mitigations
 
 - **Conflict between roadmap wording and phase context:** follow locked context decisions; keep requirement IDs mapped in plan frontmatter.
-- **TikTok API availability variance:** isolate provider adapter and gate with explicit env var + circuit breaker behavior.
+- **X API availability variance:** isolate provider adapter and gate with explicit env var + circuit breaker behavior.
 - **Quota/rate limits:** use conservative polling, capped retries, and avoid high-cost endpoints.
 - **Bad upstream payloads:** strict normalization, invalid item skipping, partial-success status.
 
@@ -110,9 +110,9 @@ Replace current Phase 2 stub in `TrendsWorkflow.scan_source()`:
 
 - `python tests/test_trend_client_contracts.py`
 - `python tests/test_youtube_client.py`
-- `python tests/test_spotify_client.py`
-- `python tests/test_steam_client.py`
-- `python tests/test_tiktok_client.py`
+- `python tests/test_X_client.py`
+- `python tests/test_X_client.py`
+- `python tests/test_X_client.py`
 - `python tests/test_trends_workflow.py`
 
 ### Coverage Focus
@@ -128,9 +128,9 @@ Replace current Phase 2 stub in `TrendsWorkflow.scan_source()`:
 
 - `tests/test_trend_client_contracts.py`
 - `tests/test_youtube_client.py`
-- `tests/test_spotify_client.py`
-- `tests/test_steam_client.py`
-- `tests/test_tiktok_client.py`
+- `tests/test_X_client.py`
+- `tests/test_X_client.py`
+- `tests/test_X_client.py`
 - `tests/test_trends_workflow.py`
 
 ## Research Outcome
@@ -138,6 +138,6 @@ Replace current Phase 2 stub in `TrendsWorkflow.scan_source()`:
 Proceed to planning with 4 plans:
 
 1. shared contracts + base abstractions + test scaffolds
-2. YouTube + Spotify implementation slice
-3. Steam + TikTok implementation slice
+2. YouTube + X implementation slice
+3. X implementation slice
 4. workflow wiring + end-to-end ingest verification

@@ -61,10 +61,11 @@ Phase 5: React Native App ░░░░░░░░░░░░░░░░░░
 - [Phase 02-data-foundation]: Per-source imports inside lifespan/health functions avoid circular imports at module load time
 - [Phase 03]: Resolver imports are function-scoped to avoid circular import risk during early client wiring.
 - [Phase 03]: compute_content_hash delegates to generate_trend_hash to preserve canonical dedup behavior.
+- [2026-03-20]: v1 platform scope locked to YouTube + X; additional platforms deferred to future milestones.
 - [Phase 03]: YouTube client uses only videos.list with maxResults capped at 20 for quota-safe polling.
-- [Phase 03]: Spotify token refresh is double-checked inside an asyncio.Lock to prevent concurrent refresh races.
-- [Phase 03]: Steam ingestion uses featuredcategories endpoint and routes list selection by source.endpoint.
-- [Phase 03]: TikTok retries are bounded to three attempts and breaker opens per source after three failed cycles.
+- [Phase 03]: X token refresh is double-checked inside an asyncio.Lock to prevent concurrent refresh races.
+- [Phase 03]: X ingestion uses `/2/tweets/search/recent` and routes fetch behavior by source.endpoint.
+- [Phase 03]: X retries are bounded to three attempts and breaker opens per source after three failed cycles.
 - [Phase 03]: scan_source now returns fixed keys (source_id, fetched, stored, duplicates, invalid, status) for deterministic observability.
 - [Phase 03]: Workflow maps client breaker-open reason to disabled_circuit_breaker status while preserving scan isolation.
 - [Phase 04-api-infrastructure]: Use URL-safe base64 JSON cursors carrying offset and sort
@@ -95,3 +96,9 @@ Phase 5: React Native App ░░░░░░░░░░░░░░░░░░
 
 **Last session:** 2026-03-19T08:40:48.499Z
 **Stopped at:** Completed 04-03-PLAN.md
+
+## Accumulated Context
+
+### Roadmap Evolution
+
+- Phase 6 added: data-filtering

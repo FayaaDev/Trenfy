@@ -17,7 +17,7 @@ Remove all SehaRadar code and establish the Trenfy project skeleton. This phase 
 - SehaRadar files were never tracked in git — the repo was initialized as a clean Trenfy project, so no `git rm` was needed
 - `tools/` retains exactly 3 Trenfy-relevant files: `nocodb_trends_client.py`, `html_extraction.py`, `openai_client.py`
 - `trend_agents/shared/models.py` is the canonical data model — kept untouched
-- `config/trend_sources.json` is the source registry — kept with 8 sources (YouTube US/JP/SA, Spotify ×2, Steam ×2, TikTok)
+- `config/trend_sources.json` is the source registry — kept with 8 sources (YouTube US/JP/SA, X ×2, X ×2, X)
 
 ### FastAPI skeleton decisions
 - `scheduler_running: False` hardcoded in Phase 1 skeleton — Phase 2 wires in real scheduler state
@@ -54,7 +54,7 @@ Remove all SehaRadar code and establish the Trenfy project skeleton. This phase 
 - `Trenfy.md` — Full Trenfy architecture spec: NocoDB schema, platform client designs, API endpoint specs, implementation order, source registry format, TrendItem model fields, content_hash algorithm. This is the single source of truth for all subsequent phases.
 
 ### Source registry
-- `config/trend_sources.json` — 8 configured sources: YouTube (US, JP, SA), Spotify (new-releases, featured-playlists), Steam (top-sellers, new-releases), TikTok. Defines `id`, `platform`, `endpoint`, `check_interval_minutes`, `enabled` per source.
+- `config/trend_sources.json` — 8 configured sources: YouTube (US, JP, SA), X (new-releases, featured-playlists), X (top-sellers, new-releases), X. Defines `id`, `platform`, `endpoint`, `check_interval_minutes`, `enabled` per source.
 
 </canonical_refs>
 
@@ -63,9 +63,9 @@ Remove all SehaRadar code and establish the Trenfy project skeleton. This phase 
 
 ### Reusable Assets
 - `tools/nocodb_trends_client.py`: `NocoDBTrendsClient` — full NocoDB CRUD: create trend, read trends, deduplicate by `content_hash`. Phase 2+ uses this directly.
-- `tools/html_extraction.py`: HTML scraping utilities — needed by the Steam platform client in Phase 3.
+- `tools/html_extraction.py`: HTML scraping utilities — needed by the X platform client in Phase 3.
 - `tools/openai_client.py`: OpenRouter lazy singleton — available for future LLM use (v2 scope).
-- `trend_agents/shared/models.py`: `TrendItem` (full trend data model) and `SourceType` enum (`youtube`, `spotify`, `steam`). Canonical data shape for all platform clients.
+- `trend_agents/shared/models.py`: `TrendItem` (full trend data model) and `SourceType` enum (`youtube`, `X`, `X`). Canonical data shape for all platform clients.
 
 ### Established Patterns
 - `app.py`: FastAPI singleton at module level — extend by importing and registering routers in Phase 4

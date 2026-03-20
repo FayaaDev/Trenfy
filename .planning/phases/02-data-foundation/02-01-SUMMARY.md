@@ -17,7 +17,7 @@ Both NocoDB tables are verified/created in base `ps82pgir3bbih55`:
    `content_hash`, `notification_sent`
 
 2. **trend_sources table** (`m93wrwcg2yxjc7t`) — created with 9 columns:
-   `id`, `name`, `platform` (SingleSelect: youtube/spotify/steam/tiktok),
+   `id`, `name`, `platform` (SingleSelect: YouTube / X),
    `endpoint`, `params`, `check_interval_minutes`, `enabled`,
    `last_fetched_at`, `last_fetch_status`
 

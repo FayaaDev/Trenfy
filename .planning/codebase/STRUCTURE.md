@@ -75,7 +75,7 @@ trend_agents/
 ├── __init__.py
 └── shared/
     ├── __init__.py
-    ├── models.py            # TrendItem, TrendSource, SourceType, YouTube/Spotify/SteamMetadata
+    ├── models.py            # TrendItem, TrendSource, SourceType, YouTube / XMetadata
     └── source_registry.py  # list_all(), list_enabled(), get_source() from config/trend_sources.json
 ```
 
@@ -156,7 +156,7 @@ config/
 ├── disease_catalog.json     # Auto-discovered diseases (runtime-populated)
 ├── diseases.json            # Known disease library with aliases
 ├── agency_configs.json      # Health agency configurations
-└── trend_sources.json       # Trenfy: YouTube/Spotify/Steam sources
+└── trend_sources.json       # Trenfy: YouTube / X sources
 ```
 
 ### `tests/` — Test Suite

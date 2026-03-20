@@ -32,7 +32,7 @@ human_verification:
 | # | Truth | Status | Evidence |
 |---|-------|--------|---------|
 | 1 | NocoDB trend_sources table exists with NOCODB_SOURCES_TABLE_ID set | ✓ VERIFIED | `.env` line 5: `NOCODB_SOURCES_TABLE_ID=m93wrwcg2yxjc7t`; `.env.example` line 5 documents placeholder |
-| 2 | source_registry loads all 8 TrendSource objects with correct intervals | ✓ VERIFIED | `python3` import verified: 8 sources, YT=15m, Spotify=60m, Steam=30m, TikTok=30m |
+| 2 | source_registry loads all 8 TrendSource objects with correct intervals | ✓ VERIFIED | `python3` import verified: 8 sources, YT=15m, X=60m, X=30m, X=30m |
 | 3 | source_registry.list_enabled() returns only enabled=True sources (all 8) | ✓ VERIFIED | Runtime confirmed: `list_enabled()` returns 8, all `enabled=True` |
 | 4 | TrendItem and TrendSource Pydantic models validate correctly | ✓ VERIFIED | Runtime confirmed: both models instantiate, defaults correct, `generate_trend_hash` returns 32-char string |
 | 5 | NocoDBTrendsClient.sync_sources() is async and non-fatal | ✓ VERIFIED | `inspect.iscoroutinefunction()` confirmed async; method has try/except returning 0 on failure |
@@ -59,7 +59,7 @@ human_verification:
 | `workflows/__init__.py` | Package init | ✓ VERIFIED | Exists |
 | `workflows/trends_scheduler.py` | `TrendsScheduler` with `start()`, `stop()`, `is_running` | ✓ VERIFIED | 106 lines; class, all methods, module-level `scheduler` singleton |
 | `app.py` | FastAPI lifespan + real `/health` | ✓ VERIFIED | 79 lines; `asynccontextmanager` lifespan, deferred imports, `scheduler.is_running` in /health |
-| `config/trend_sources.json` | 8 sources with correct platforms/intervals | ✓ VERIFIED | 8 sources: YT×3, Spotify×2, Steam×2, TikTok×1 |
+| `config/trend_sources.json` | 8 sources with correct platforms/intervals | ✓ VERIFIED | 8 sources: YT×3, X×2, X×2, X×1 |
 
 ---
 

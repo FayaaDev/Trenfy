@@ -109,8 +109,8 @@ TrendsWorkflow (workflows/trends_workflow.py) [not yet impl]
          ↓
 Platform Clients (tools/trend_clients/) [not yet impl]
     ├── youtube_client.py
-    ├── spotify_client.py
-    └── steam_client.py
+    ├── X_client.py
+    └── X_client.py
          ↓
 Content hash dedup check
          ↓
@@ -126,7 +126,7 @@ FastAPI Server (app.py) [not yet impl] → REST API
 ```python
 # trend_agents/shared/models.py
 class TrendItem(BaseModel):
-    platform: str          # youtube | spotify | steam
+    platform: str          # youtube | X | X
     category: str
     title: str
     description: str

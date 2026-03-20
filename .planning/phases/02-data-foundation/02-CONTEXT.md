@@ -29,7 +29,7 @@ FastAPI core, NocoDB schema, source registry, Pydantic models, and per-source as
 
 ### Claude's Discretion
 - Workflow scope for Phase 2: how `TrendsWorkflow.scan_source()` behaves when no platform client exists yet (stub, no-op, or graceful skip) — Claude decides
-- TikTok source handling in Phase 2 scheduler: whether `TIKTOK_TRENDING` runs with a placeholder or is temporarily disabled until Phase 3 — Claude decides
+- X source handling in Phase 2 scheduler: whether `X_TRENDING` runs with a placeholder or is temporarily disabled until Phase 3 — Claude decides
 - Per-source error handling in scheduler: logging, `last_fetch_status` update behavior on exception — Claude decides
 - Exact FastAPI lifecycle hook (`@app.on_event("startup")` vs lifespan context manager) — Claude decides
 
@@ -44,13 +44,13 @@ FastAPI core, NocoDB schema, source registry, Pydantic models, and per-source as
 - `Trenfy.md` — Full architecture spec: NocoDB schema (§NocoDB Schema), workflow design (§Workflow), scheduler pattern (§Scheduler), API endpoints (§API Endpoints), environment variables (§Environment Variables), implementation order (§Implementation Order). This is the primary design reference for Phase 2.
 
 ### Data models (already implemented — do NOT recreate)
-- `trend_agents/shared/models.py` — `TrendItem`, `TrendSource`, `SourceType`, `YouTubeVideoMetadata`, `SpotifyTrackMetadata`, `SteamGameMetadata`, `generate_trend_hash`. Canonical data shape for all platform clients and workflow.
+- `trend_agents/shared/models.py` — `TrendItem`, `TrendSource`, `SourceType`, `YouTubeVideoMetadata`, `XTrackMetadata`, `XGameMetadata`, `generate_trend_hash`. Canonical data shape for all platform clients and workflow.
 
 ### NocoDB client (already implemented — do NOT recreate)
 - `tools/nocodb_trends_client.py` — `NocoDBTrendsClient`: full CRUD for `trends` table, multi-URL fallback, dedup by `content_hash`. Phase 2 extends this to add source sync / `trend_sources` table operations.
 
 ### Source configuration
-- `config/trend_sources.json` — 8 configured sources: YouTube (US, JP, SA), Spotify (new-releases, featured-playlists), Steam (top-sellers, new-releases), TikTok. Defines `id`, `platform`, `endpoint`, `check_interval_minutes`, `enabled` per source.
+- `config/trend_sources.json` — 8 configured sources: YouTube (US, JP, SA), X (new-releases, featured-playlists), X (top-sellers, new-releases), X. Defines `id`, `platform`, `endpoint`, `check_interval_minutes`, `enabled` per source.
 
 ### Requirements
 - `.planning/REQUIREMENTS.md` — CORE-01 through CORE-06 and INFRA-03 define exact acceptance criteria for this phase. Read before planning tasks.

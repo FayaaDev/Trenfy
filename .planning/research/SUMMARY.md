@@ -6,10 +6,10 @@
 - **FastAPI `>=0.115`** — native `lifespan` context manager needed for scheduler startup
 - **Pydantic v2 (`>=2.7`) + pydantic-settings** — faster validation, env loading without python-dotenv
 - **httpx `>=0.27`** — async-first HTTP; already in use for NocoDB client
-- **beautifulsoup4 + lxml** — BS4 for Steam HTML scraping; lxml is faster than html.parser
+- **beautifulsoup4 + lxml** — BS4 for X HTML scraping; lxml is faster than html.parser
 - **Custom asyncio scheduler loop** — `while True` + `asyncio.sleep(60)`; APScheduler adds complexity for zero benefit at 7 sources
 - **uvicorn[standard]** — pulls in uvloop + httptools for async/HTTP performance
-- **RapidAPI TikTok (tikapi) + circuit-breaker** — only viable v1 option; treat as degradable, budget ~$10-15/month
+- **RapidAPI X (tikapi) + circuit-breaker** — only viable v1 option; treat as degradable, budget ~$10-15/month
 
 **React Native App**
 - **Expo managed workflow** — no native modules needed; EAS Build for iOS/Android; eject path available if needed
@@ -35,16 +35,16 @@
 - `GET /api/sources` — expose `last_fetched_at` + `last_fetch_status` per source
 - `GET /api/trends/stats` — aggregate counts by platform
 - `/health` endpoint — Docker health checks
-- Per-source scheduler: YouTube 15m, Spotify 60m, Steam 30m, TikTok 60m
+- Per-source scheduler: YouTube 15m, X 60m, X 30m, X 60m
 - `content_hash` deduplication — prevents duplicate rows on scheduler re-runs
-- Error isolation per source — TikTok failure must not block YouTube/Spotify
+- Error isolation per source — X failure must not block YouTube/X
 - `fetched_at` timestamp on every trend record
 
 **React Native App**
 - Scrollable trend feed — FlashList, sorted by `fetched_at` desc, infinite scroll
-- Platform filter tabs — YouTube / Spotify / Steam / TikTok
+- Platform filter tabs — YouTube / X
 - Trend card — title, platform icon, contextual metric label, time-ago, thumbnail
-- Tap to open source — deep link to native platform app (YouTube, Spotify, Steam)
+- Tap to open source — deep link to native platform app (YouTube and X)
 - Pull-to-refresh — triggers new fetch from FastAPI
 - Category filter — Gaming / Music / Video / Entertainment
 - Region selector — US / SA
@@ -58,7 +58,7 @@
 ## Architecture Overview
 
 ```
-External APIs (YouTube / Spotify / Steam / TikTok RapidAPI)
+External APIs (YouTube / X RapidAPI)
     │ httpx async
     ▼
 Platform Clients  [tools/trend_clients/]
@@ -85,7 +85,7 @@ The scheduler runs inside the FastAPI process as an asyncio background task, fir
 
 1. **`pyproject.toml`, `requirements.txt`, `.env.example`** — project scaffolding
 2. **`trend_agents/shared/models.py`** — already done; verify TrendItem shape
-3. **`config/trend_sources.json`** — already done; add SA Spotify sources
+3. **`config/trend_sources.json`** — already done; add SA X sources
 4. **`trend_agents/shared/source_registry.py`** — loads + filters TrendSource from JSON
 5. **`tools/nocodb_trends_client.py`** — already done; keep as-is
 6. **`tools/trend_clients/base.py`** — abstract base class + CacheMixin
@@ -93,16 +93,16 @@ The scheduler runs inside the FastAPI process as an asyncio background task, fir
 8. **`workflows/trends_workflow.py`** — fetch → normalize → hash → dedup → store; end-to-end smoke test possible here
 9. **`app.py` (FastAPI)**  — REST API with pagination + response cache; mobile dev can start against YouTube data
 10. **`workflows/trends_scheduler.py`** — asyncio loop with per-source backoff + disable logic
-11. **`tools/trend_clients/spotify_client.py`** — asyncio.Lock on token refresh from first implementation
-12. **`tools/trend_clients/steam_client.py`** — scrape robustness, SCRAPE_DEGRADED logging, graceful degradation
-13. **`tools/trend_clients/tiktok_client.py`** — build last; treat as optional; circuit-breaker required
+11. **`tools/trend_clients/X_client.py`** — asyncio.Lock on token refresh from first implementation
+12. **`tools/trend_clients/X_client.py`** — scrape robustness, SCRAPE_DEGRADED logging, graceful degradation
+13. **`tools/trend_clients/X_client.py`** — build last; treat as optional; circuit-breaker required
 14. **`tools/trend_clients/__init__.py`** — `get_client(platform)` factory
 15. **Codebase cleanup** — remove all SehaRadar code in a single auditable commit; verify with `python -c "import app"`
 16. **`main.py`** — CLI entry point (run server or one-shot scan)
 17. **`Dockerfile` + `docker-compose.yml`** — two services; internal NocoDB URL
 18. **`.env` validation at startup** — pydantic-settings; fail fast on missing keys
 19. **Structured logging** — replace `print()` with `logging` module throughout
-20. **Tests** — `test_youtube_client`, `test_spotify_client`, `test_steam_client`, `test_trends_workflow`
+20. **Tests** — `test_youtube_client`, `test_X_client`, `test_X_client`, `test_trends_workflow`
 21. **Expo project init** — navigation setup, NativeWind config, depends on step 9
 22. **`src/api/` layer** — typed axios instance, `getTrends()`, `getTrend()`, `getStats()`
 23. **`FeedScreen` + `FilterBar` + `TrendCard`** — FlashList + expo-image from the start
@@ -115,11 +115,11 @@ The scheduler runs inside the FastAPI process as an asyncio background task, fir
 
 1. **YouTube quota exhaustion (10,000 units/day)** — Never schedule `fetch_rising` (100 units/call); handle `quotaExceeded 403` with same-day backoff and `last_fetch_status = quota_exceeded`; request quota increase before launch.
 
-2. **TikTok scraper breakage** — Treat TikTok as a degradable source with a circuit-breaker (disable after 3 consecutive failures); validate response schema on every call; set 60-min polling interval; app must function fully without TikTok.
+2. **X scraper breakage** — Treat X as a degradable source with a circuit-breaker (disable after 3 consecutive failures); validate response schema on every call; set 60-min polling interval; app must function fully without X.
 
-3. **Spotify token refresh race condition** — Use `asyncio.Lock` in `spotify_client.py` for all token refresh operations; refresh proactively at `expires_at - 5min`, not reactively on 401; retry once after refresh before marking source errored.
+3. **X token refresh race condition** — Use `asyncio.Lock` in `X_client.py` for all token refresh operations; refresh proactively at `expires_at - 5min`, not reactively on 401; retry once after refresh before marking source errored.
 
-4. **Steam HTML scraping fragility** — Assert scrape result count (< 5 items = `SCRAPE_DEGRADED` warning); pin CSS selectors as named constants; add browser-like `User-Agent` + random delay; accept periodic breakage and degrade gracefully.
+4. **X HTML scraping fragility** — Assert scrape result count (< 5 items = `SCRAPE_DEGRADED` warning); pin CSS selectors as named constants; add browser-like `User-Agent` + random delay; accept periodic breakage and degrade gracefully.
 
 5. **Silent scheduler failures** — Wrap every `scan_source` task in try/except; always write `last_fetch_status` on failure; implement exponential backoff + auto-disable after N consecutive failures; never allow one source to affect others.
 
@@ -139,8 +139,8 @@ These are settled. The roadmapper should treat them as fixed constraints, not op
 | HTTP client (backend) | **httpx.** Already in codebase; async-first; consistent with NocoDB client |
 | HTTP client (RN app) | **axios with configured instance.** Base URL set once; cleaner error handling than raw fetch |
 | UI library | **NativeWind v4.** Feed + cards + filter chips = utility-class territory; avoids fighting component library defaults |
-| TikTok strategy (v1) | **RapidAPI tikapi + circuit-breaker, 60-min interval.** Unofficial path with controlled failure mode |
-| TikTok strategy (v2) | **Re-evaluate** `TikTokApi` (Playwright) after v1 validation |
+| X strategy (v1) | **RapidAPI tikapi + circuit-breaker, 60-min interval.** Unofficial path with controlled failure mode |
+| X strategy (v2) | **Re-evaluate** `XApi` (Playwright) after v1 validation |
 | Dedup hash inputs | **`platform + title.strip().lower() + published_date (YYYY-MM-DD normalized) + region_code`** — normalize before hashing, not inside clients |
 | `fetch_rising` scheduling | **Never scheduled.** 100 units/call exhausts quota. Manual/on-demand only |
 | `DELETE /api/trends` | **Not built.** Immutable append-only history; no deletion endpoint |

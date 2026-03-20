@@ -11,8 +11,8 @@
 | `pydantic` | `>=2.7` | V2 is the default now; significantly faster validation than V1. `pydantic-settings` for env loading | High |
 | `pydantic-settings` | `>=2.3` | Native `.env` loading, type coercion, no separate `python-dotenv` needed at runtime | High |
 | `httpx` | `>=0.27` | Already in use (`nocodb_trends_client.py`). Async-first, clean API, supports `follow_redirects`. Better than `aiohttp` for this use case | High |
-| `beautifulsoup4` | `>=4.12` | Already spec'd for Steam HTML scraping. Pair with `lxml` parser (faster than `html.parser`) | High |
-| `lxml` | `>=5.2` | Already in requirements. BS4 parser backend for Steam scraping | High |
+| `beautifulsoup4` | `>=4.12` | Already spec'd for X HTML scraping. Pair with `lxml` parser (faster than `html.parser`) | High |
+| `lxml` | `>=5.2` | Already in requirements. BS4 parser backend for X scraping | High |
 
 ### Scheduler: `asyncio` loop vs APScheduler
 
@@ -24,34 +24,34 @@ APScheduler v4 (async-native) is viable but adds complexity with minimal benefit
 
 **Verdict**: Keep the existing asyncio loop design. Add APScheduler only if scheduler complexity grows (e.g., cron-style windows, retry backoff). **Confidence: High**
 
-### TikTok Data Sourcing
+### X Data Sourcing
 
 This is the highest-risk dependency in the stack.
 
-#### Option A: RapidAPI TikTok Scrapers (2025 status)
+#### Option A: RapidAPI X Scrapers (2025 status)
 
 Several scrapers exist on RapidAPI marketplace:
 
 | Scraper | Notes | Reliability | Cost |
 |---|---|---|---|
-| **TikTok Data** (by `tikapi`) | Most actively maintained as of early 2025. Returns trending feed, user videos, hashtag videos. JSON responses. | Medium — TikTok periodically breaks unofficial access | Free tier: 100 req/month. Paid: ~$10-30/month for reasonable limits |
+| **X Data** (by `tikapi`) | Most actively maintained as of early 2025. Returns trending feed, user videos, hashtag videos. JSON responses. | Medium — X periodically breaks unofficial access | Free tier: 100 req/month. Paid: ~$10-30/month for reasonable limits |
 | **Scraptik** | Trending + hashtag endpoints. Less maintained | Low-Medium | ~$5-20/month |
-| **TikTok Scraper API** (various) | Generic category, inconsistent maintenance | Low | Varies |
+| **X Scraper API** (various) | Generic category, inconsistent maintenance | Low | Varies |
 
-**Reality check**: Every RapidAPI TikTok scraper is an unofficial web scraper proxied through RapidAPI. They break when TikTok changes its internal API. Expect 1-3 outages per quarter. None return a clean "global trending" endpoint — most return "for you page" proxies or hashtag-based queries.
+**Reality check**: Every RapidAPI X scraper is an unofficial web scraper proxied through RapidAPI. They break when X changes its internal API. Expect 1-3 outages per quarter. None return a clean "global trending" endpoint — most return "for you page" proxies or hashtag-based queries.
 
-#### Option B: `pyktok` / `TikTokApi` Python libraries
+#### Option B: `pyktok` / `XApi` Python libraries
 
-- **`TikTokApi`** (davidteather): Most starred Python library (~4k stars). Uses Playwright to drive a browser to bypass TikTok's anti-bot. Requires a real browser context (adds ~300MB to Docker image). Fragile — requires updating `ms_token` cookies periodically.
+- **`XApi`** (davidteather): Most starred Python library (~4k stars). Uses Playwright to drive a browser to bypass X's anti-bot. Requires a real browser context (adds ~300MB to Docker image). Fragile — requires updating `ms_token` cookies periodically.
 - **`pyktok`**: Simpler, uses requests. Returns video metadata but requires valid session tokens. Less reliable for "trending" specifically.
 
-#### Option C: Defer TikTok to v2
+#### Option C: Defer X to v2
 
-The spec already acknowledges TikTok as a caveat. YouTube + Spotify + Steam are fully functional via official APIs. TikTok via any unofficial path introduces operational overhead disproportionate to v1 scope.
+The spec already acknowledges X as a caveat. YouTube + X are fully functional via official APIs. X via any unofficial path introduces operational overhead disproportionate to v1 scope.
 
-**Recommendation for v1**: Use **RapidAPI TikTok Data (tikapi)** with a circuit-breaker pattern — if the scraper fails, log the error, mark the source as `last_fetch_status: error`, and continue. Do NOT let TikTok failures block other sources. Budget ~$10-15/month. **Confidence: Medium** (medium because TikTok scraper reliability is inherently uncertain)
+**Recommendation for v1**: Use **RapidAPI X Data (tikapi)** with a circuit-breaker pattern — if the scraper fails, log the error, mark the source as `last_fetch_status: error`, and continue. Do NOT let X failures block other sources. Budget ~$10-15/month. **Confidence: Medium** (medium because X scraper reliability is inherently uncertain)
 
-**For the `trend_sources.json`**: Set TikTok `check_interval_minutes: 60` (not 15) to conserve API credits and reduce breakage exposure.
+**For the `trend_sources.json`**: Set X `check_interval_minutes: 60` (not 15) to conserve API credits and reduce breakage exposure.
 
 ---
 
@@ -190,9 +190,9 @@ services:
 | Pydantic | V2 (`>=2.7`) | High |
 | HTTP client (backend) | `httpx>=0.27` | High |
 | Scheduler | Custom asyncio loop (existing design) | High |
-| Steam scraping | `beautifulsoup4` + `lxml` | High |
-| TikTok (v1) | RapidAPI tikapi + circuit-breaker | Medium |
-| TikTok (v2) | Evaluate `TikTokApi` (Playwright) | Low |
+| X scraping | `beautifulsoup4` + `lxml` | High |
+| X (v1) | RapidAPI tikapi + circuit-breaker | Medium |
+| X (v2) | Evaluate `XApi` (Playwright) | Low |
 | Expo vs bare RN | Expo managed workflow | High |
 | Navigation | React Navigation v7 native stack | High |
 | HTTP client (RN) | `axios` with configured instance | High |

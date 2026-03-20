@@ -2,7 +2,7 @@
 
 ## What This Is
 
-Trenfy is a trend-catching platform that monitors YouTube, Spotify, Steam, and TikTok for what's trending in gaming, music, and entertainment. A Python FastAPI backend polls platform APIs on a schedule, normalizes and deduplicates the data, and stores it in NocoDB. A React Native mobile app lets users browse and discover trends filtered by platform or category, and tap through to the original content on its platform.
+Trenfy is a trend-catching platform that monitors YouTube and X for what's trending in gaming, music, and entertainment. A Python FastAPI backend polls platform APIs on a schedule, normalizes and deduplicates the data, and stores it in NocoDB. A React Native mobile app lets users browse and discover trends filtered by platform or category, and tap through to the original content on its platform.
 
 ## Core Value
 
@@ -14,22 +14,23 @@ Users can open the app and immediately see what's trending right now across gami
 
 *(Validated in Phase 2: data-foundation)*
 - [x] NocoDB schema created — `trends` and `trend_sources` tables live in base `ps82pgir3bbih55`
-- [x] Source registry loads all 8 configured sources from `config/trend_sources.json`
+- [x] Source registry loads all configured sources from `config/trend_sources.json`
 - [x] Per-source async scheduler with failure isolation (`asyncio.create_task` per source)
 - [x] FastAPI app starts scheduler + syncs sources on startup via lifespan hook
 - [x] `/health` reports real scheduler state
 
 ### Active
 
-- [ ] Backend polls YouTube, Spotify, Steam, and TikTok for trending content
+- [ ] Backend polls YouTube and X for trending content
 - [ ] Trends are normalized, deduplicated, and stored in NocoDB
 - [ ] FastAPI server exposes REST endpoints to query trends
 - [ ] React Native app displays a browsable, filterable trend feed
-- [ ] Users can filter trends by platform (YouTube / Spotify / Steam / TikTok) and category (gaming / music / entertainment)
+- [ ] Users can filter trends by platform (YouTube / X) and category (gaming / music / entertainment)
 - [ ] Tapping a trend opens it on its native platform
 - [ ] Regions covered: Global (US baseline) + Saudi Arabia focus
 - [ ] No user authentication required — fully public app
 - [ ] Deployed via Docker Compose (no reverse proxy in v1)
+- [ ] Platform scope for v1 remains YouTube + X only; additional platforms are deferred to later milestones
 
 ### Out of Scope
 
@@ -47,14 +48,14 @@ Users can open the app and immediately see what's trending right now across gami
 - **Existing codebase**: Repo is currently SehaRadar (health surveillance). All SehaRadar code must be removed. A `Trenfy.md` spec document already exists with backend architecture, NocoDB schema, platform client designs, and an implementation order — this is the primary design reference.
 - **Partially built**: `trend_agents/shared/models.py` (data models) and `tools/nocodb_trends_client.py` (NocoDB CRUD) are already implemented and should be kept.
 - **Infrastructure**: NocoDB is already running (self-hosted Docker). The `trends` and `trend_sources` NocoDB tables need to be created per the schema in `Trenfy.md`.
-- **TikTok caveat**: No official public API. Approach is RapidAPI TikTok scraper or unofficial web scraping — needs investigation during research phase.
-- **Regions**: YouTube sources already configured for US, SA, JP in `Trenfy.md`. Extend Spotify/Steam similarly where API supports it.
+- **X caveat**: API availability and rate limits vary by account tier; scheduler behavior must remain quota-aware and degrade gracefully.
+- **Regions**: YouTube sources already configured for US, SA, JP in `Trenfy.md`. Extend X similarly where API supports it.
 - **React Native app**: New addition not in existing spec. Needs Expo or bare RN decision, navigation library, API integration layer.
 
 ## Constraints
 
 - **Tech stack**: Python FastAPI backend (already spec'd), React Native mobile app, NocoDB database — no deviations
-- **TikTok API**: No official API; must use RapidAPI or scraping — affects reliability and rate limits
+- **X API**: Access limits vary by account tier and endpoint availability — affects polling strategy and retry behavior
 - **YouTube quota**: 10,000 units/day; trending calls cost ~2 units — schedule conservatively (every 15 min = ~96 units/day per region, comfortably within limits)
 - **No auth**: App is public; no user table, no sessions, no tokens in v1
 - **Docker only**: No Caddy; backend exposed directly on port (or internal Docker network)
@@ -65,7 +66,7 @@ Users can open the app and immediately see what's trending right now across gami
 |----------|-----------|---------|
 | Remove all SehaRadar code | Clean slate — dual-system coexistence causes confusion and bloat | — Pending |
 | NocoDB as database | Already self-hosted and running; existing client code reusable | ✓ Validated Phase 2 |
-| TikTok via RapidAPI/scraping | No official public API available | — Pending |
+| X via official API (tier-aware) | Keep v1 stable with explicit rate-limit handling and graceful degradation | — Pending |
 | No auth in v1 | Simplifies architecture; trends are public data | — Pending |
 | Docker only (no Caddy) | Reduce infra complexity for v1 | — Pending |
 | React Native for mobile | User specified; cross-platform (iOS + Android) | — Pending |
@@ -74,9 +75,8 @@ Users can open the app and immediately see what's trending right now across gami
 
 ## Current State
 
-Phase 2 complete (2026-03-19) — Data foundation in place. Scheduler runs, NocoDB schema live,
-source registry working. Phase 3 (Platform Clients) is next: YouTube, Spotify, Steam clients
-with real API calls replacing the Phase 2 stubs.
+Phase 4 complete (2026-03-19) — API contracts and infra hardening are in place.
+Phase 5 (React Native App) is next, with platform scope locked to YouTube + X for v1.
 
 ---
-*Last updated: 2026-03-19 after Phase 2 completion*
+*Last updated: 2026-03-20 after platform-scope update*

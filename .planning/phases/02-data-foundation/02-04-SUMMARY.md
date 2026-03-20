@@ -95,7 +95,7 @@ None - no external service configuration required.
 
 ## Next Phase Readiness
 - Phase 2 end-to-end pipeline complete: source_registry → TrendsWorkflow (stub) → TrendsScheduler → app.py lifespan
-- Phase 3 (Platform Clients) can now replace `TrendsWorkflow.scan_source()` stub with real YouTube/Spotify/Steam fetch logic — scheduler will automatically use it
+- Phase 3 (Platform Clients) can now replace `TrendsWorkflow.scan_source()` stub with real YouTube / X fetch logic — scheduler will automatically use it
 - All 8 sources are confirmed enabled and will be picked up on first scheduler tick
 
 ---

@@ -20,7 +20,7 @@ created: 2026-03-19
 | **Framework** | standalone Python test scripts |
 | **Config file** | none — existing project convention |
 | **Quick run command** | `python tests/test_trend_client_contracts.py` |
-| **Full suite command** | `python tests/test_trend_client_contracts.py && python tests/test_youtube_client.py && python tests/test_spotify_client.py && python tests/test_steam_client.py && python tests/test_tiktok_client.py && python tests/test_trends_workflow.py` |
+| **Full suite command** | `python tests/test_trend_client_contracts.py && python tests/test_youtube_client.py && python tests/test_X_client.py && python tests/test_X_client.py && python tests/test_X_client.py && python tests/test_trends_workflow.py` |
 | **Estimated runtime** | ~45 seconds |
 
 ---
@@ -40,9 +40,9 @@ created: 2026-03-19
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
 | 03-01-01 | 01 | 1 | PLAT-07 | unit | `python tests/test_trend_client_contracts.py` | ❌ W0 | ⬜ pending |
 | 03-02-01 | 02 | 2 | PLAT-01, PLAT-02 | unit | `python tests/test_youtube_client.py` | ❌ W0 | ⬜ pending |
-| 03-02-02 | 02 | 2 | PLAT-07 | unit | `python tests/test_spotify_client.py` | ❌ W0 | ⬜ pending |
-| 03-03-01 | 03 | 2 | PLAT-03, PLAT-05 | unit | `python tests/test_steam_client.py` | ❌ W0 | ⬜ pending |
-| 03-03-02 | 03 | 2 | PLAT-04, PLAT-06 | unit | `python tests/test_tiktok_client.py` | ❌ W0 | ⬜ pending |
+| 03-02-02 | 02 | 2 | PLAT-07 | unit | `python tests/test_X_client.py` | ❌ W0 | ⬜ pending |
+| 03-03-01 | 03 | 2 | PLAT-03, PLAT-05 | unit | `python tests/test_X_client.py` | ❌ W0 | ⬜ pending |
+| 03-03-02 | 03 | 2 | PLAT-04, PLAT-06 | unit | `python tests/test_X_client.py` | ❌ W0 | ⬜ pending |
 | 03-04-01 | 04 | 3 | PLAT-08 | integration | `python tests/test_trends_workflow.py` | ❌ W0 | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠ flaky*
@@ -53,9 +53,9 @@ created: 2026-03-19
 
 - [ ] `tests/test_trend_client_contracts.py` — contract + hash behavior tests
 - [ ] `tests/test_youtube_client.py` — YouTube normalization and category mapping
-- [ ] `tests/test_spotify_client.py` — OAuth token refresh and endpoint parsing
-- [ ] `tests/test_steam_client.py` — Steam source normalization
-- [ ] `tests/test_tiktok_client.py` — retry and circuit-breaker behavior
+- [ ] `tests/test_X_client.py` — OAuth token refresh and endpoint parsing
+- [ ] `tests/test_X_client.py` — X source normalization
+- [ ] `tests/test_X_client.py` — retry and circuit-breaker behavior
 - [ ] `tests/test_trends_workflow.py` — dedup, partial success, and status updates
 
 ---

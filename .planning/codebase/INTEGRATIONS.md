@@ -82,41 +82,41 @@ OPENROUTER_HTTP_REFERER=  (optional)
 
 ---
 
-## Spotify Web API
+## X Web API
 
 - **Role**: Fetch new releases, featured playlists for Trenfy
 - **Auth**: OAuth2 Client Credentials Flow (auto-refresh when <5 min remaining)
-- **Client**: `tools/trend_clients/spotify_client.py` (**not yet implemented**)
+- **Client**: `tools/trend_clients/X_client.py` (**not yet implemented**)
 
 **Methods planned**:
 - `fetch_new_releases()` — `GET /browse/new-releases`
 - `fetch_featured_playlists()` — `GET /browse/featured-playlists`
 - `fetch_audio_features(ids)` — batch up to 100 IDs
 
-**Env vars**: `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`
+**Env vars**: `X_CLIENT_ID`, `X_CLIENT_SECRET`
 
 ---
 
-## Steam Web API + Store Scraping
+## X Web API + Store Scraping
 
 - **Role**: Fetch top sellers, new releases for Trenfy
 - **Auth**: Public key + optional Publisher key for player counts
-- **Client**: `tools/trend_clients/steam_client.py` (**not yet implemented**)
-- **Note**: Top sellers require scraping (`store.steampowered.com`) — no official API
+- **Client**: `tools/trend_clients/X_client.py` (**not yet implemented**)
+- **Note**: Top sellers require scraping (`store.Xpowered.com`) — no official API
 
 **Methods planned**:
 - `fetch_top_sellers()` — scrape store with TRENDING_DESC sort
 - `fetch_new_releases()` — scrape store with Release_Desc sort
 - `fetch_app_details(ids)` — `GET /api/appdetails?appids=...`
-- `fetch_player_count(app_id)` — `ISteamUserStats/GetNumberOfCurrentPlayers`
+- `fetch_player_count(app_id)` — `IXUserStats/GetNumberOfCurrentPlayers`
 
-**Env vars**: `STEAM_API_KEY`, `STEAM_PUBLISHER_KEY`
+**Env vars**: `X_API_KEY`, `X_PUBLISHER_KEY`
 
 ---
 
 ## Playwright / Puppeteer (Browser Automation)
 
-- **Role**: Scraping sites with JavaScript rendering (ProMED, Steam)
+- **Role**: Scraping sites with JavaScript rendering (ProMED, X)
 - **Setup**: Chromium installed in Docker via `npx playwright install --with-deps chromium`
 - **Stealth**: `puppeteer-extra-plugin-stealth` to avoid bot detection
 - **Used in**: `bridge-service.js`, `promed.js`

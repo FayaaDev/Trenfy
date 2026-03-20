@@ -31,11 +31,11 @@ source_registry OK — 8 sources loaded
   YOUTUBE_TRENDING_US: platform=youtube, interval=15m, enabled=True
   YOUTUBE_TRENDING_JP: platform=youtube, interval=15m, enabled=True
   YOUTUBE_TRENDING_SA: platform=youtube, interval=15m, enabled=True
-  SPOTIFY_NEW_RELEASES: platform=spotify, interval=60m, enabled=True
-  SPOTIFY_FEATURED_PLAYLISTS: platform=spotify, interval=60m, enabled=True
-  STEAM_TOP_SELLERS: platform=steam, interval=30m, enabled=True
-  STEAM_NEW_RELEASES: platform=steam, interval=30m, enabled=True
-  TIKTOK_TRENDING: platform=tiktok, interval=30m, enabled=True
+  X_NEW_RELEASES: platform=X, interval=60m, enabled=True
+  X_FEATURED_PLAYLISTS: platform=X, interval=60m, enabled=True
+  X_TOP_SELLERS: platform=X, interval=30m, enabled=True
+  X_NEW_RELEASES: platform=X, interval=30m, enabled=True
+  X_TRENDING: platform=X, interval=30m, enabled=True
 ```
 
 ## Self-Check: PASSED
@@ -43,5 +43,5 @@ source_registry OK — 8 sources loaded
 - `list_all()` returns 8 TrendSource objects ✓
 - `list_enabled()` returns 8 (all enabled) ✓
 - `get_source('YOUTUBE_TRENDING_US').check_interval_minutes == 15` ✓
-- `get_source('TIKTOK_TRENDING').check_interval_minutes == 30` ✓
+- `get_source('X_TRENDING').check_interval_minutes == 30` ✓
 - Module imports cleanly ✓

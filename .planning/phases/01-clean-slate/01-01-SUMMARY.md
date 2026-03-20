@@ -8,10 +8,10 @@ tags: [cleanup, trenfy, seharadar, git, tools, config]
 requires: []
 provides:
   - tools/nocodb_trends_client.py (Trenfy NocoDB client)
-  - tools/html_extraction.py (HTML scraping utilities for Steam client)
+  - tools/html_extraction.py (HTML scraping utilities for X client)
   - tools/openai_client.py (OpenRouter client for future LLM use)
   - trend_agents/shared/models.py (TrendItem, SourceType data models)
-  - config/trend_sources.json (source registry: YouTube x3, Spotify x2, Steam x2, TikTok x1)
+  - config/trend_sources.json (source registry: YouTube x3, X x2, X x2, X x1)
 affects: [all future phases depend on clean codebase]
 
 # Tech tracking
@@ -70,7 +70,7 @@ completed: 2026-03-19
 - Confirmed no SehaRadar files exist — repo was already Trenfy-only
 - Committed all Trenfy-relevant files to git tracking (13 files)
 - Verified all Task 1 and Task 2 acceptance criteria pass
-- config/trend_sources.json contains 8 platform sources (YouTube US/JP/SA, Spotify new-releases/playlists, Steam top-sellers/new, TikTok)
+- config/trend_sources.json contains 8 platform sources (YouTube US/JP/SA, X new-releases/playlists, X top-sellers/new, X)
 
 ## Task Commits
 
@@ -82,11 +82,11 @@ Each task was committed atomically:
 
 ## Files Created/Modified
 - `tools/nocodb_trends_client.py` - Trenfy NocoDB CRUD client (NocoDBTrendsClient)
-- `tools/html_extraction.py` - HTML scraping utilities needed for Steam client
+- `tools/html_extraction.py` - HTML scraping utilities needed for X client
 - `tools/openai_client.py` - OpenRouter lazy singleton client for future LLM use
 - `tools/__init__.py` - Trenfy tools package init
 - `trend_agents/shared/models.py` - TrendItem, SourceType, platform metadata models
-- `config/trend_sources.json` - 8 source definitions for YouTube, Spotify, Steam, TikTok
+- `config/trend_sources.json` - 8 source definitions for YouTube and X
 - `.env.example` - Environment variable documentation
 - `.gitignore` - Standard Python/Node gitignore
 - `AGENTS.md` - Agent workflow instructions

@@ -7,6 +7,8 @@
 
 ## v1 Requirements
 
+**Platform scope note:** v1 is intentionally limited to YouTube + X. Additional platforms are deferred to later milestones.
+
 ### Cleanup
 
 - [x] **CLEN-01**: All SehaRadar files are removed — health_agents/, workflows/unified_scan_workflow.py, workflows/syncdetection_worker.py, workflows/email_digest_workflow.py, server.py, bridge-service.js, main.py (old), promed.js, promednew.js, parsers/, config/sources.json, emptySDKagnet.py, test-*.js root files
@@ -49,7 +51,7 @@
 
 - [ ] **APP-01**: Expo (managed workflow) project scaffolded with React Navigation (stack + tab), NativeWind v4, FlashList, Zustand
 - [ ] **APP-02**: Main feed screen shows a scrollable FlashList of trend cards sorted by fetched_at descending, with infinite scroll (load more on scroll end)
-- [ ] **APP-03**: Trend card displays: thumbnail image (expo-image), title, platform icon, contextual metric label ("4.2M views" / "89 popularity" / "12.4K players"), time since fetched_at ("4 min ago")
+- [ ] **APP-03**: Trend card displays: thumbnail image (expo-image), title, platform icon, contextual metric label ("4.2M views" / "12.4K likes" / "3.1K reposts"), time since fetched_at ("4 min ago")
 - [ ] **APP-04**: Platform filter tabs (YouTube / X / All) at the top of the feed — tapping filters the list without re-fetching
 - [ ] **APP-05**: Category filter (Gaming / Music / Entertainment / All) — secondary filter below platform tabs
 - [ ] **APP-06**: Region selector (US / SA) — accessible from feed screen, persisted in AsyncStorage across app restarts

@@ -150,8 +150,8 @@ Per `Trenfy.md`, planned test files:
 ```
 tests/
 ├── test_youtube_client.py      (not yet created)
-├── test_spotify_client.py      (not yet created)
-├── test_steam_client.py        (not yet created)
+├── test_X_client.py      (not yet created)
+├── test_X_client.py        (not yet created)
 └── test_trends_workflow.py     (not yet created)
 ```
 

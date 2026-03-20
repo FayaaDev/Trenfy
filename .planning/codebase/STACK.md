@@ -69,7 +69,7 @@
 | `docker-compose.mac.yml` | macOS development variant |
 | `Dockerfile` | Python 3.11-slim + Node.js + Playwright Chromium |
 | `config/sources.json` | SehaRadar source configuration |
-| `config/trend_sources.json` | Trenfy platform sources (YouTube/Spotify/Steam) |
+| `config/trend_sources.json` | Trenfy platform sources (YouTube / X) |
 | `config/diseases.json` | Known disease library with aliases |
 | `config/agency_configs.json` | Health agency configurations |
 

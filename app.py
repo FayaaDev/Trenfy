@@ -20,6 +20,13 @@ def _env_configured(key: str) -> bool:
     return bool(str(os.getenv(key, "")).strip())
 
 
+def _env_enabled(key: str, default: bool = True) -> bool:
+    raw = str(os.getenv(key, "")).strip().lower()
+    if not raw:
+        return default
+    return raw in {"1", "true", "yes", "on"}
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """FastAPI lifespan — startup and shutdown logic."""
@@ -36,17 +43,21 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.warning("[App] Source sync failed (non-fatal): %s", e)
 
-    # 2. Start scheduler
-    await scheduler.start()
-    logger.info("[App] Scheduler started: is_running=%s", scheduler.is_running)
+    # 2. Start scheduler (optional for local/dev)
+    if _env_enabled("TRENDS_ENABLED", default=True):
+        await scheduler.start()
+        logger.info("[App] Scheduler started: is_running=%s", scheduler.is_running)
+    else:
+        logger.info("[App] Scheduler disabled via TRENDS_ENABLED")
 
     yield
 
     # --- Shutdown ---
     from workflows.trends_scheduler import scheduler as _scheduler
 
-    await _scheduler.stop()
-    logger.info("[App] Scheduler stopped")
+    if _scheduler.is_running:
+        await _scheduler.stop()
+        logger.info("[App] Scheduler stopped")
 
 
 app = FastAPI(

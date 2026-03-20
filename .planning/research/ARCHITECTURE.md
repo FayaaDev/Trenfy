@@ -4,8 +4,8 @@
 
 ### Platform Pollers (`tools/trend_clients/`)
 **Owns:**
-- All HTTP communication with external platform APIs (YouTube Data API v3, Spotify Web API, Steam Store API/scraper, TikTok via RapidAPI)
-- Platform-specific auth (YouTube API key, Spotify OAuth2 token lifecycle, Steam key, RapidAPI header)
+- All HTTP communication with external platform APIs (YouTube Data API v3, X Web API, X Store API/scraper, X via RapidAPI)
+- Platform-specific auth (YouTube API key, X OAuth2 token lifecycle, X key, RapidAPI header)
 - Response parsing: raw API JSON → `TrendItem` list
 - Per-client caching (TTL-based, in-memory)
 - Retry logic for transient failures
@@ -83,7 +83,7 @@
 **Owns:**
 - All UI: trend feed, filters, detail view
 - Local state management (filter selections, pagination cursor)
-- Deep linking to native platform apps (YouTube, Spotify, Steam)
+- Deep linking to native platform apps (YouTube and X)
 - Image caching for thumbnails
 
 **Does NOT own:**
@@ -98,14 +98,14 @@
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  External Platform APIs                                       │
-│  YouTube Data API v3 │ Spotify Web API │ Steam Store / HTML  │
-│  TikTok (RapidAPI)                                           │
+│  YouTube Data API v3 │ X Web API │ X Store / HTML  │
+│  X (RapidAPI)                                           │
 └───────────────┬─────────────────────────────────────────────┘
                 │  HTTP (async httpx)
                 ▼
 ┌─────────────────────────────────────────────────────────────┐
 │  Platform Clients  (tools/trend_clients/)                    │
-│  youtube_client │ spotify_client │ steam_client │ tiktok_client│
+│  youtube_client │ X_client │ X_client │ X_client│
 │  • Auth / token refresh                                      │
 │  • Raw API response → TrendItem list                        │
 │  • Per-client cache (TTL)                                    │
@@ -192,9 +192,9 @@ Phase 4 — Scheduler (automated polling)
        ↳ polling is now fully autonomous
 
 Phase 5 — Remaining platform clients
-  [11] tools/trend_clients/spotify_client.py (depends on [6])
-  [12] tools/trend_clients/steam_client.py   (depends on [6])
-  [13] tools/trend_clients/tiktok_client.py  (depends on [6], highest risk)
+  [11] tools/trend_clients/X_client.py (depends on [6])
+  [12] tools/trend_clients/X_client.py   (depends on [6])
+  [13] tools/trend_clients/X_client.py  (depends on [6], highest risk)
   [14] tools/trend_clients/__init__.py        (client factory, depends on [11][12][13])
 
 Phase 6 — Cleanup + hardening
@@ -206,8 +206,8 @@ Phase 6 — Cleanup + hardening
 
 Phase 7 — Tests
   [20] test_youtube_client.py
-  [21] test_spotify_client.py
-  [22] test_steam_client.py
+  [21] test_X_client.py
+  [22] test_X_client.py
   [23] test_trends_workflow.py
 
 Phase 8 — React Native app
@@ -248,9 +248,9 @@ trenfy/
 │       ├── __init__.py           # get_client(platform) factory
 │       ├── base.py               # BaseTrendClient + CacheMixin
 │       ├── youtube_client.py
-│       ├── spotify_client.py
-│       ├── steam_client.py
-│       └── tiktok_client.py
+│       ├── X_client.py
+│       ├── X_client.py
+│       └── X_client.py
 │
 ├── workflows/
 │   ├── trends_workflow.py        # fetch → normalize → hash → dedup → store
@@ -262,9 +262,9 @@ trenfy/
 └── tests/
     ├── conftest.py               # pytest fixtures (mock NocoDB, mock clients)
     ├── test_youtube_client.py
-    ├── test_spotify_client.py
-    ├── test_steam_client.py
-    ├── test_tiktok_client.py
+    ├── test_X_client.py
+    ├── test_X_client.py
+    ├── test_X_client.py
     └── test_trends_workflow.py
 ```
 
@@ -293,7 +293,7 @@ trenfy-app/
 │   │   ├── TrendCard.tsx         # Single trend item (thumbnail, title, metric)
 │   │   ├── TrendList.tsx         # FlashList wrapper with pagination
 │   │   ├── FilterBar.tsx         # Platform + category filter chips
-│   │   └── PlatformBadge.tsx     # Colored badge: YouTube / Spotify / Steam
+│   │   └── PlatformBadge.tsx     # Colored badge: YouTube / X
 │   │
 │   ├── screens/
 │   │   ├── FeedScreen.tsx        # Main trend feed, filter state
@@ -312,7 +312,7 @@ trenfy-app/
 │       └── formatters.ts         # Format metric values (1.2M views, etc.)
 │
 └── assets/
-    └── platform-icons/           # YouTube, Spotify, Steam, TikTok icons
+    └── platform-icons/           # YouTube and X icons
 ```
 
 **Expo vs bare RN:** Use Expo (managed workflow). Rationale: no native modules required (no camera, no BLE, etc.), `expo-image` handles thumbnail caching, EAS Build handles iOS/Android distribution. Ejecting to bare is always possible later if needed.
