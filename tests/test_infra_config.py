@@ -62,6 +62,7 @@ def test_env_contract_keys() -> None:
         "SERVER_PORT=",
         "LOG_LEVEL=",
         "TRENDS_ENABLED=",
+        "CORS_ORIGINS=",
     ]
     for key in required_keys:
         _assert_contains(env_example, key, ".env key")

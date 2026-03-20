@@ -27,6 +27,22 @@ def _env_enabled(key: str, default: bool = True) -> bool:
     return raw in {"1", "true", "yes", "on"}
 
 
+def _cors_origins() -> list:
+    """Build the CORS allowlist from CORS_ORIGINS env var plus localhost dev origin.
+
+    Always includes http://localhost:5173. CORS_ORIGINS is treated as a
+    comma-separated explicit allowlist for deployed origins.
+    """
+    localhost = "http://localhost:5173"
+    raw = os.getenv("CORS_ORIGINS", "")
+    extra = [o.strip() for o in raw.split(",") if o.strip()]
+    seen: list = []
+    for origin in [localhost] + extra:
+        if origin not in seen:
+            seen.append(origin)
+    return seen
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """FastAPI lifespan — startup and shutdown logic."""
@@ -67,12 +83,12 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS — allow React Native app requests
+# CORS — explicit allowlist for browser admin mutations
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_cors_origins(),
     allow_credentials=False,
-    allow_methods=["GET", "POST"],
+    allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
