@@ -94,6 +94,8 @@ async def test_scan_source_dispatches_dedups_and_stores_new_rows() -> None:
         "stored": 1,
         "duplicates": 1,
         "invalid": 0,
+        "below_threshold": 0,
+        "blocked": 0,
         "status": "success",
     }
     assert len(trends_client.created_items) == 1

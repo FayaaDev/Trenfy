@@ -25,6 +25,8 @@ class TrendsWorkflow:
             "stored": 0,
             "duplicates": 0,
             "invalid": 0,
+            "below_threshold": 0,
+            "blocked": 0,
             "status": "success",
         }
 
@@ -52,6 +54,31 @@ class TrendsWorkflow:
                 valid_items.append(item)
 
             result["invalid"] = invalid_count
+
+            # Metric threshold filter (FILT-02)
+            if source.min_metric_value > 0:
+                below = [
+                    i for i in valid_items if i.metric_value < source.min_metric_value
+                ]
+                valid_items = [
+                    i for i in valid_items if i.metric_value >= source.min_metric_value
+                ]
+                result["below_threshold"] = len(below)
+
+            # Keyword blocklist filter (FILT-05)
+            if source.blocked_keywords:
+                blocked_lower = [kw.lower() for kw in source.blocked_keywords]
+                blocked = [
+                    i
+                    for i in valid_items
+                    if any(kw in i.title.lower() for kw in blocked_lower)
+                ]
+                valid_items = [
+                    i
+                    for i in valid_items
+                    if not any(kw in i.title.lower() for kw in blocked_lower)
+                ]
+                result["blocked"] = len(blocked)
 
             existing_hashes = await self.trends_client.batch_check_duplicates(
                 [item.content_hash for item in valid_items]
