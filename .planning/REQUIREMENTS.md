@@ -1,0 +1,180 @@
+---
+milestone: v1.1
+status: active
+created: 2026-03-20
+archive_ref: .planning/milestones/v1.0-REQUIREMENTS.md
+phase_evidence_ref: .planning/phases/02-data-foundation/02-VERIFICATION.md
+---
+
+# Active Requirements Baseline — v1.1
+
+This is the **active** requirements traceability file for milestone v1.1 (Verification and Mobile Delivery).
+
+**v1.0 archive:** `.planning/milestones/v1.0-REQUIREMENTS.md`
+**Audit report:** `.planning/milestones/v1.0-MILESTONE-AUDIT.md`
+
+---
+
+## v1.0 Carry-Over: Reconciled Outcomes
+
+The v1.0 milestone was archived with accepted gaps. Requirements are reconciled here with corrected statuses based on code evidence and the Phase 2 verification artifact (`.planning/phases/02-data-foundation/02-VERIFICATION.md`).
+
+**Status definitions:**
+- `validated` — code implemented AND a verification artifact confirms ✓ SATISFIED
+- `satisfied-evidence-pending` — code implemented and phase summaries confirm completion, but milestone-level traceability was not updated before archive (documentation debt, not code debt)
+- `deferred` — not implemented; carried to next milestone
+- `dropped` — removed from scope
+
+### Cleanup (CLEN)
+
+| ID | Description | Status | Evidence |
+|----|-------------|--------|----------|
+| CLEN-01 | Remove legacy SehaRadar files | satisfied-evidence-pending | 01-01-SUMMARY.md confirms removal; no 01-VERIFICATION.md exists |
+| CLEN-02 | Retain reusable tools in Trenfy structure | satisfied-evidence-pending | 01-01-SUMMARY.md confirms tools/ retained; no 01-VERIFICATION.md |
+| CLEN-03 | Rename and clean project package metadata | satisfied-evidence-pending | 01-01-SUMMARY.md confirms rename; no 01-VERIFICATION.md |
+| CLEN-04 | Replace compose stack with Trenfy-only services | satisfied-evidence-pending | 01-02-SUMMARY.md confirms Trenfy docker-compose.yml; no 01-VERIFICATION.md |
+| CLEN-05 | Update `.env.example` to Trenfy variables | satisfied-evidence-pending | 01-02-SUMMARY.md confirms .env.example updated; no 01-VERIFICATION.md |
+
+### Backend Core (CORE)
+
+| ID | Description | Status | Evidence |
+|----|-------------|--------|----------|
+| CORE-01 | FastAPI app and `/health` endpoint | validated | 02-VERIFICATION.md: "CORE-01 \| 02-04 \| FastAPI app starts with working /health endpoint \| ✓ SATISFIED" |
+| CORE-02 | Source registry loads enabled sources | validated | 02-VERIFICATION.md: "CORE-02 \| 02-02 \| Source registry loads enabled sources from trend_sources.json \| ✓ SATISFIED"; `trend_agents/shared/source_registry.py` confirmed with list_all(), list_enabled(), get_source() |
+| CORE-03 | TrendItem and TrendSource Pydantic models validate correctly | validated | 02-VERIFICATION.md: "CORE-03 \| 02-02 \| TrendItem and TrendSource Pydantic models validate correctly \| ✓ SATISFIED"; `trend_agents/shared/models.py` runtime-verified |
+| CORE-04 | NocoDB trends client supports create/read/dedup | validated | 02-VERIFICATION.md: "CORE-04 \| 02-03 \| NocoDB client creates, reads, deduplicates trend records \| ✓ SATISFIED" |
+| CORE-05 | Per-source async scheduler executes on source intervals | validated | 02-VERIFICATION.md: "CORE-05 \| 02-04 \| Per-source async scheduler runs each source on its configured interval \| ✓ SATISFIED" |
+| CORE-06 | Source failures do not block other source loops | validated | 02-VERIFICATION.md: "CORE-06 \| 02-04 \| Failed source does not block others — each in isolated asyncio task \| ✓ SATISFIED" |
+
+### Platform Clients (PLAT)
+
+| ID | Description | Status | Evidence |
+|----|-------------|--------|----------|
+| PLAT-01 | YouTube trending fetch by configured regions | satisfied-evidence-pending | 03-01-SUMMARY.md/03-02-SUMMARY.md confirm implementation; no 03-VERIFICATION.md |
+| PLAT-02 | YouTube quota-safe scheduling behavior | satisfied-evidence-pending | 03-01-SUMMARY.md confirms maxResults cap; no 03-VERIFICATION.md |
+| PLAT-03 | X trending data fetch via official API path | satisfied-evidence-pending | 03-03-SUMMARY.md confirms /2/tweets/search/recent; no 03-VERIFICATION.md |
+| PLAT-04 | Centralized, safe X auth refresh handling | satisfied-evidence-pending | 03-03-SUMMARY.md confirms asyncio.Lock double-check; no 03-VERIFICATION.md |
+| PLAT-05 | X rate-limit-aware retry and caps | satisfied-evidence-pending | 03-03-SUMMARY.md confirms bounded retry (3 attempts); no 03-VERIFICATION.md |
+| PLAT-06 | Circuit-breaker after repeated X failures | satisfied-evidence-pending | 03-04-SUMMARY.md confirms breaker-open mapping; no 03-VERIFICATION.md |
+| PLAT-07 | Base client interface compliance across platform clients | satisfied-evidence-pending | 03-01-SUMMARY.md/03-03-SUMMARY.md confirm interface; no 03-VERIFICATION.md |
+| PLAT-08 | Deterministic `content_hash` generation for dedup | satisfied-evidence-pending | 03-02-SUMMARY.md confirms generate_trend_hash delegation; no 03-VERIFICATION.md |
+
+### Trends API (API)
+
+| ID | Description | Status | Evidence |
+|----|-------------|--------|----------|
+| API-01 | Paginated `/api/trends` with filters | satisfied-evidence-pending | 04-01-SUMMARY.md confirms endpoint; no 04-VERIFICATION.md |
+| API-02 | `/api/trends/{id}` detail endpoint | satisfied-evidence-pending | 04-01-SUMMARY.md confirms endpoint; no 04-VERIFICATION.md |
+| API-03 | `/api/trends/refresh` endpoint | satisfied-evidence-pending | 04-02-SUMMARY.md confirms endpoint; no 04-VERIFICATION.md |
+| API-04 | `/api/trends/stats` aggregate endpoint | satisfied-evidence-pending | 04-02-SUMMARY.md confirms endpoint; no 04-VERIFICATION.md |
+| API-05 | `/api/sources` endpoint for source status payloads | satisfied-evidence-pending | 04-02-SUMMARY.md confirms endpoint; no 04-VERIFICATION.md |
+| API-06 | `/health` scheduler-running status response | satisfied-evidence-pending | 04-03-SUMMARY.md confirms; no 04-VERIFICATION.md |
+| API-07 | CORS headers for mobile app access | satisfied-evidence-pending | 04-03-SUMMARY.md confirms; no 04-VERIFICATION.md |
+| API-08 | `platform` filter on `/api/trends` | validated | 05-VERIFICATION.md confirms ✓ SATISFIED |
+| API-09 | `category` filter on `/api/trends` | validated | 05-VERIFICATION.md confirms ✓ SATISFIED |
+| API-10 | `region_code` filter on `/api/trends` | validated | 05-VERIFICATION.md confirms ✓ SATISFIED |
+| API-11 | Sort parameter with fallback behavior | validated | 05-VERIFICATION.md confirms ✓ SATISFIED |
+| API-12 | Pagination cursor with stable ordering | validated | 05-VERIFICATION.md confirms ✓ SATISFIED |
+
+### Data Filtering (FILT)
+
+| ID | Description | Status | Evidence |
+|----|-------------|--------|----------|
+| FILT-01 | Source-level min_metric_value threshold | validated | 05-VERIFICATION.md confirms ✓ SATISFIED |
+| FILT-02 | Source-level blocked_keywords list | validated | 05-VERIFICATION.md confirms ✓ SATISFIED |
+| FILT-03 | Arabic translation via OpenRouter | validated | 05-VERIFICATION.md confirms ✓ SATISFIED |
+| FILT-04 | Translation is best-effort (non-blocking) | validated | 05-VERIFICATION.md confirms ✓ SATISFIED |
+| FILT-05 | NocoDB query filter with platform/category/region | validated | 05-VERIFICATION.md confirms ✓ SATISFIED |
+| FILT-06 | below_threshold counter in scan result | validated | 05-VERIFICATION.md confirms ✓ SATISFIED |
+| FILT-07 | blocked counter in scan result | validated | 05-VERIFICATION.md confirms ✓ SATISFIED |
+| FILT-08 | ar_translation field in TrendItem | validated | 05-VERIFICATION.md confirms ✓ SATISFIED |
+| FILT-09 | Activation guards for default sources | validated | 05-VERIFICATION.md confirms ✓ SATISFIED |
+| FILT-10 | Pydantic-typed filter fields on TrendSource | validated | 05-VERIFICATION.md confirms ✓ SATISFIED |
+| FILT-11 | Single-batch OpenRouter translation call | validated | 05-VERIFICATION.md confirms ✓ SATISFIED |
+| FILT-12 | SEPARATOR-delimited translation protocol | validated | 05-VERIFICATION.md confirms ✓ SATISFIED |
+
+### React Native App (APP)
+
+| ID | Description | Status | Evidence |
+|----|-------------|--------|----------|
+| APP-01 | Expo app scaffold with navigation/state/list dependencies | deferred | Not implemented; deferred to Phase 8 |
+| APP-02 | FlashList feed with infinite scrolling | deferred | Not implemented; deferred to Phase 8 |
+| APP-03 | Trend card UI fields and metric presentation | deferred | Not implemented; deferred to Phase 8 |
+| APP-04 | Platform tabs and local filtering behavior | deferred | Not implemented; deferred to Phase 8 |
+| APP-05 | Category filter controls | deferred | Not implemented; deferred to Phase 8 |
+| APP-06 | Region selector with persistence | deferred | Not implemented; deferred to Phase 8 |
+| APP-07 | Deep-link/open source URL behavior | deferred | Not implemented; deferred to Phase 8 |
+| APP-08 | Pull-to-refresh tied to backend refresh endpoint | deferred | Not implemented; deferred to Phase 8 |
+| APP-09 | Loading/error/empty feed states | deferred | Not implemented; deferred to Phase 8 |
+| APP-10 | Persisted filters across restarts | deferred | Not implemented; deferred to Phase 8 |
+| APP-11 | RTL rendering support for Arabic content | deferred | Not implemented; deferred to Phase 8 |
+| APP-12 | Backend-only API usage with no NocoDB token leakage | deferred | Not implemented; deferred to Phase 8 |
+
+### Infrastructure (INFRA)
+
+| ID | Description | Status | Evidence |
+|----|-------------|--------|----------|
+| INFRA-01 | Compose environment contracts for backend + source credentials | satisfied-evidence-pending | 04-03-SUMMARY.md confirms docker-compose.yml env vars; no 04-VERIFICATION.md |
+| INFRA-02 | Dockerfile-based backend runtime build | satisfied-evidence-pending | 04-03-SUMMARY.md confirms Dockerfile; no 04-VERIFICATION.md |
+| INFRA-03 | NocoDB table/schema completeness for `trends` + `trend_sources` | satisfied-evidence-pending | 02-01-SUMMARY.md: both tables created (trends=md3c6cy09fvz2jg, sources=m93wrwcg2yxjc7t); 02-VERIFICATION.md: "INFRA-03 \| ✓ SATISFIED (partial human)" — table existence requires human NocoDB confirmation |
+| INFRA-04 | Environment variable documentation in `.env.example` | satisfied-evidence-pending | 04-03-SUMMARY.md confirms .env.example updated; no 04-VERIFICATION.md |
+
+---
+
+## v1.1 Active Requirements
+
+### Phase 6 — Requirements Baseline Repair
+
+| ID | Description | Status | Phase |
+|----|-------------|--------|-------|
+| REQ-601 | Create active v1.1 REQUIREMENTS.md with reconciled v1.0 carry-over statuses | [ ] pending | 06 |
+| REQ-602 | Close CORE-02, CORE-03, INFRA-03 with verified evidence references | [ ] pending | 06 |
+| REQ-603 | Update ROADMAP.md Phase 6 goal and plan count | [ ] pending | 06 |
+
+### Phase 7 — Verification Recovery and Backend Flow Closure
+
+| ID | Description | Status | Phase |
+|----|-------------|--------|-------|
+| REQ-701 | Create 01-VERIFICATION.md closing CLEN-01..CLEN-05 | [ ] pending | 07 |
+| REQ-702 | Create 03-VERIFICATION.md closing PLAT-01..PLAT-08 | [ ] pending | 07 |
+| REQ-703 | Create 04-VERIFICATION.md closing API-01..API-07, INFRA-01, INFRA-02, INFRA-04 | [ ] pending | 07 |
+| REQ-704 | Confirm INFRA-03 human check (NocoDB tables exist) | [ ] pending | 07 |
+| REQ-705 | Produce milestone integration report proving end-to-end fetch→persist→GET /api/trends | [ ] pending | 07 |
+
+### Phase 8 — Mobile App Delivery and E2E Validation
+
+| ID | Description | Status | Phase |
+|----|-------------|--------|-------|
+| REQ-801 | Expo app scaffold with navigation/state/list dependencies (APP-01) | [ ] pending | 08 |
+| REQ-802 | FlashList feed with infinite scrolling (APP-02) | [ ] pending | 08 |
+| REQ-803 | Trend card UI fields and metric presentation (APP-03) | [ ] pending | 08 |
+| REQ-804 | Platform tabs and local filtering behavior (APP-04) | [ ] pending | 08 |
+| REQ-805 | Category filter controls (APP-05) | [ ] pending | 08 |
+| REQ-806 | Region selector with persistence (APP-06) | [ ] pending | 08 |
+| REQ-807 | Deep-link/open source URL behavior (APP-07) | [ ] pending | 08 |
+| REQ-808 | Pull-to-refresh tied to backend refresh endpoint (APP-08) | [ ] pending | 08 |
+| REQ-809 | Loading/error/empty feed states (APP-09) | [ ] pending | 08 |
+| REQ-810 | Persisted filters across restarts (APP-10) | [ ] pending | 08 |
+| REQ-811 | RTL rendering support for Arabic content (APP-11) | [ ] pending | 08 |
+| REQ-812 | Backend-only API usage with no NocoDB token leakage (APP-12) | [ ] pending | 08 |
+
+---
+
+## Traceability Summary
+
+| Category | Total | Validated | Satisfied-Evidence-Pending | Deferred | Status |
+|----------|-------|-----------|---------------------------|----------|--------|
+| CLEN | 5 | 0 | 5 | 0 | needs Phase 7 (01-VERIFICATION.md) |
+| CORE | 6 | 6 | 0 | 0 | closed Phase 6 |
+| PLAT | 8 | 0 | 8 | 0 | needs Phase 7 (03-VERIFICATION.md) |
+| API | 12 | 5 | 7 | 0 | needs Phase 7 (04-VERIFICATION.md for API-01..07) |
+| FILT | 12 | 12 | 0 | 0 | complete |
+| APP | 12 | 0 | 0 | 12 | needs Phase 8 |
+| INFRA | 4 | 0 | 4 | 0 | needs Phase 7 (04-VERIFICATION.md + INFRA-03 human check) |
+| **Total** | **59** | **23** | **24** | **12** | |
+
+---
+
+*Active requirements baseline established: 2026-03-20*
+*Archive reference: `.planning/milestones/v1.0-REQUIREMENTS.md`*
+*Phase 2 evidence: `.planning/phases/02-data-foundation/02-VERIFICATION.md`*
