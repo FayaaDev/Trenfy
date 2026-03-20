@@ -7,7 +7,7 @@ current_phase_name: requirements-baseline-repair
 current_plan: 0
 status: planning
 stopped_at: Ready to start 06-01 planning
-last_updated: "2026-03-20T07:16:39.656Z"
+last_updated: "2026-03-20T07:17:22.149Z"
 last_activity: 2026-03-20 - Archived v1.0 and accepted audit gaps with follow-up phases
 progress:
   total_phases: 7
@@ -32,7 +32,7 @@ See: .planning/PROJECT.md (updated 2026-03-20)
 **Current Phase Name:** requirements-baseline-repair
 **Current Plan:** 0
 **Total Plans in Phase:** 0
-**Total Phases:** 7
+**Total Phases:** 6
 **Status:** Planning v1.1 after v1.0 archival
 **Progress:** 62%
 **Last Activity:** 2026-03-20 - Archived v1.0 and accepted audit gaps with follow-up phases
