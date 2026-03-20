@@ -109,3 +109,85 @@ def test_mockup_endpoint_is_read_only_and_never_calls_refresh_workflow() -> None
     assert payload["hero"] is None
     assert payload["highlights"] == []
     assert payload["latest"] == []
+
+
+def test_mockup_scope_endpoint_maps_platform_and_region() -> None:
+    from api.routes import trends as trends_route
+
+    captured = []
+
+    async def fake_query_trends(**kwargs):
+        captured.append(kwargs)
+        return []
+
+    original_query = trends_route.nocodb_trends.query_trends
+    trends_route.nocodb_trends.query_trends = fake_query_trends
+
+    client = _make_client()
+    response = client.get("/api/trends/mockup/yt-jp")
+
+    trends_route.nocodb_trends.query_trends = original_query
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload == {
+        "scope": "yt-jp",
+        "platform": "youtube",
+        "region_code": "JP",
+        "count": 0,
+        "items": [],
+    }
+    assert captured == [
+        {
+            "platform": "youtube",
+            "region_code": "JP",
+            "limit": 200,
+            "offset": 0,
+            "sort": "-fetched_at",
+        }
+    ]
+
+
+def test_mockup_scope_endpoint_fetches_all_rows_for_platform() -> None:
+    from api.routes import trends as trends_route
+
+    calls = []
+    first_page = [{"id": f"yt-{index}"} for index in range(200)]
+    second_page = [{"id": "yt-200"}, {"id": "yt-201"}]
+
+    async def fake_query_trends(**kwargs):
+        calls.append(kwargs)
+        if kwargs["offset"] == 0:
+            return first_page
+        if kwargs["offset"] == 200:
+            return second_page
+        return []
+
+    original_query = trends_route.nocodb_trends.query_trends
+    trends_route.nocodb_trends.query_trends = fake_query_trends
+
+    client = _make_client()
+    response = client.get("/api/trends/mockup/yt")
+
+    trends_route.nocodb_trends.query_trends = original_query
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["scope"] == "yt"
+    assert payload["platform"] == "youtube"
+    assert payload["region_code"] is None
+    assert payload["count"] == 202
+    assert payload["items"][0]["id"] == "yt-0"
+    assert payload["items"][-1]["id"] == "yt-201"
+    assert [call["offset"] for call in calls] == [0, 200]
+
+
+def test_mockup_scope_endpoint_rejects_unknown_scope() -> None:
+    client = _make_client()
+    response = client.get("/api/trends/mockup/not-supported")
+
+    assert response.status_code == 404
+    assert response.json() == {
+        "error": "mockup_scope_not_found",
+        "scope": "not-supported",
+    }

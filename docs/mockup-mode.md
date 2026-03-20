@@ -6,7 +6,7 @@ Use mockup mode when you need realistic trend data for UI demos without hitting 
 
 - Disables scheduler polling with `TRENDS_ENABLED=false`
 - Reads existing records from NocoDB only
-- Serves grouped mock data from `GET /api/trends/mockup`
+- Serves scoped mock data from dedicated platform/region endpoints
 
 ## Quick start
 
@@ -14,22 +14,35 @@ Use mockup mode when you need realistic trend data for UI demos without hitting 
 TRENDS_ENABLED=false uv run uvicorn app:app --port 8080
 ```
 
-In another terminal:
+In another terminal, call one of the scoped endpoints:
 
 ```bash
-curl "http://localhost:8080/api/trends/mockup?limit=12"
+curl "http://localhost:8080/api/trends/mockup/yt"
 ```
 
-Optional shaping filters:
+Available scopes:
+
+- `GET /api/trends/mockup/yt` - all YouTube rows
+- `GET /api/trends/mockup/x` - all X rows
+- `GET /api/trends/mockup/yt-us` - YouTube rows with `region_code=US`
+- `GET /api/trends/mockup/yt-sa` - YouTube rows with `region_code=SA`
+- `GET /api/trends/mockup/yt-jp` - YouTube rows with `region_code=JP`
+- `GET /api/trends/mockup/x-us` - X rows with `region_code=US`
+- `GET /api/trends/mockup/x-sa` - X rows with `region_code=SA`
+- `GET /api/trends/mockup/x-jp` - X rows with `region_code=JP`
+
+Example:
 
 ```bash
-curl "http://localhost:8080/api/trends/mockup?limit=12&platform=youtube&category=music"
+curl "http://localhost:8080/api/trends/mockup/x-sa"
 ```
 
 Expected top-level response keys:
 
-- `hero`
-- `highlights`
-- `latest`
+- `scope`
+- `platform`
+- `region_code`
+- `count`
+- `items`
 
 The mockup endpoint is read-only and does not run refresh workflows.

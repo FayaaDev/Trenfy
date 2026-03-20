@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from fastapi import APIRouter, Body, Query
 from fastapi.responses import JSONResponse
@@ -18,6 +18,17 @@ trends_router = APIRouter(prefix="/api/trends", tags=["trends"])
 sources_router = APIRouter(prefix="/api", tags=["sources"])
 
 VALID_SORT_FIELDS = {"fetched_at", "metric_value", "published_date"}
+MOCKUP_PAGE_SIZE = 200
+MOCKUP_SCOPE_FILTERS: Dict[str, Tuple[str, Optional[str]]] = {
+    "yt": ("youtube", None),
+    "x": ("x", None),
+    "yt-us": ("youtube", "US"),
+    "yt-sa": ("youtube", "SA"),
+    "yt-jp": ("youtube", "JP"),
+    "x-us": ("x", "US"),
+    "x-sa": ("x", "SA"),
+    "x-jp": ("x", "JP"),
+}
 
 
 def _build_mockup_sections(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
@@ -29,6 +40,50 @@ def _build_mockup_sections(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
         "highlights": highlights,
         "latest": latest,
     }
+
+
+def _build_scoped_mockup_payload(
+    scope: str,
+    platform: str,
+    region_code: Optional[str],
+    rows: List[Dict[str, Any]],
+) -> Dict[str, Any]:
+    return {
+        "scope": scope,
+        "platform": platform,
+        "region_code": region_code,
+        "count": len(rows),
+        "items": rows,
+    }
+
+
+async def _query_all_mockup_rows(
+    platform: str,
+    region_code: Optional[str] = None,
+) -> List[Dict[str, Any]]:
+    all_rows: List[Dict[str, Any]] = []
+    offset = 0
+
+    while True:
+        batch = await nocodb_trends.query_trends(
+            platform=platform,
+            region_code=region_code,
+            limit=MOCKUP_PAGE_SIZE,
+            offset=offset,
+            sort="-fetched_at",
+        )
+
+        if not batch:
+            break
+
+        all_rows.extend(batch)
+
+        if len(batch) < MOCKUP_PAGE_SIZE:
+            break
+
+        offset += MOCKUP_PAGE_SIZE
+
+    return all_rows
 
 
 @trends_router.get("")
@@ -112,6 +167,21 @@ async def get_trends_mockup(
         sort="-fetched_at",
     )
     return _build_mockup_sections(rows)
+
+
+@trends_router.get("/mockup/{scope}")
+async def get_trends_mockup_scope(scope: str):
+    normalized_scope = scope.strip().lower()
+    target = MOCKUP_SCOPE_FILTERS.get(normalized_scope)
+    if target is None:
+        return JSONResponse(
+            status_code=404,
+            content={"error": "mockup_scope_not_found", "scope": scope},
+        )
+
+    platform, region_code = target
+    rows = await _query_all_mockup_rows(platform=platform, region_code=region_code)
+    return _build_scoped_mockup_payload(normalized_scope, platform, region_code, rows)
 
 
 @trends_router.get("/stats")
