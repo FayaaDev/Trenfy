@@ -11,11 +11,11 @@
 
 ### Cleanup
 
-- [x] **CLEN-01**: All SehaRadar files are removed — health_agents/, workflows/unified_scan_workflow.py, workflows/syncdetection_worker.py, workflows/email_digest_workflow.py, server.py, bridge-service.js, main.py (old), promed.js, promednew.js, parsers/, config/sources.json, emptySDKagnet.py, test-*.js root files
-- [x] **CLEN-02**: Retained reusable tools moved to Trenfy structure — tools/nocodb_trends_client.py, trend_agents/shared/models.py
-- [x] **CLEN-03**: pyproject.toml updated — name = "trenfy", all SehaRadar dependencies removed, Trenfy dependencies added
-- [x] **CLEN-04**: docker-compose.yml replaced — Trenfy-only services (no RSSHub, no Caddy config)
-- [x] **CLEN-05**: .env.example updated — only Trenfy environment variables
+- [ ] **CLEN-01**: All SehaRadar files are removed — health_agents/, workflows/unified_scan_workflow.py, workflows/syncdetection_worker.py, workflows/email_digest_workflow.py, server.py, bridge-service.js, main.py (old), promed.js, promednew.js, parsers/, config/sources.json, emptySDKagnet.py, test-*.js root files
+- [ ] **CLEN-02**: Retained reusable tools moved to Trenfy structure — tools/nocodb_trends_client.py, trend_agents/shared/models.py
+- [ ] **CLEN-03**: pyproject.toml updated — name = "trenfy", all SehaRadar dependencies removed, Trenfy dependencies added
+- [ ] **CLEN-04**: docker-compose.yml replaced — Trenfy-only services (no RSSHub, no Caddy config)
+- [ ] **CLEN-05**: .env.example updated — only Trenfy environment variables
 
 ### Backend Core
 
@@ -28,24 +28,24 @@
 
 ### Platform Clients
 
-- [x] **PLAT-01**: YouTube client fetches trending videos for configured regions (US, SA, JP) using YouTube Data API v3 with API key auth
-- [x] **PLAT-02**: YouTube client stays within 10,000 daily quota units — conservative scheduling (≤600 units/day for 3 regions at 15-minute intervals)
-- [x] **PLAT-03**: X client fetches trending posts/topics for configured regions via official X API endpoints
-- [x] **PLAT-04**: X API auth token/credentials handling is centralized and refreshed safely to avoid concurrent refresh race conditions
-- [x] **PLAT-05**: X client applies rate-limit-aware fetching (backoff/retry with caps) and stays within configured request budgets
-- [x] **PLAT-06**: X client uses a circuit-breaker — after 3 consecutive failures the source auto-disables and logs clearly
-- [x] **PLAT-07**: All platform clients implement the abstract base interface (BaseTrendClient) with a fetch() method returning List[TrendItem]
-- [x] **PLAT-08**: content_hash generated per item: SHA-256 of "platform|title.lower()|published_date|region_code" truncated to 32 chars
+- [ ] **PLAT-01**: YouTube client fetches trending videos for configured regions (US, SA, JP) using YouTube Data API v3 with API key auth
+- [ ] **PLAT-02**: YouTube client stays within 10,000 daily quota units — conservative scheduling (≤600 units/day for 3 regions at 15-minute intervals)
+- [ ] **PLAT-03**: X client fetches trending posts/topics for configured regions via official X API endpoints
+- [ ] **PLAT-04**: X API auth token/credentials handling is centralized and refreshed safely to avoid concurrent refresh race conditions
+- [ ] **PLAT-05**: X client applies rate-limit-aware fetching (backoff/retry with caps) and stays within configured request budgets
+- [ ] **PLAT-06**: X client uses a circuit-breaker — after 3 consecutive failures the source auto-disables and logs clearly
+- [ ] **PLAT-07**: All platform clients implement the abstract base interface (BaseTrendClient) with a fetch() method returning List[TrendItem]
+- [ ] **PLAT-08**: content_hash generated per item: SHA-256 of "platform|title.lower()|published_date|region_code" truncated to 32 chars
 
 ### Trends API
 
-- [x] **API-01**: GET /api/trends returns paginated list of trends (default limit=50, max=200), filterable by platform, category, region_code, start_date, end_date
-- [x] **API-02**: GET /api/trends/{id} returns single trend detail by NocoDB row ID
-- [x] **API-03**: POST /api/trends/refresh accepts {"source_id": "..."} or {"platform": "..."} and triggers an immediate fetch for that source/platform
-- [x] **API-04**: GET /api/trends/stats returns aggregate counts by platform (total trends, newest fetched_at per platform)
-- [x] **API-05**: GET /api/sources returns all configured sources with id, name, platform, last_fetched_at, last_fetch_status, enabled
-- [x] **API-06**: GET /health returns {"status": "ok", "scheduler_running": true/false}
-- [x] **API-07**: All responses include CORS headers permitting requests from the React Native app
+- [ ] **API-01**: GET /api/trends returns paginated list of trends (default limit=50, max=200), filterable by platform, category, region_code, start_date, end_date
+- [ ] **API-02**: GET /api/trends/{id} returns single trend detail by NocoDB row ID
+- [ ] **API-03**: POST /api/trends/refresh accepts {"source_id": "..."} or {"platform": "..."} and triggers an immediate fetch for that source/platform
+- [ ] **API-04**: GET /api/trends/stats returns aggregate counts by platform (total trends, newest fetched_at per platform)
+- [ ] **API-05**: GET /api/sources returns all configured sources with id, name, platform, last_fetched_at, last_fetch_status, enabled
+- [ ] **API-06**: GET /health returns {"status": "ok", "scheduler_running": true/false}
+- [ ] **API-07**: All responses include CORS headers permitting requests from the React Native app
 
 ### React Native App
 
@@ -64,10 +64,10 @@
 
 ### Infrastructure
 
-- [x] **INFRA-01**: docker-compose.yml defines a single trenfy-backend service (Python FastAPI) with NocoDB URL and YouTube + X API credentials as environment variables
-- [x] **INFRA-02**: Dockerfile builds the Python backend — Python 3.11-slim, installs requirements, starts uvicorn on port 8080
+- [ ] **INFRA-01**: docker-compose.yml defines a single trenfy-backend service (Python FastAPI) with NocoDB URL and YouTube + X API credentials as environment variables
+- [ ] **INFRA-02**: Dockerfile builds the Python backend — Python 3.11-slim, installs requirements, starts uvicorn on port 8080
 - [ ] **INFRA-03**: NocoDB trends and trend_sources tables exist with schema matching Trenfy.md (columns: platform, category, title, description, url, thumbnail_url, published_date, fetched_at, metric_type, metric_value, metadata, region_code, content_hash, notification_sent)
-- [x] **INFRA-04**: .env.example documents all required environment variables (NocoDB, YouTube, X, server settings)
+- [ ] **INFRA-04**: .env.example documents all required environment variables (NocoDB, YouTube, X, server settings)
 
 ---
 
@@ -121,54 +121,54 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CLEN-01 | Phase 1 | ✓ Complete |
-| CLEN-02 | Phase 1 | ✓ Complete |
-| CLEN-03 | Phase 1 | ✓ Complete |
-| CLEN-04 | Phase 1 | ✓ Complete |
-| CLEN-05 | Phase 1 | ✓ Complete |
+| CLEN-01 | Phase 7 | Pending |
+| CLEN-02 | Phase 7 | Pending |
+| CLEN-03 | Phase 7 | Pending |
+| CLEN-04 | Phase 7 | Pending |
+| CLEN-05 | Phase 7 | Pending |
 | CORE-01 | Phase 2 | Complete |
-| CORE-02 | Phase 2 | Pending |
-| CORE-03 | Phase 2 | Pending |
+| CORE-02 | Phase 6 | Pending |
+| CORE-03 | Phase 6 | Pending |
 | CORE-04 | Phase 2 | Complete |
 | CORE-05 | Phase 2 | Complete |
 | CORE-06 | Phase 2 | Complete |
-| PLAT-01 | Phase 3 | Complete |
-| PLAT-02 | Phase 3 | Complete |
-| PLAT-03 | Phase 3 | Complete |
-| PLAT-04 | Phase 3 | Complete |
-| PLAT-05 | Phase 3 | Complete |
-| PLAT-06 | Phase 3 | Complete |
-| PLAT-07 | Phase 3 | Complete |
-| PLAT-08 | Phase 3 | Complete |
-| API-01 | Phase 4 | Complete |
-| API-02 | Phase 4 | Complete |
-| API-03 | Phase 4 | Complete |
-| API-04 | Phase 4 | Complete |
-| API-05 | Phase 4 | Complete |
-| API-06 | Phase 4 | Complete |
-| API-07 | Phase 4 | Complete |
-| APP-01 | Phase 5 | Pending |
-| APP-02 | Phase 5 | Pending |
-| APP-03 | Phase 5 | Pending |
-| APP-04 | Phase 5 | Pending |
-| APP-05 | Phase 5 | Pending |
-| APP-06 | Phase 5 | Pending |
-| APP-07 | Phase 5 | Pending |
-| APP-08 | Phase 5 | Pending |
-| APP-09 | Phase 5 | Pending |
-| APP-10 | Phase 5 | Pending |
-| APP-11 | Phase 5 | Pending |
-| APP-12 | Phase 5 | Pending |
-| INFRA-01 | Phase 4 | Complete |
-| INFRA-02 | Phase 4 | Complete |
-| INFRA-03 | Phase 2 | Pending |
-| INFRA-04 | Phase 4 | Complete |
+| PLAT-01 | Phase 7 | Pending |
+| PLAT-02 | Phase 7 | Pending |
+| PLAT-03 | Phase 7 | Pending |
+| PLAT-04 | Phase 7 | Pending |
+| PLAT-05 | Phase 7 | Pending |
+| PLAT-06 | Phase 7 | Pending |
+| PLAT-07 | Phase 7 | Pending |
+| PLAT-08 | Phase 7 | Pending |
+| API-01 | Phase 7 | Pending |
+| API-02 | Phase 7 | Pending |
+| API-03 | Phase 7 | Pending |
+| API-04 | Phase 7 | Pending |
+| API-05 | Phase 7 | Pending |
+| API-06 | Phase 7 | Pending |
+| API-07 | Phase 7 | Pending |
+| APP-01 | Phase 8 | Pending |
+| APP-02 | Phase 8 | Pending |
+| APP-03 | Phase 8 | Pending |
+| APP-04 | Phase 8 | Pending |
+| APP-05 | Phase 8 | Pending |
+| APP-06 | Phase 8 | Pending |
+| APP-07 | Phase 8 | Pending |
+| APP-08 | Phase 8 | Pending |
+| APP-09 | Phase 8 | Pending |
+| APP-10 | Phase 8 | Pending |
+| APP-11 | Phase 8 | Pending |
+| APP-12 | Phase 8 | Pending |
+| INFRA-01 | Phase 7 | Pending |
+| INFRA-02 | Phase 7 | Pending |
+| INFRA-03 | Phase 6 | Pending |
+| INFRA-04 | Phase 7 | Pending |
 
 **Coverage:**
-- v1 requirements: 41 total
-- Mapped to phases: 41
+- v1 requirements: 42 total
+- Mapped to phases: 42
 - Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-19*
-*Last updated: 2026-03-19 after initial definition*
+*Last updated: 2026-03-20 after milestone gap planning*

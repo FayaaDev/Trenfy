@@ -1,8 +1,8 @@
 # Trenfy Roadmap
 
 **Generated:** 2006-03-19
-**Phases:** 7
-**Requirements covered:** 41/41
+**Phases:** 8
+**Requirements covered:** 42/42
 **v1 Platform Scope:** YouTube + X (future platforms deferred)
 
 ---
@@ -93,5 +93,41 @@
 1. Items below `min_metric_value` or matching `blocked_keywords` are dropped before dedup; default sources (0 threshold, empty blocklist) are unaffected
 2. Arabic-language trend items have `ar_translation` populated via OpenRouter; failures leave the field null without blocking ingestion
 3. `GET /api/trends` accepts `?platform=youtube,x`, `?q=`, `?sort_by=`, `?min_metric_value=` and returns correctly filtered/sorted results
+
+---
+
+## Phase 6: Requirements Baseline Repair
+**Goal:** Repair milestone requirement traceability and baseline requirement status so all gap work is mapped and auditable before re-verification
+**Requirements:** CORE-02, CORE-03, INFRA-03
+**Plans:** 0 plans
+
+### Success Criteria
+1. `REQUIREMENTS.md` traceability has no coverage mismatch and correctly maps all v1 requirement IDs
+2. Audit-flagged unsatisfied requirements are set to pending and assigned to gap-closure phases
+3. Gap-closure phase assignments are internally consistent across roadmap and requirements docs
+
+---
+
+## Phase 7: Verification Recovery and Backend Flow Closure
+**Goal:** Close orphaned backend requirements by recreating missing verification evidence and cross-phase integration proof for milestone v1.0
+**Requirements:** CLEN-01, CLEN-02, CLEN-03, CLEN-04, CLEN-05, PLAT-01, PLAT-02, PLAT-03, PLAT-04, PLAT-05, PLAT-06, PLAT-07, PLAT-08, API-01, API-02, API-03, API-04, API-05, API-06, API-07, INFRA-01, INFRA-02, INFRA-04
+**Plans:** 0 plans
+
+### Success Criteria
+1. Missing verification artifacts for phases 1, 3, and 4 exist and map requirements to evidence
+2. Integration evidence proves Phase 2 scheduler/workflow to Phase 3 clients and Phase 3 clients to Phase 4 API wiring
+3. End-to-end backend flow from scheduled fetch to `/api/trends` is verified with reproducible evidence
+
+---
+
+## Phase 8: Mobile App Delivery and E2E Validation
+**Goal:** Deliver pending mobile v1 requirements and verify mobile-to-backend flow in milestone artifacts
+**Requirements:** APP-01, APP-02, APP-03, APP-04, APP-05, APP-06, APP-07, APP-08, APP-09, APP-10, APP-11, APP-12
+**Plans:** 0 plans
+
+### Success Criteria
+1. APP-01 through APP-12 are implemented and mapped to verification evidence
+2. Mobile flow to backend endpoints is validated with CORS-safe behavior and no NocoDB token exposure
+3. Milestone re-audit no longer reports APP requirements as orphaned
 
 ---
