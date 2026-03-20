@@ -3,6 +3,7 @@
 **Generated:** 2026-03-19
 **Phases:** 5
 **Requirements covered:** 41/41
+**v1 Platform Scope:** YouTube + X (future platforms deferred)
 
 ---
 
@@ -37,20 +38,20 @@
 ### Success Criteria
 1. `GET /health` returns `{"status": "ok", "scheduler_running": true}` within 200ms after server startup
 2. The NocoDB `trends` and `trend_sources` tables exist with all columns matching the Trenfy.md schema; the NocoDB client can write a test TrendItem and read it back without error
-3. The scheduler starts two sources (YouTube, and X) on their configured intervals; killing one source's task with a simulated exception leaves the other three running unaffected
+3. The scheduler starts two sources (YouTube and X) on their configured intervals; killing one source's task with a simulated exception leaves the other source running unaffected
 4. `config/trend_sources.json` loads via the source registry and returns a typed list of `TrendSource` objects with correct intervals and enabled flags
 
 ---
 
 ## Phase 3: Platform Clients
-**Goal:** All two platform clients fetching, normalizing, and persisting real trend data with deduplication and failure isolation
+**Goal:** Both platform clients fetch, normalize, and persist real trend data with deduplication and failure isolation
 **Requirements:** PLAT-01, PLAT-02, PLAT-03, PLAT-04, PLAT-05, PLAT-06, PLAT-07, PLAT-08
 **Plans:** 4/4 plans complete
 
 ### Plans
 - [x] 03-01-PLAN.md — Contract foundation (BaseTrendClient, normalization helpers, hash tests) (PLAT-07, PLAT-08) ✓ f0ed8d0
-- [x] 03-02-PLAN.md — YouTube + Spotify clients with auth/normalization and tests (PLAT-01, PLAT-02, PLAT-07) ✓ 1be7515
-- [x] 03-03-PLAN.md — Steam + TikTok clients with retry/circuit-breaker controls and tests (PLAT-03, PLAT-04, PLAT-05, PLAT-06) ✓ e33d3c5
+- [x] 03-02-PLAN.md — YouTube + X clients with auth/normalization and tests (PLAT-01, PLAT-02, PLAT-07) ✓ 1be7515
+- [x] 03-03-PLAN.md — X client resilience controls (retry/circuit-breaker) and tests (PLAT-03, PLAT-04, PLAT-05, PLAT-06) ✓ e33d3c5
 - [x] 03-04-PLAN.md — Trends workflow wiring (dispatch, dedup, status handling, isolation tests) (PLAT-06, PLAT-07, PLAT-08) ✓ 12fc748
 
 ### Success Criteria
@@ -86,6 +87,19 @@
 2. Platform tabs and category filter chips correctly narrow the visible list client-side without additional API calls; selected filters survive an app restart (AsyncStorage persistence confirmed)
 3. Tapping a trend card opens the correct source URL in the device's native app or browser; Arabic-titled trends from the SA region render with correct RTL text direction
 4. Pull-to-refresh triggers `POST /api/trends/refresh` for the active platform filter; skeleton loaders appear during fetch; an unreachable API shows an error state with a working retry button
+
+### Phase 6: data-filtering
+
+**Goal:** Harden the data pipeline with ingestion filters (metric threshold, keyword blocklist, Arabic translation enrichment) and extend the REST API with multi-value platform, full-text search, sort order, and metric floor query params
+**Requirements:** FILT-01, FILT-02, FILT-03, FILT-04, FILT-05, FILT-06, FILT-07, FILT-08, FILT-09, FILT-10, FILT-11, FILT-12, API-08, API-09, API-10, API-11, API-12
+**Depends on:** Phase 5
+**Plans:** 4 plans
+
+Plans:
+- [ ] 06-01-PLAN.md — Extend TrendItem + TrendSource models; update trend_sources.json with example filter config
+- [ ] 06-02-PLAN.md — Ingestion filters: metric threshold + keyword blocklist in scan_source()
+- [ ] 06-03-PLAN.md — Arabic translation enrichment: translation.py module + workflow wiring + NocoDB column
+- [ ] 06-04-PLAN.md — API filter hardening: multi-platform anyof, ?q= search, ?sort_by=, ?min_metric_value=
 
 ---
 
