@@ -5,16 +5,16 @@ milestone_name: milestone
 current_phase: 06
 current_phase_name: requirements-baseline-repair
 current_plan: 0
-status: planning
-stopped_at: Ready to start 06-01 planning
-last_updated: "2026-03-20T07:17:22.149Z"
-last_activity: 2026-03-20 - Archived v1.0 and accepted audit gaps with follow-up phases
+status: verifying
+stopped_at: Completed 06-02-PLAN.md
+last_updated: "2026-03-20T07:38:49.317Z"
+last_activity: 2026-03-20
 progress:
-  total_phases: 7
-  completed_phases: 5
-  total_plans: 17
-  completed_plans: 17
-  percent: 62
+  total_phases: 3
+  completed_phases: 1
+  total_plans: 2
+  completed_plans: 2
+  percent: 100
 ---
 
 # Trenfy — Project State
@@ -33,10 +33,10 @@ See: .planning/PROJECT.md (updated 2026-03-20)
 **Current Plan:** 0
 **Total Plans in Phase:** 0
 **Total Phases:** 6
-**Status:** Planning v1.1 after v1.0 archival
-**Progress:** 62%
-**Last Activity:** 2026-03-20 - Archived v1.0 and accepted audit gaps with follow-up phases
-**Stopped At:** Ready to start 06-01 planning
+**Status:** Phase complete — ready for verification
+**Progress:** [██████████] 100%
+**Last Activity:** 2026-03-20
+**Stopped At:** Completed 06-02-PLAN.md
 
 ## Progress
 
@@ -104,6 +104,9 @@ Phase 8: Mobile App       ░░░░░░░░░░░░░░░░░░
 - [Phase 05-03]: Single batched OpenRouter call with SEPARATOR-delimited items for Arabic translation — cheaper and simpler than parallel calls
 - [Phase quick-260320-bpk-calling-x-and-youtube-apis-is-expensive]: Mockup endpoint uses query_trends read path only and avoids workflow refresh calls
 - [Phase quick-260320-bpk-calling-x-and-youtube-apis-is-expensive]: Mockup payload contract standardized to hero/highlights/latest for stable UI cards
+- [Phase 06]: CORE-02 and CORE-03 reconciled to validated — code was done and 02-VERIFICATION.md confirms SATISFIED; v1.0 archive was wrong to mark them deferred
+- [Phase 06]: INFRA-03 reconciled to satisfied-evidence-pending — NocoDB human check pending, carried to Phase 7 REQ-704
+- [Phase 06]: v1.1 active REQUIREMENTS.md established with 59 reconciled v1.0 IDs and REQ-601..REQ-812 for Phases 6-8
 
 ## Performance Metrics
 
@@ -125,10 +128,11 @@ Phase 8: Mobile App       ░░░░░░░░░░░░░░░░░░
 | Phase 05-data-filtering P04 | 3min | 2 tasks | 3 files |
 | Phase 05-data-filtering P03 | 10min | 3 tasks | 4 files |
 | Phase quick-260320-bpk-calling-x-and-youtube-apis-is-expensive P01 | 11min | 2 tasks | 4 files |
+| Phase 06-requirements-baseline-repair P01-02 | 4min | 3 tasks | 3 files |
 
 ## Session Notes
 
-**Last session:** 2026-03-20T05:40:51.613Z
+**Last session:** 2026-03-20T07:38:49.314Z
 **Stopped at:** Completed 05-04-PLAN.md
 
 ## Accumulated Context

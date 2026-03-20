@@ -7,7 +7,7 @@
 
 ## Current Milestone Scope (v1.1)
 
-- [ ] Phase 6: Requirements Baseline Repair (2 plans)
+- [x] Phase 6: Requirements Baseline Repair (2 plans) (completed 2026-03-20)
 - [ ] Phase 7: Verification Recovery and Backend Flow Closure (0 plans)
 - [ ] Phase 8: Mobile App Delivery and E2E Validation (0 plans)
 

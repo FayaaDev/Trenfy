@@ -127,9 +127,9 @@ The v1.0 milestone was archived with accepted gaps. Requirements are reconciled 
 
 | ID | Description | Status | Phase |
 |----|-------------|--------|-------|
-| REQ-601 | Create active v1.1 REQUIREMENTS.md with reconciled v1.0 carry-over statuses | [ ] pending | 06 |
-| REQ-602 | Close CORE-02, CORE-03, INFRA-03 with verified evidence references | [ ] pending | 06 |
-| REQ-603 | Update ROADMAP.md Phase 6 goal and plan count | [ ] pending | 06 |
+| REQ-601 | Create active v1.1 REQUIREMENTS.md with reconciled v1.0 carry-over statuses | [x] complete | 06 |
+| REQ-602 | Close CORE-02, CORE-03, INFRA-03 with verified evidence references | [x] complete | 06 |
+| REQ-603 | Update ROADMAP.md Phase 6 goal and plan count | [x] complete | 06 |
 
 ### Phase 7 — Verification Recovery and Backend Flow Closure
 
