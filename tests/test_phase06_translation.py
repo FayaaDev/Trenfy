@@ -5,11 +5,30 @@ Tests for tools/translation.py — Arabic detection and batch translation enrich
 import asyncio
 import sys
 from pathlib import Path
+from types import ModuleType
 from unittest.mock import AsyncMock, MagicMock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from trend_agents.shared.models import TrendItem
+
+
+# ---------------------------------------------------------------------------
+# Stub out tools.openai_client so tests work without openai/agents SDK installed
+# ---------------------------------------------------------------------------
+
+
+def _make_openai_client_stub() -> ModuleType:
+    """Return a lightweight stub for tools.openai_client."""
+    stub = ModuleType("tools.openai_client")
+    stub.has_openrouter_api_key = lambda: False
+    stub.get_openai_client = lambda: None
+    stub.get_default_llm_model = lambda: "openai/gpt-4o-mini"
+    return stub
+
+
+if "tools.openai_client" not in sys.modules:
+    sys.modules["tools.openai_client"] = _make_openai_client_stub()
 
 
 # ---------------------------------------------------------------------------
@@ -95,12 +114,15 @@ async def test_translate_items_arabic_items_stay_none():
     ar_item = _item(platform="x", lang="ar", title="مرحبا")
     sa_item = _item(platform="youtube", region_code="SA", title="عالم")
 
-    with patch("tools.translation.has_openrouter_api_key", return_value=True):
-        with patch("tools.translation.get_openai_client") as mock_client_fn:
-            await translate_items([ar_item, sa_item])
-            # No API call should be made for Arabic items
-            mock_client_fn.assert_not_called()
+    oc = sys.modules["tools.openai_client"]
+    oc.has_openrouter_api_key = lambda: True
+    mock_get_client = MagicMock()
+    oc.get_openai_client = mock_get_client
 
+    await translate_items([ar_item, sa_item])
+
+    # No API call should be made for Arabic items
+    mock_get_client.assert_not_called()
     assert ar_item.ar_translation is None
     assert sa_item.ar_translation is None
 
@@ -117,8 +139,10 @@ async def test_translate_items_no_api_key_all_none_no_exception():
     item1 = _item(platform="youtube", title="Gaming highlights")
     item2 = _item(platform="x", lang="en", title="Music chart")
 
-    with patch("tools.translation.has_openrouter_api_key", return_value=False):
-        result = await translate_items([item1, item2])
+    oc = sys.modules["tools.openai_client"]
+    oc.has_openrouter_api_key = lambda: False
+
+    result = await translate_items([item1, item2])
 
     # No exception raised, all ar_translation stay None
     assert result is not None
@@ -138,11 +162,11 @@ async def test_translate_items_non_arabic_get_translated():
     item1 = _item(platform="youtube", title="Gaming highlights", region_code="US")
     item2 = _item(platform="x", title="Music chart", lang="en")
 
-    # Simulate 2-item batch response
-    mock_response = MagicMock()
-    mock_response.choices = [MagicMock()]
     translation1 = "أبرز الألعاب"
     translation2 = "قائمة الموسيقى"
+
+    mock_response = MagicMock()
+    mock_response.choices = [MagicMock()]
     mock_response.choices[
         0
     ].message.content = f"{translation1}{SEPARATOR.strip()}{translation2}"
@@ -150,9 +174,12 @@ async def test_translate_items_non_arabic_get_translated():
     mock_client = AsyncMock()
     mock_client.chat.completions.create = AsyncMock(return_value=mock_response)
 
-    with patch("tools.translation.has_openrouter_api_key", return_value=True):
-        with patch("tools.translation.get_openai_client", return_value=mock_client):
-            result = await translate_items([item1, item2])
+    oc = sys.modules["tools.openai_client"]
+    oc.has_openrouter_api_key = lambda: True
+    oc.get_openai_client = lambda: mock_client
+    oc.get_default_llm_model = lambda: "openai/gpt-4o-mini"
+
+    result = await translate_items([item1, item2])
 
     assert result is not None
     assert item1.ar_translation == translation1
@@ -161,7 +188,7 @@ async def test_translate_items_non_arabic_get_translated():
 
 async def test_translate_items_single_api_call_for_all_non_arabic():
     """translate_items must use a single batched API call (not one per item)."""
-    from tools.translation import translate_items
+    from tools.translation import SEPARATOR, translate_items
 
     items = [
         _item(platform="youtube", title=f"Title {i}", region_code="US")
@@ -170,9 +197,6 @@ async def test_translate_items_single_api_call_for_all_non_arabic():
 
     mock_response = MagicMock()
     mock_response.choices = [MagicMock()]
-    # Return 5 translations separated by SEPARATOR
-    from tools.translation import SEPARATOR
-
     mock_response.choices[0].message.content = SEPARATOR.strip().join(
         [f"ترجمة {i}" for i in range(5)]
     )
@@ -180,9 +204,12 @@ async def test_translate_items_single_api_call_for_all_non_arabic():
     mock_client = AsyncMock()
     mock_client.chat.completions.create = AsyncMock(return_value=mock_response)
 
-    with patch("tools.translation.has_openrouter_api_key", return_value=True):
-        with patch("tools.translation.get_openai_client", return_value=mock_client):
-            await translate_items(items)
+    oc = sys.modules["tools.openai_client"]
+    oc.has_openrouter_api_key = lambda: True
+    oc.get_openai_client = lambda: mock_client
+    oc.get_default_llm_model = lambda: "openai/gpt-4o-mini"
+
+    await translate_items(items)
 
     # Exactly 1 API call for 5 items (batched)
     assert mock_client.chat.completions.create.call_count == 1
@@ -205,9 +232,12 @@ async def test_translate_items_api_error_all_none_no_exception():
         side_effect=RuntimeError("API down")
     )
 
-    with patch("tools.translation.has_openrouter_api_key", return_value=True):
-        with patch("tools.translation.get_openai_client", return_value=mock_client):
-            result = await translate_items([item1, item2])  # must not raise
+    oc = sys.modules["tools.openai_client"]
+    oc.has_openrouter_api_key = lambda: True
+    oc.get_openai_client = lambda: mock_client
+    oc.get_default_llm_model = lambda: "openai/gpt-4o-mini"
+
+    result = await translate_items([item1, item2])  # must not raise
 
     assert result is not None
     assert item1.ar_translation is None
@@ -221,7 +251,7 @@ async def test_translate_items_api_error_all_none_no_exception():
 
 async def test_translate_items_mixed_batch():
     """Arabic items stay None; non-Arabic items get translated in same call."""
-    from tools.translation import SEPARATOR, translate_items
+    from tools.translation import translate_items
 
     ar_item = _item(platform="x", lang="ar", title="مرحبا")
     en_item = _item(platform="youtube", title="Hello", region_code="US")
@@ -233,9 +263,12 @@ async def test_translate_items_mixed_batch():
     mock_client = AsyncMock()
     mock_client.chat.completions.create = AsyncMock(return_value=mock_response)
 
-    with patch("tools.translation.has_openrouter_api_key", return_value=True):
-        with patch("tools.translation.get_openai_client", return_value=mock_client):
-            await translate_items([ar_item, en_item])
+    oc = sys.modules["tools.openai_client"]
+    oc.has_openrouter_api_key = lambda: True
+    oc.get_openai_client = lambda: mock_client
+    oc.get_default_llm_model = lambda: "openai/gpt-4o-mini"
+
+    await translate_items([ar_item, en_item])
 
     assert ar_item.ar_translation is None
     assert en_item.ar_translation == "مرحبا يا عالم"
@@ -259,9 +292,12 @@ async def test_translate_items_returns_items_and_mutates_in_place():
     mock_client = AsyncMock()
     mock_client.chat.completions.create = AsyncMock(return_value=mock_response)
 
-    with patch("tools.translation.has_openrouter_api_key", return_value=True):
-        with patch("tools.translation.get_openai_client", return_value=mock_client):
-            result = await translate_items([item])
+    oc = sys.modules["tools.openai_client"]
+    oc.has_openrouter_api_key = lambda: True
+    oc.get_openai_client = lambda: mock_client
+    oc.get_default_llm_model = lambda: "openai/gpt-4o-mini"
+
+    result = await translate_items([item])
 
     # Same list returned
     assert result is not None
