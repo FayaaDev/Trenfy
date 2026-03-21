@@ -27,19 +27,32 @@ export default function useTrendFeed(filters: TrendFeedFilters): UseTrendFeedRes
   const [cursor, setCursor] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const isSearchMounted = useRef(false);
-  const isFilterMounted = useRef(false);
-  const serverFilterKey = `${filters.platform ?? ''}|${filters.regionCode ?? ''}`;
-  const selectedCategories = filters.selectedCategories;
+  const latestRequestId = useRef(0);
+  const searchDebounceTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const selectedCategories = useMemo(
+    () => [...filters.selectedCategories].sort(),
+    [filters.selectedCategories]
+  );
+  const categoryFilter = useMemo(
+    () => (selectedCategories.length > 0 ? selectedCategories.join(',') : undefined),
+    [selectedCategories]
+  );
+  const serverFilterKey = `${filters.platform ?? ''}|${categoryFilter ?? ''}|${filters.regionCode ?? ''}`;
+  const latestFiltersRef = useRef({
+    platform: filters.platform ?? undefined,
+    category: categoryFilter,
+    regionCode: filters.regionCode ?? undefined,
+  });
 
-  const items = useMemo(() => {
-    if (selectedCategories.length === 0) {
-      return rawItems;
-    }
+  useEffect(() => {
+    latestFiltersRef.current = {
+      platform: filters.platform ?? undefined,
+      category: categoryFilter,
+      regionCode: filters.regionCode ?? undefined,
+    };
+  }, [categoryFilter, filters.platform, filters.regionCode]);
 
-    return rawItems.filter((item) =>
-      item.category ? selectedCategories.includes(item.category) : false
-    );
-  }, [rawItems, selectedCategories]);
+  const items = rawItems;
 
   const loadPage = useCallback(async (opts: {
     q: string;
@@ -47,6 +60,11 @@ export default function useTrendFeed(filters: TrendFeedFilters): UseTrendFeedRes
     append: boolean;   // true = loadMore, false = replace
     refreshing: boolean;
   }) => {
+    const requestId = latestRequestId.current + 1;
+    const currentFilters = latestFiltersRef.current;
+
+    latestRequestId.current = requestId;
+
     if (opts.append) setIsLoadingMore(true);
     else if (opts.refreshing) setIsRefreshing(true);
     else setIsLoading(true);
@@ -54,12 +72,17 @@ export default function useTrendFeed(filters: TrendFeedFilters): UseTrendFeedRes
 
     try {
       const result = await fetchTrends({
-        platform: filters.platform ?? undefined,
-        region_code: filters.regionCode ?? undefined,
+        platform: currentFilters.platform,
+        category: currentFilters.category,
+        region_code: currentFilters.regionCode,
         q: opts.q || undefined,
         cursor: opts.cursor || undefined,
         limit: 20,
       });
+
+      if (requestId !== latestRequestId.current) {
+        return;
+      }
 
       if (opts.append) {
         setRawItems((prev) => {
@@ -81,18 +104,31 @@ export default function useTrendFeed(filters: TrendFeedFilters): UseTrendFeedRes
       setCursor(result.paging.next_cursor);
       setHasMore(result.paging.has_more);
     } catch (err) {
+      if (requestId !== latestRequestId.current) {
+        return;
+      }
+
       setError(err instanceof Error ? err.message : 'Failed to load trends');
     } finally {
+      if (requestId !== latestRequestId.current) {
+        return;
+      }
+
       setIsLoading(false);
       setIsLoadingMore(false);
       setIsRefreshing(false);
     }
-  }, [filters.platform, filters.regionCode]);
+  }, []);
 
-  // Initial load on mount
   useEffect(() => {
-    loadPage({ q: '', cursor: null, append: false, refreshing: false });
-  }, [loadPage]);
+    if (searchDebounceTimeout.current) {
+      clearTimeout(searchDebounceTimeout.current);
+      searchDebounceTimeout.current = null;
+    }
+
+    setCursor(null);
+    loadPage({ q: searchQuery, cursor: null, append: false, refreshing: false });
+  }, [loadPage, serverFilterKey]);
 
   // Debounced search — skip on first mount to avoid double-firing with initial load
   useEffect(() => {
@@ -100,22 +136,18 @@ export default function useTrendFeed(filters: TrendFeedFilters): UseTrendFeedRes
       isSearchMounted.current = true;
       return;
     }
-    const timer = setTimeout(() => {
+    searchDebounceTimeout.current = setTimeout(() => {
       setCursor(null);
       loadPage({ q: searchQuery, cursor: null, append: false, refreshing: false });
     }, 300);
-    return () => clearTimeout(timer);
-  }, [searchQuery, loadPage]);
 
-  useEffect(() => {
-    if (!isFilterMounted.current) {
-      isFilterMounted.current = true;
-      return;
-    }
-
-    setCursor(null);
-    loadPage({ q: searchQuery, cursor: null, append: false, refreshing: false });
-  }, [serverFilterKey, loadPage]);
+    return () => {
+      if (searchDebounceTimeout.current) {
+        clearTimeout(searchDebounceTimeout.current);
+        searchDebounceTimeout.current = null;
+      }
+    };
+  }, [loadPage, searchQuery]);
 
   const refresh = useCallback(() => {
     setCursor(null);

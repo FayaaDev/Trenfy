@@ -78,6 +78,26 @@ async def test_query_trends_single_platform_uses_eq(client_instance):
 
 
 @pytest.mark.asyncio
+async def test_query_trends_multi_category_uses_anyof(client_instance):
+    """category='gaming,music' should produce (category,anyof,gaming,music)."""
+    captured: Dict[str, Any] = {}
+
+    async def mock_request(
+        method, path, *, params=None, json_body=None, allow_404=False
+    ):
+        captured["params"] = params or {}
+        return _make_mock_response()
+
+    client_instance._request = mock_request
+    await client_instance.query_trends(category="gaming,music")
+
+    where = captured["params"].get("where", "")
+    assert "(category,anyof,gaming,music)" in where, (
+        f"Expected category anyof, got: {where!r}"
+    )
+
+
+@pytest.mark.asyncio
 async def test_query_trends_no_platform_no_filter(client_instance):
     """platform=None should not add any platform filter."""
     captured: Dict[str, Any] = {}
@@ -338,6 +358,15 @@ def test_platform_multi_value_passed_unchanged(test_app, mock_query_trends):
     assert response.status_code == 200
     kwargs = mock_query_trends.query_trends.call_args.kwargs
     assert kwargs.get("platform") == "youtube,x"
+
+
+def test_category_multi_value_passed_unchanged(test_app, mock_query_trends):
+    """category=gaming,music should be passed as-is for query_trends anyof logic."""
+    with TestClient(test_app) as client:
+        response = client.get("/api/trends?category=gaming%2Cmusic")
+    assert response.status_code == 200
+    kwargs = mock_query_trends.query_trends.call_args.kwargs
+    assert kwargs.get("category") == "gaming,music"
 
 
 def test_cursor_sort_takes_precedence_over_sort_by(test_app, mock_query_trends):

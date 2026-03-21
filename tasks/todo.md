@@ -49,4 +49,12 @@
 
 ## Review
 
-- Phase 14 verified complete. One accepted gap remains deferred to Phase 15: category chips currently filter only the already-loaded feed pages, not the full category result set.
+- Phase 14 initially shipped with one accepted gap: category chips only filtered the already-loaded feed pages, not the full category result set.
+- 2026-03-21 follow-up: closed the category filter completeness gap by moving category chips onto server-backed multi-category feed queries; `npm run typecheck` and `.venv/bin/pytest tests/test_phase06_api_filters.py tests/test_api_trends_read.py` passed.
+
+## App Filtering Fix
+
+- [x] Confirm the app filtering root cause across `useTrendFeed`, mobile API helpers, and backend trend querying.
+- [x] Move category chips from client-side narrowing to server-backed filtering for full result correctness.
+- [x] Add regression coverage for category filter propagation and multi-category query behavior.
+- [x] Run targeted verification and record the outcome.

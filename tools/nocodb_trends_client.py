@@ -197,7 +197,13 @@ class NocoDBTrendsClient:
             else:
                 where_parts.append(f"(platform,eq,{platform})")
         if category:
-            where_parts.append(f"(category,eq,{category})")
+            category_values = [
+                value.strip() for value in category.split(",") if value.strip()
+            ]
+            if len(category_values) > 1:
+                where_parts.append(f"(category,anyof,{','.join(category_values)})")
+            elif category_values:
+                where_parts.append(f"(category,eq,{category_values[0]})")
         if region_code:
             where_parts.append(f"(region_code,eq,{region_code})")
         if start_date:
