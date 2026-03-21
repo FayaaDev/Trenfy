@@ -4,13 +4,13 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 11
 status: executing
-last_updated: "2026-03-21T10:46:18.468Z"
+last_updated: "2026-03-21T10:50:42.148Z"
 last_activity: 2026-03-21
 progress:
   total_phases: 7
   completed_phases: 0
   total_plans: 4
-  completed_plans: 2
+  completed_plans: 3
 ---
 
 # Session State
@@ -37,6 +37,7 @@ Last activity: 2026-03-21
 - 2026-03-21: Roadmap created — Phases 11–17, 100% coverage, roadmap_ready
 - 2026-03-21: Completed 11-01 — Rebranded to Trenfy, installed 8 packages (flash-list, reanimated v3, etc.), purged mockData/starterCopy, minimal App.tsx entry
 - 2026-03-21: Completed 11-02 — Trenfy brand tokens (midnight #0A0F1E, teal #14B8A6, amber #F59E0B, Arabic typography scale)
+- 2026-03-21: Completed 11-03 — Mobile API client layer: apiFetch<T> wrapper + fetchTrends (status=approved enforced) + fetchTrendsPreview; EXPO_PUBLIC_API_URL; zero NocoDB calls
 
 ## Accumulated Context
 
@@ -51,3 +52,4 @@ Last activity: 2026-03-21
   - Mock data: purge `mockData.ts` and `starterCopy.ts` imports completely before any API wiring begins
   - Apple Sign-In: persist `fullName`/`email` immediately on first callback — Apple only delivers credentials once
 - **API field names to verify in Phase 11:** `url` vs `source_url`, `ar_translation` vs `ar_title`, `metric_value` vs `view_count`, `region_code` query param name
+- **API client established:** All mobile reads go through `apiFetch<T>` in `src/api/client.ts` via `EXPO_PUBLIC_API_URL` — no NocoDB direct calls. `fetchTrends` always enforces `status=approved`.

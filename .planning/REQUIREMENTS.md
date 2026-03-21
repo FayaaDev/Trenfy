@@ -10,8 +10,8 @@ Requirements for this milestone. Each maps to a roadmap phase.
 ### Scaffold (MOBL)
 
 - [x] **MOBL-01**: Developer can run the app under the Trenfy brand (app.json name, bundle ID, icon, splash updated; WhiteLabelApp renamed/restructured)
-- [ ] **MOBL-02**: App connects to the Trenfy FastAPI backend via a configurable base URL (`EXPO_PUBLIC_API_URL`)
-- [ ] **MOBL-03**: App does not call NocoDB directly; all data flows through FastAPI endpoints only
+- [x] **MOBL-02**: App connects to the Trenfy FastAPI backend via a configurable base URL (`EXPO_PUBLIC_API_URL`)
+- [x] **MOBL-03**: App does not call NocoDB directly; all data flows through FastAPI endpoints only
 - [x] **MOBL-04**: Required packages are installed and the app builds cleanly (FlashList ~2.3, Reanimated ~3.19.5, expo-image, expo-sqlite kv-store, expo-linking, expo-web-browser)
 - [x] **MOBL-05**: All white-label mock data and placeholder copy are removed; no `mockData.ts` or `starterCopy.ts` imports remain in any screen
 
@@ -111,8 +111,8 @@ Which phases cover which requirements. Populated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | MOBL-01 | Phase 11 | Complete |
-| MOBL-02 | Phase 11 | Pending |
-| MOBL-03 | Phase 11 | Pending |
+| MOBL-02 | Phase 11 | Complete |
+| MOBL-03 | Phase 11 | Complete |
 | MOBL-04 | Phase 11 | Complete |
 | MOBL-05 | Phase 11 | Complete |
 | NAV-01 | Phase 12 | Pending |
