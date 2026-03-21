@@ -57,7 +57,7 @@ export interface PatchTrendPayload {
   metric_type?: string;
   metric_value?: number;
   region_code?: string;
-  ar_translation?: string;
+  ar_translation?: string | null;
 }
 
 export interface PatchSourcePayload {
