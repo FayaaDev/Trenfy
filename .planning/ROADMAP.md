@@ -147,12 +147,12 @@ Tasks:
 **Plans:** 6 plans
 
 Plans:
-- [ ] 09-01-PLAN.md — Trends table with filters, pagination, sort (TrendsPage + route wiring)
-- [ ] 09-02-PLAN.md — Trend actions: Approve/Reject/Delete with optimistic updates + toasts
-- [ ] 09-03-PLAN.md — Trend edit modal (TrendEditModal, RHF + Zod validation)
-- [ ] 09-04-PLAN.md — Bulk actions: checkbox multi-select + parallel Approve/Reject
-- [ ] 09-05-PLAN.md — Sources panel: toggle enable/disable with optimistic patchSource
-- [ ] 09-06-PLAN.md — Categories panel: distinct categories + counts from live data
+- [x] 09-01-PLAN.md — Trends table with filters, pagination, sort (TrendsPage + route wiring)
+- [x] 09-02-PLAN.md — Trend actions: Approve/Reject/Delete with optimistic updates + toasts
+- [x] 09-03-PLAN.md — Trend edit modal (TrendEditModal, RHF + Zod validation)
+- [x] 09-04-PLAN.md — Bulk actions: checkbox multi-select + parallel Approve/Reject
+- [x] 09-05-PLAN.md — Sources panel: toggle enable/disable with optimistic patchSource
+- [x] 09-06-PLAN.md — Categories panel: distinct categories + counts from live data
 
 ### 09-01: Trends Table + Filters
 
@@ -294,9 +294,9 @@ Tasks:
 |-------|------|-------------|--------|
 | 07 | Backend readiness — CORS, status field, PATCH/DELETE endpoints | DB-01..02, BAPI-01..07 | complete |
 | 08 | Web scaffold, API client, auth gate | WEB-01..09, AUTH-01..04 | complete |
-| 09 | Admin panel (trends, sources, categories) | ADMIN-01..12, SRC-01..04, CAT-01..03 | pending |
+| 09 | Admin panel (trends, sources, categories) | ADMIN-01..12, SRC-01..04, CAT-01..03 | complete |
 | 10 | Demo feed page | DEMO-01..08 | pending |
-| **Total** | | **49 requirements** | **8/10 phases done** |
+| **Total** | | **49 requirements** | **9/10 phases done** |
 
 ---
 
