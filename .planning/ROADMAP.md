@@ -256,7 +256,11 @@ Tasks:
 
 **Requirements covered:** DEMO-01 through DEMO-08
 
-**Plans:**
+**Plans:** 2 plans (planned)
+
+Plans:
+- [ ] 10-01-PLAN.md — Demo Feed Page
+- [ ] 10-02-PLAN.md — Trend Card Component
 
 ### 10-01: Demo Feed Page
 
@@ -296,7 +300,7 @@ Tasks:
 | 07 | Backend readiness — CORS, status field, PATCH/DELETE endpoints | DB-01..02, BAPI-01..07 | complete |
 | 08 | Web scaffold, API client, auth gate | WEB-01..09, AUTH-01..04 | complete |
 | 09 | Admin panel + local proxy contract alignment | ADMIN-01..12, SRC-01..04, CAT-01..03, WEB-08 | complete |
-| 10 | Demo feed page | DEMO-01..08 | pending |
+| 10 | Demo feed page | DEMO-01..08 | planned |
 | **Total** | | **49 requirements** | **9/10 phases done** |
 
 ---
