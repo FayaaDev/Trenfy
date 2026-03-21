@@ -83,7 +83,11 @@ Plans:
   5. First open shows a skeleton shimmer before real data appears — a blank white screen is never shown to the user
   6. If the API fetch fails, a descriptive error message and a "Retry" button are shown — tapping Retry re-fires the fetch
   7. Tapping any trend card opens the trend's source URL in the native browser (Safari/Chrome), not an in-app WebView
-**Plans:** TBD
+**Plans:** 3 plans
+Plans:
+- [ ] 13-01-PLAN.md — TrendCard + SkeletonCard components (Wave 1)
+- [ ] 13-02-PLAN.md — useTrendFeed hook: pagination + search + refresh (Wave 1)
+- [ ] 13-03-PLAN.md — TrendingNowScreen rewrite: FlashList wiring + visual checkpoint (Wave 2)
 
 ### Phase 14: Filters
 **Goal:** User can narrow the feed by platform, category, and region with a collapsible header that animates smoothly and remembers their preferences across restarts.
@@ -140,7 +144,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 11. Foundation | 4/4 | ✅ Complete | 2026-03-21 |
 | 12. Navigation Shell | 2/2 | ✅ Complete | 2026-03-21 |
-| 13. Trending Feed + Cards | 0/? | Not started | — |
+| 13. Trending Feed + Cards | 0/3 | 🔲 Planned | — |
 | 14. Filters | 0/? | Not started | — |
 | 15. Categories Tab | 0/? | Not started | — |
 | 16. Bookmarks + Profile | 0/? | Not started | — |
