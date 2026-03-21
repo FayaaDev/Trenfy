@@ -2,93 +2,59 @@
 
 ## What This Is
 
-Trenfy is a trend-catching platform for gaming, music, and entertainment. The v1.1 scope delivered requirements traceability repair — reconciling all 59 v1.0 requirement IDs, closing CORE-02/CORE-03 as validated, and establishing the active requirements baseline for next milestone work. The backend pipeline (shipped v1.0) and a cost-safe mockup endpoint are live. Mobile app delivery is the primary next milestone focus.
+Trenfy is a trend-catching platform for gaming, music, and entertainment. The shipped product now includes the FastAPI + NocoDB ingestion backend, a React web admin for moderation and source control, and a public demo feed for approved trends.
 
 ## Core Value
 
-Users can open the app and immediately see what's trending right now across gaming, music, and entertainment — filtered to what they care about, tappable to the source.
+Users can open the app and immediately see what's trending right now across gaming, music, and entertainment - filtered to what they care about, tappable to the source.
 
 ## Current State
 
-- v1.1 shipped on 2026-03-20 with Phase 6 (2 plans, 3 tasks).
-- Requirements baseline repaired: 59 v1.0 IDs reconciled across CLEN/CORE/PLAT/API/FILT/APP/INFRA categories.
-- CORE-02, CORE-03 formally closed as validated (Phase 2 VERIFICATION.md confirmed); INFRA-03 confirmed satisfied-pending one human NocoDB check.
-- 24/59 v1.0 requirements are fully validated; 24 remain satisfied-evidence-pending (code done, missing VERIFICATION.md artifacts); 12 (APP-01..12) remain deferred to next milestone.
-  - **Phase 07 (Backend Readiness) complete**: 4 plans, 138 tests green, all 7 BAPI requirements verified. FastAPI backend now exposes status-filtered reads, trend PATCH/DELETE mutations, source enable/disable toggling, and explicit CORS allowlist.
-  - **Phase 08 (Web Scaffold + Auth) complete**: 3 plans, Vite + React + TS scaffold, typed API client, AdminGuard auth gate, React Router routes.
-  - **Phase 09 (Admin Panel) complete**: 6 plans, 20/20 requirements verified. TrendsPage (table, filters, pagination, sort, approve/reject/delete, edit modal, bulk actions), SourcesPage (toggle with optimistic updates), CategoriesPage (distinct categories + counts).
+- `v1.2` shipped on 2026-03-21.
+- Backend moderation support is live: trend `status`, status-filtered reads, trend PATCH/DELETE, source enable/disable updates, and explicit CORS allowlisting.
+- React web surface is live under `web/`: admin auth gate, trends moderation table, sources toggles, categories view, and the public approved-only `/demo` feed.
+- Historical milestone artifacts live in `.planning/milestones/v1.2-ROADMAP.md` and `.planning/milestones/v1.2-REQUIREMENTS.md`.
+- No next milestone is active yet; start with `/gsd-new-milestone` and a fresh `.planning/REQUIREMENTS.md`.
 
-## Current Milestone: v1.2 Web Admin + Demo Feed
+## Next Milestone Goals
 
-**Goal:** Build a React web admin panel for full content control and a public demo feed page.
-
-**Target features:**
-- API control panel (health, stats, refresh, mock endpoints as interactive buttons)
-- Trend content list showing both original and Arabic translation columns
-- Content review workflow: approve/reject, edit, delete (requires adding `status` field to Trenfy table)
-- Category management: enforce controlled category list, move content between categories
-- Trend sources panel: view sources, toggle enabled/disabled
-- Simple password/token protection on the admin page
-- Public demo feed page showing approved-only trends
-
-## Deferred Milestone Goals
-
-- Deliver React Native mobile app: APP-01..APP-12 (scaffold, FlashList feed, filtering, deep links, RTL support, pull-to-refresh, error/loading states).
-- Close verification debt: create 01/03/04-VERIFICATION.md artifacts covering CLEN/PLAT/API/INFRA satisfied-evidence-pending requirements.
-- Run E2E integration test: fetch→persist→GET /api/trends→mobile render.
+- Deliver the React Native mobile app scope previously deferred as `APP-01..APP-12`.
+- Close the remaining verification debt from earlier milestones (`01/03/04-VERIFICATION.md`, `REQ-701..REQ-705`, `INFRA-03` human confirmation, and a proper milestone audit pass).
+- Decide whether the web admin/demo surface needs incremental feature work or should stay in maintenance mode while mobile becomes primary.
 
 ## Requirements Snapshot
 
 ### Validated
 
-- [x] NocoDB-backed ingestion pipeline and source lifecycle are implemented. — v1.0
-- [x] YouTube and X clients fetch, normalize, and deduplicate trend data. — v1.0
-- [x] Trend APIs and Docker runtime contracts are implemented and available. — v1.0
-- [x] Filtering and Arabic enrichment capabilities are integrated into ingestion/query paths. — v1.0
-- [x] Requirements traceability baseline established: 59 v1.0 IDs reconciled with correct statuses. — v1.1
-- [x] CORE-02 (source registry) and CORE-03 (Pydantic models) closed as validated via Phase 2 evidence. — v1.1
-- [x] INFRA-03 NocoDB schema confirmed satisfied-pending human table check. — v1.1
+- [x] v1.0 backend ingestion pipeline, platform clients, public APIs, and filtering/enrichment capabilities.
+- [x] v1.1 requirements traceability repair and baseline reconciliation.
+- [x] v1.2 backend moderation endpoints and explicit CORS contract.
+- [x] v1.2 React web admin panel for trends, sources, and categories.
+- [x] v1.2 public demo feed for approved trends.
 
-### Active (v1.2 targets)
+### Active
 
-  - [x] ADMIN-01..ADMIN-12: React web admin panel — trends table, filters, pagination, sort, approve/reject/delete, edit modal, bulk actions, toasts. — Phase 09 complete
-  - [x] SRC-01..SRC-04: Sources panel — toggle enable/disable with optimistic mutations, color-coded status badge. — Phase 09 complete
-  - [x] CAT-01..CAT-03: Categories panel — distinct categories with counts, fallback defaults. — Phase 09 complete
-  - [ ] DEMO-01..DEMO-0x: Public demo feed page — approved content only.
-- [x] DB-01: `status` field (pending/approved/rejected) live in Trenfy NocoDB table — confirmed via MCP.
-- [x] BAPI-01..BAPI-07: Backend API backend-readiness endpoints — complete (Phase 07).
+- [ ] No active milestone requirements yet - define the next scope with `/gsd-new-milestone`.
 
-### Deferred (next milestone)
+### Deferred
 
-- [ ] Verification debt closure: create 01/03/04-VERIFICATION.md for CLEN/PLAT/API/INFRA groups.
-- [ ] INFRA-03 human verification: confirm NocoDB `trends` and `trend_sources` table existence.
-- [ ] APP-01..APP-12: React Native mobile app delivery.
-
-### Out of Scope
-
-- User authentication / accounts — not needed, app is public
-- Push notifications — defer to v2
-- Trend bookmarks / favorites — defer to v2
-- LLM trend analysis / classification — structured API data is sufficient
-- Caddy reverse proxy — Docker only for v1
-- Twitch — good for gaming but defer to v2 to reduce scope
-- Cross-platform trend scoring — per-platform only in v1
-- Email digests — pattern exists in old codebase, defer to v2
+- [ ] React Native mobile app delivery (`APP-01..APP-12`).
+- [ ] Verification debt closure for earlier milestone evidence (`01/03/04-VERIFICATION.md`, `REQ-701..REQ-705`).
+- [ ] Human confirmation for `INFRA-03` NocoDB table/schema existence.
 
 ## Context
 
-- Backend codebase is approximately 4.3k lines of Python focused on ingestion/workflow/API paths.
-- NocoDB base and source table IDs are already established for local runtime.
-- Quick-task work exists for cost-safe mockup payload usage without live refresh pressure.
-- Current risk is mobile delivery execution (12 APP requirements) and closing 24 satisfied-evidence-pending items with proper VERIFICATION.md artifacts.
+- The codebase is roughly 8.1k LOC across Python and TypeScript, with the backend still carrying most of the runtime complexity.
+- The React web app now provides operational control and a public review surface, reducing the need to inspect raw NocoDB data directly.
+- The main process risk is milestone-close discipline: v1.2 shipped without a milestone audit, and the active requirements file was only reconciled at archive time.
 
 ## Constraints
 
-- **Tech stack**: Python FastAPI backend (already spec'd), React Native mobile app, NocoDB database — no deviations
-- **X API**: Access limits vary by account tier and endpoint availability — affects polling strategy and retry behavior
-- **YouTube quota**: 10,000 units/day; trending calls cost ~2 units — schedule conservatively (every 15 min = ~96 units/day per region, comfortably within limits)
-- **No auth**: App is public; no user table, no sessions, no tokens in v1
-- **Docker only**: No Caddy; backend exposed directly on port (or internal Docker network)
+- **Tech stack**: FastAPI backend, NocoDB data store, React web admin/demo now shipped; React Native remains the expected mobile client for the next milestone.
+- **X API**: Access limits vary by account tier and endpoint availability - affects polling strategy and retry behavior.
+- **YouTube quota**: 10,000 units/day; trending calls cost about 2 units - schedule conservatively.
+- **Public product surface**: Demo feed is public; admin access remains token-gated only.
+- **Docker only**: No Caddy; backend is exposed directly on port or the internal Docker network.
 
 ## Key Decisions
 
@@ -97,13 +63,38 @@ Users can open the app and immediately see what's trending right now across gami
 | Remove all SehaRadar code | Clean slate reduces ambiguity and maintenance overhead | ✓ Validated v1.0 |
 | NocoDB as database | Already self-hosted and running; existing client code reusable | ✓ Validated Phase 2 |
 | X via official API (tier-aware) | Keep v1 stable with explicit rate-limit handling and graceful degradation | ✓ Implemented v1.0 |
-| No auth in v1 | Simplifies architecture; trends are public data | ✓ Kept in v1.0 |
+| No auth in v1 | Simplifies public product architecture; trends stay public data | ✓ Kept in v1.0 |
 | Docker only (no Caddy) | Reduce infra complexity for v1 | ✓ Kept in v1.0 |
-| React Native for mobile | User-specified cross-platform client | ⚠ Deferred to v1.2 |
-| Upsert by source id on startup | JSON is additive source of truth; preserves last_fetched_at | ✓ Validated Phase 2 |
-| lifespan context manager | Modern FastAPI pattern over @app.on_event | ✓ Validated Phase 2 |
+| React Native for mobile | User-specified cross-platform client | ⚠ Deferred to v1.3 |
+| Upsert by source id on startup | JSON is additive source of truth; preserves `last_fetched_at` | ✓ Validated Phase 2 |
+| `lifespan` context manager | Modern FastAPI pattern over `@app.on_event` | ✓ Validated Phase 2 |
 | Ship v1.0 with accepted audit gaps | Preserve release cadence while tracking debt explicitly | ✓ Reconciled in v1.1 |
-| Repair traceability in v1.1 before mobile work | 24 satisfied-evidence-pending items needed reconciliation before adding new scope | ✓ Completed v1.1 |
+| Repair traceability in v1.1 before new delivery scope | Earlier evidence debt needed reconciliation before adding more surface area | ✓ Completed v1.1 |
+| Ship a React web admin before the mobile app | Unblock moderation and public review workflows with lower scope risk | ✓ Validated v1.2 |
+| Use shared `status` moderation state across backend, admin, and demo feed | One approval contract keeps operator actions and public visibility aligned | ✓ Validated v1.2 |
+| Keep frontend on relative `/api` requests by default | Vite proxy handles local dev; `VITE_API_URL` stays an explicit override | ✓ Validated v1.2 |
+| Use Tailwind v4 with current shadcn tooling | Current shadcn setup no longer cleanly supports the older Tailwind v3 pin | ✓ Validated v1.2 |
+
+<details>
+<summary>Archived pre-v1.2 planning context</summary>
+
+### Previous Milestone Focus
+
+- Build a React web admin panel for full content control and a public demo feed page.
+- Target features included moderation actions, category/source management, token-gated admin access, and approved-only public browsing.
+
+### Previous Deferred Goals
+
+- Deliver React Native mobile app: `APP-01..APP-12`.
+- Close verification debt with `01/03/04-VERIFICATION.md` artifacts.
+- Run end-to-end integration coverage for fetch -> persist -> `GET /api/trends` -> client render.
+
+### Previous Requirements Snapshot
+
+- `ADMIN-01..ADMIN-12`, `SRC-01..SRC-04`, `CAT-01..CAT-03`, `DB-01`, and `BAPI-01..BAPI-07` were complete by the end of Phases 07-09.
+- `DEMO-01..DEMO-08` remained the final active slice before Phase 10 shipped.
+
+</details>
 
 ---
-*Last updated: 2026-03-21 after Phase 09 (Admin Panel) complete*
+*Last updated: 2026-03-21 after v1.2 milestone archive*

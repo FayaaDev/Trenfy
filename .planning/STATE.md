@@ -1,10 +1,10 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.2
-milestone_name: milestone
+milestone_name: Web Admin + Demo Feed
 current_phase: 10
-status: complete
-last_updated: "2026-03-21T07:55:00Z"
+status: archived
+last_updated: "2026-03-21T06:53:34Z"
 progress:
   total_phases: 10
   completed_phases: 10
@@ -18,17 +18,17 @@ progress:
 
 See: .planning/PROJECT.md (updated 2026-03-21)
 
-**Core value:** Users can open the app and immediately see what's trending right now across gaming, music, and entertainment — filtered to what they care about, tappable to the source.
-**Current focus:** Phase 10 — demo-feed
-Last activity: 2026-03-21 - Phase 10 shipped — PR #1 (phase/10-demo-feed → master)
+**Core value:** Users can open the app and immediately see what's trending right now across gaming, music, and entertainment - filtered to what they care about, tappable to the source.
+**Current focus:** Planning the next milestone
+Last activity: 2026-03-21 - Archived v1.2 milestone and prepared release tag `v1.2`
 
 ## Position
 
 **Milestone:** v1.2 Web Admin + Demo Feed
-**Current phase:** 10
-**Status:** Complete — v1.2 milestone done
+**Current phase:** None active
+**Status:** Archived - shipped and ready for next milestone planning
 
-## Phase Plan
+## Milestone Snapshot
 
 | Phase | Name | Plans | Status |
 |-------|------|-------|--------|
@@ -39,19 +39,21 @@ Last activity: 2026-03-21 - Phase 10 shipped — PR #1 (phase/10-demo-feed → m
 
 ## Decisions
 
+- 2026-03-21 (Phase 08): Adopt Tailwind v4 because the current shadcn stack no longer cleanly supports the older Tailwind v3 pin.
 - 2026-03-21 (Phase 09): Treat `localhost:8080` as the authoritative local backend target for the Vite `/api` proxy.
 - 2026-03-21 (Phase 09): Keep the frontend on relative `/api` requests and use `VITE_API_URL` only for explicit non-default backend overrides.
+- 2026-03-21 (Phase 10): Enforce demo feed visibility through `status=approved` API requests instead of a UI-only filter.
 
 ## Performance Metrics
 
-| Phase | Plan | Duration | Tasks | Files | Recorded |
-|-------|------|----------|-------|-------|----------|
-| 09 | 07 | 1 min | 3 | 7 | 2026-03-21 |
+| Milestone | Phases | Plans | Tasks | Commits | Files | Recorded |
+|-----------|--------|-------|-------|---------|-------|----------|
+| v1.2 | 4 | 16 | 97 | 50 | 124 | 2026-03-21 |
 
 ## Session Continuity
 
-- Last completed: `10-01-PLAN.md`
-- Next suggested focus: v1.2 milestone complete
+- Last completed: milestone archive for `v1.2`
+- Next suggested focus: `/gsd-new-milestone`
 
 ### Quick Tasks Completed
 
@@ -61,19 +63,21 @@ Last activity: 2026-03-21 - Phase 10 shipped — PR #1 (phase/10-demo-feed → m
 
 ## Session Log
 
-- 2026-03-21: Quick task `260321-bw2` complete — admin trend edit modal now hydrates selected row values reliably and supports `ar_translation` edits in the existing PATCH flow
-- 2026-03-20: Milestone v1.2 started — Web Admin + Demo Feed
-- 2026-03-20: Questioning phase complete — decisions captured
+- 2026-03-21: Milestone archive complete - v1.2 roadmap/requirements archived, ROADMAP.md collapsed, PROJECT.md evolved, tag prep ready
+- 2026-03-21: Quick task `260321-bw2` complete - admin trend edit modal now hydrates selected row values reliably and supports `ar_translation` edits in the existing PATCH flow
+- 2026-03-20: Milestone v1.2 started - Web Admin + Demo Feed
+- 2026-03-20: Questioning phase complete - decisions captured
 - 2026-03-20: Research files written (STACK, FEATURES, ARCHITECTURE, PITFALLS, SUMMARY)
-- 2026-03-20: REQUIREMENTS.md written — 49 requirements across 8 categories
-- 2026-03-20: ROADMAP.md written — 4 phases, 15 plans, phases 07-10
-- 2026-03-20: Milestone planning complete — ready to execute Phase 7
-- 2026-03-20: Phase 7 context gathered — backend readiness decisions captured for planning
-- 2026-03-20: Phase 7 planned — research, validation strategy, and plans 07-01 through 07-04 written
-- 2026-03-20: Phase 7 complete — 138 tests green, all BAPI-01..BAPI-07 requirements verified, 07-VERIFICATION.md written
-- 2026-03-21: Phase 8 context gathered — web scaffold + auth decisions captured for planning
-- 2026-03-21: Phase 8 planned — plans 08-01 through 08-03 written
-- 2026-03-21: Phase 8 complete — UAT passed (9/9), Vite scaffold + typed API client + auth gate shipped
-- 2026-03-21: Phase 9 planned — 7 plans across 3 waves for admin panel, including the 09-07 dev-contract gap closure
-- 2026-03-21: Phase 9 complete — 20/20 requirements verified (ADMIN-01..12, SRC-01..04, CAT-01..03); TrendsPage, SourcesPage, CategoriesPage, TrendEditModal, DeleteConfirmDialog, SourceToggle, and the corrected local proxy contract all shipped
-- 2026-03-21: Phase 10 complete — DemoPage + TrendCard shipped; public /demo feed ready
+- 2026-03-20: REQUIREMENTS.md written - 49 requirements across 8 categories
+- 2026-03-20: ROADMAP.md written - 4 phases, 15 plans, phases 07-10
+- 2026-03-20: Milestone planning complete - ready to execute Phase 7
+- 2026-03-20: Phase 7 context gathered - backend readiness decisions captured for planning
+- 2026-03-20: Phase 7 planned - research, validation strategy, and plans 07-01 through 07-04 written
+- 2026-03-20: Phase 7 complete - 138 tests green, all BAPI-01..BAPI-07 requirements verified, 07-VERIFICATION.md written
+- 2026-03-21: Phase 8 context gathered - web scaffold + auth decisions captured for planning
+- 2026-03-21: Phase 8 planned - plans 08-01 through 08-03 written
+- 2026-03-21: Phase 8 complete - UAT passed (9/9), Vite scaffold + typed API client + auth gate shipped
+- 2026-03-21: Phase 9 planned - 7 plans across 3 waves for admin panel, including the 09-07 dev-contract gap closure
+- 2026-03-21: Phase 9 complete - 20/20 requirements verified (ADMIN-01..12, SRC-01..04, CAT-01..03); TrendsPage, SourcesPage, CategoriesPage, TrendEditModal, DeleteConfirmDialog, SourceToggle, and the corrected local proxy contract all shipped
+- 2026-03-21: Phase 10 complete - DemoPage + TrendCard shipped; public /demo feed ready
+- 2026-03-21: Phase 10 shipped - PR #1 opened (phase/10-demo-feed -> master); 8/8 requirements addressed
