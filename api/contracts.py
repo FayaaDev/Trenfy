@@ -99,6 +99,7 @@ class PatchTrendRequest(BaseModel):
     metric_value: Optional[int] = None
     region_code: Optional[str] = None
     ar_translation: Optional[str] = None
+    title_ar: Optional[str] = None
 
     @field_validator("status", mode="before")
     @classmethod

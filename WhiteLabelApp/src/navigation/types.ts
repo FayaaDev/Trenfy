@@ -1,6 +1,5 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
-import type { CompositeScreenProps } from '@react-navigation/native';
 
 /**
  * Root bottom tab navigator param list.
@@ -9,8 +8,6 @@ import type { CompositeScreenProps } from '@react-navigation/native';
  */
 export type RootTabParamList = {
   TrendingNow: undefined;
-  Categories: undefined;
-  Profile: undefined;
 };
 
 /**
@@ -25,8 +22,6 @@ export type CategoryStackParamList = {
 
 // Convenience screen prop types — use these in screen components.
 export type TrendingNowTabProps = BottomTabScreenProps<RootTabParamList, 'TrendingNow'>;
-export type CategoriesTabProps = BottomTabScreenProps<RootTabParamList, 'Categories'>;
-export type ProfileTabProps = BottomTabScreenProps<RootTabParamList, 'Profile'>;
 
 export type CategoryListScreenProps = NativeStackScreenProps<CategoryStackParamList, 'CategoryList'>;
 export type CategoryFeedScreenProps = NativeStackScreenProps<CategoryStackParamList, 'CategoryFeed'>;

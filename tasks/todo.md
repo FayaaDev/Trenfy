@@ -74,3 +74,29 @@
 - Archived `.planning/milestones/v1.3-ROADMAP.md` and `.planning/milestones/v1.3-REQUIREMENTS.md`.
 - Collapsed `.planning/ROADMAP.md`, evolved `.planning/PROJECT.md`, refreshed `.planning/STATE.md`, and added milestone notes to `.planning/MILESTONES.md` + `.planning/RETROSPECTIVE.md`.
 - Deleted the live `.planning/REQUIREMENTS.md`; next milestone should start with `/gsd-new-milestone`.
+
+## Temporary Single-Tab App
+
+- [x] Comment out `WhiteLabelApp/src/screens/CategoryListScreen.tsx` for later reuse.
+- [x] Comment out `WhiteLabelApp/src/screens/ProfileScreen.tsx` for later reuse.
+- [x] Simplify `WhiteLabelApp/src/navigation/AppNavigator.tsx` so the bottom bar only shows `TrendingNow`.
+- [x] Run targeted verification and record the result.
+
+## Temporary Single-Tab Review
+
+- Updated the bottom-tab navigator to expose only `TrendingNow`, which leaves one centered tab item in the navigation bar.
+- Commented out the unused `CategoryListScreen` and `ProfileScreen` source so the implementations stay in place for later reuse.
+- `npm run typecheck` in `WhiteLabelApp` still fails because of pre-existing duplicate object keys in `WhiteLabelApp/src/components/FeedCard.tsx:136`, `WhiteLabelApp/src/components/FeedCard.tsx:141`, and `WhiteLabelApp/src/components/FeedCard.tsx:147`; no type errors were reported from the files changed for this task.
+
+## Single-Tab Follow-up
+
+- [x] Remove unused profile stub and now-dead navigation type exports left behind by the single-tab change.
+- [x] Fix the duplicate style keys in `WhiteLabelApp/src/components/FeedCard.tsx` so app typecheck passes.
+- [x] Re-run `WhiteLabelApp` typecheck and document the outcome.
+
+## Single-Tab Follow-up Review
+
+- Commented out `WhiteLabelApp/src/screens/ProfileStubScreen.tsx` to match the other temporarily disabled screens and removed its stale `ProfileTabProps` reference inside the preserved block.
+- Trimmed `WhiteLabelApp/src/navigation/types.ts` so `RootTabParamList` only includes `TrendingNow` and dropped the unused tab prop exports.
+- Removed the duplicate `title`, `titleAr`, and `arTranslation` style keys from `WhiteLabelApp/src/components/FeedCard.tsx`, preserving a single consistent RTL/LTR text style definition.
+- `npm run typecheck` now passes in `WhiteLabelApp`.

@@ -16,6 +16,7 @@ export interface Trend {
   metadata: Record<string, unknown>;
   content_hash: string;
   ar_translation: string | null;
+  title_ar: string | null;
   status: 'pending' | 'approved' | 'rejected' | null;
   fetched_at?: string;                                 // ISO datetime string
 }
@@ -58,6 +59,7 @@ export interface PatchTrendPayload {
   metric_value?: number;
   region_code?: string;
   ar_translation?: string | null;
+  title_ar?: string | null;
 }
 
 export interface PatchSourcePayload {

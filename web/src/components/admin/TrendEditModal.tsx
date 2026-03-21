@@ -26,6 +26,7 @@ import { Button } from '@/components/ui/button';
 
 const editSchema = z.object({
   title: z.string().min(1, 'Title is required').max(300, 'Title too long'),
+  title_ar: z.string().max(300, 'Arabic title too long'),
   category: z.string().min(1, 'Category is required'),
   description: z.string().max(2000, 'Description too long'),
   ar_translation: z.string().max(2000, 'Arabic translation too long'),
@@ -52,6 +53,7 @@ export function TrendEditModal({ trend, onClose }: TrendEditModalProps) {
     resolver: zodResolver(editSchema),
     defaultValues: {
       title: '',
+      title_ar: '',
       category: '',
       description: '',
       ar_translation: '',
@@ -62,6 +64,7 @@ export function TrendEditModal({ trend, onClose }: TrendEditModalProps) {
   useEffect(() => {
     reset({
       title: trend?.title ?? '',
+      title_ar: trend?.title_ar ?? '',
       category: trend?.category ?? '',
       description: trend?.description ?? '',
       ar_translation: trend?.ar_translation ?? '',
@@ -81,9 +84,11 @@ export function TrendEditModal({ trend, onClose }: TrendEditModalProps) {
 
   const onSubmit = (values: EditFormValues) => {
     const arTranslation = values.ar_translation.trim();
+    const titleAr = values.title_ar.trim();
 
     mutation.mutate({
       ...values,
+      title_ar: titleAr || null,
       ar_translation: arTranslation || null,
     });
   };
@@ -108,6 +113,20 @@ export function TrendEditModal({ trend, onClose }: TrendEditModalProps) {
             />
             {errors.title && (
               <p className="text-xs text-destructive">{errors.title.message}</p>
+            )}
+          </div>
+
+          {/* Arabic Title */}
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-slate-200">Arabic Title</label>
+            <Input
+              {...register('title_ar')}
+              className={ADMIN_DIALOG_FIELD_CLASS}
+              placeholder="العنوان بالعربية"
+              dir="rtl"
+            />
+            {errors.title_ar && (
+              <p className="text-xs text-destructive">{errors.title_ar.message}</p>
             )}
           </div>
 

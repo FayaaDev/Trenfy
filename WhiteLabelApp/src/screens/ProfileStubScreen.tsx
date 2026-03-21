@@ -1,9 +1,12 @@
+/*
+Temporarily disabled while the app ships with a single Trending Now tab.
+Keep this screen here for later reuse.
+
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
-import type { ProfileTabProps } from '../navigation/types';
 
-export default function ProfileStubScreen(_props: ProfileTabProps) {
+export default function ProfileStubScreen() {
   const { colors, typography } = useTheme();
   const styles = StyleSheet.create({
     container: {
@@ -23,3 +26,4 @@ export default function ProfileStubScreen(_props: ProfileTabProps) {
     </View>
   );
 }
+*/

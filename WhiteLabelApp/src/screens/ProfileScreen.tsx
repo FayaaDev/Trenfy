@@ -1,3 +1,7 @@
+/*
+Temporarily disabled while the app ships with a single Trending Now tab.
+Keep this screen here for later reuse.
+
 import React from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
@@ -10,3 +14,4 @@ export default function ProfileScreen() {
   });
   return <View style={styles.root}><Text style={styles.text}>Trenfy</Text></View>;
 }
+*/

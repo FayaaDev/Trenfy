@@ -110,6 +110,7 @@ class NocoDBTrendsClient:
             "fetched_at": datetime.now().isoformat(),
             "notification_sent": False,
             "ar_translation": item.ar_translation,
+            "title_ar": item.title_ar,
             "status": item.status or "pending",
         }
 

@@ -24,6 +24,7 @@ class TrendItem(BaseModel):
     metadata: Dict[str, Any] = Field(default_factory=dict)
     content_hash: str = ""
     ar_translation: Optional[str] = None
+    title_ar: Optional[str] = None
     status: Optional[str] = None
 
 

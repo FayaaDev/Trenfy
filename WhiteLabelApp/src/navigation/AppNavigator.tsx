@@ -1,55 +1,59 @@
 import React from 'react';
+import { Pressable, View } from 'react-native';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Iconify } from 'react-native-iconify';
 
 import TrendingNowScreen from '../screens/TrendingNowScreen';
-import CategoryListScreen from '../screens/CategoryListScreen';
-import CategoryFeedScreen from '../screens/CategoryFeedScreen';
-import ProfileStubScreen from '../screens/ProfileStubScreen';
 import { useTheme } from '../theme/ThemeContext';
-import type { RootTabParamList, CategoryStackParamList } from './types';
+import type { RootTabParamList } from './types';
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
-const CategoryStack = createNativeStackNavigator<CategoryStackParamList>();
 
-/**
- * Nested native stack for the Categories tab.
- * CategoryList is the root; tapping a category card navigates to CategoryFeed.
- * CategoryFeed uses the native header (no headerShown: false) to render
- * route.params.categoryName as the back-navigable screen title.
- */
-function CategoriesStack() {
-  const { colors } = useTheme();
+const CIRCLE_SIZE = 56;
+
+/** No bar — just a floating circle icon anchored above the safe area. */
+function FloatingTabBar({ navigation }: BottomTabBarProps) {
+  const { colors, shadows } = useTheme();
+  const insets = useSafeAreaInsets();
+
   return (
-    <CategoryStack.Navigator
-      screenOptions={{
-        headerStyle: { backgroundColor: colors.surface },
-        headerTintColor: colors.text,
-        headerTitleStyle: { fontWeight: '700' as const },
+    <View
+      pointerEvents="box-none"
+      style={{
+        position: 'absolute',
+        bottom: insets.bottom - 23,
+        left: 0,
+        right: 0,
+        alignItems: 'center',
       }}
     >
-      <CategoryStack.Screen
-        name="CategoryList"
-        component={CategoryListScreen}
-        options={{ headerShown: false }}
-      />
-      <CategoryStack.Screen
-        name="CategoryFeed"
-        component={CategoryFeedScreen}
-        options={({ route }) => ({ title: route.params.categoryName })}
-      />
-    </CategoryStack.Navigator>
+      <Pressable
+        onPress={() => navigation.navigate('TrendingNow')}
+        accessibilityRole="button"
+        accessibilityLabel="Trending Now"
+        style={{
+          width: CIRCLE_SIZE,
+          height: CIRCLE_SIZE,
+          borderRadius: CIRCLE_SIZE / 2,
+          backgroundColor: colors.primary,
+          alignItems: 'center',
+          justifyContent: 'center',
+          ...shadows.floating,
+        }}
+      >
+        <Iconify
+          icon="streamline-plump:trending-content"
+          size={28}
+          color={colors.surface}
+        />
+      </Pressable>
+    </View>
   );
 }
 
-/**
- * Root 3-tab navigator.
- * Tab labels: "Trending Now", "Categories", "Profile" (exact strings — per D-01).
- * Icons: Iconify (per D-02) — no @expo/vector-icons/Ionicons used here.
- * Tab bar: height 88, surface background, primary active tint (per D-12 to D-15).
- */
 export default function AppNavigator() {
   const { colors } = useTheme();
 
@@ -68,55 +72,10 @@ export default function AppNavigator() {
   return (
     <NavigationContainer theme={navTheme}>
       <Tab.Navigator
-        screenOptions={({ route }) => ({
-          headerShown: false,
-          tabBarActiveTintColor: colors.primary,
-          tabBarInactiveTintColor: colors.muted,
-          tabBarLabelStyle: {
-            fontSize: 12,
-            fontWeight: '600' as const,
-          },
-          tabBarStyle: {
-            backgroundColor: colors.surface,
-            borderTopColor: colors.border,
-            height: 88,
-            paddingBottom: 10,
-            paddingTop: 10,
-          },
-          tabBarIcon: ({ color, size }) => {
-            let iconName: string;
-            switch (route.name) {
-              case 'TrendingNow':
-                iconName = 'streamline-plump:trending-content';
-                break;
-              case 'Categories':
-                iconName = 'si:grid-line';
-                break;
-              case 'Profile':
-                iconName = 'iconamoon:profile-fill';
-                break;
-              default:
-                iconName = 'si:grid-line';
-            }
-            return <Iconify icon={iconName} size={size} color={color} />;
-          },
-        })}
+        tabBar={(props) => <FloatingTabBar {...props} />}
+        screenOptions={{ headerShown: false }}
       >
-        <Tab.Screen
-          name="TrendingNow"
-          component={TrendingNowScreen}
-          options={{ tabBarLabel: 'Trending Now' }}
-        />
-        <Tab.Screen
-          name="Categories"
-          component={CategoriesStack}
-          options={{ tabBarLabel: 'Categories' }}
-        />
-        <Tab.Screen
-          name="Profile"
-          component={ProfileStubScreen}
-          options={{ tabBarLabel: 'Profile' }}
-        />
+        <Tab.Screen name="TrendingNow" component={TrendingNowScreen} />
       </Tab.Navigator>
     </NavigationContainer>
   );

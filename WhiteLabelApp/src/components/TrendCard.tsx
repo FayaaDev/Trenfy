@@ -6,6 +6,7 @@ import { Iconify } from 'react-native-iconify';
 
 import { Trend } from '../types';
 import { useTheme } from '../theme/ThemeContext';
+import { useIsRTL } from '../hooks/useIsRTL';
 
 export interface TrendCardProps {
   trend: Trend;
@@ -76,6 +77,12 @@ function formatPublishedDate(value: string): string {
 
 export default function TrendCard({ trend, onPress }: TrendCardProps) {
   const { colors, radii, shadows, spacing, typography } = useTheme();
+  const isRTL = useIsRTL();
+
+  // Locale-aware content selection with fallbacks
+  const displayTitle = (isRTL && trend.title_ar) ? trend.title_ar : trend.title;
+  const displayBody  = (isRTL && trend.ar_translation) ? trend.ar_translation : trend.description;
+  const bodyIsArabic = isRTL && !!trend.ar_translation;
 
   const styles = StyleSheet.create({
     shadow: {
@@ -160,6 +167,11 @@ export default function TrendCard({ trend, onPress }: TrendCardProps) {
       textAlign: 'right',
       marginBottom: 4,
     },
+    bodyText: {
+      ...typography.bodySmall,
+      color: colors.textSecondary,
+      marginBottom: 4,
+    },
     footer: {
       flexDirection: 'row',
       justifyContent: 'space-between',
@@ -230,17 +242,17 @@ export default function TrendCard({ trend, onPress }: TrendCardProps) {
 
           {/* Title */}
           <Text style={styles.title} numberOfLines={2} ellipsizeMode="tail">
-            {trend.title}
+            {displayTitle}
           </Text>
 
-          {/* Arabic translation (RTL) */}
-          {trend.ar_translation ? (
+          {/* Body text — Arabic (RTL) or English description */}
+          {displayBody ? (
             <Text
-              style={styles.arabicText}
+              style={bodyIsArabic ? styles.arabicText : styles.bodyText}
               numberOfLines={2}
               ellipsizeMode="tail"
             >
-              {trend.ar_translation}
+              {displayBody}
             </Text>
           ) : null}
 

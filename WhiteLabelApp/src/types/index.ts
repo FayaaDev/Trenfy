@@ -2,6 +2,7 @@ export interface Trend {
   id: string;
   title: string;
   ar_translation?: string;
+  title_ar?: string;
   description?: string;
   url?: string;
   thumbnail_url?: string;

@@ -1,3 +1,7 @@
+/*
+Temporarily disabled while the app ships with a single Trending Now tab.
+Keep this screen here for later reuse.
+
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
@@ -23,3 +27,4 @@ export default function CategoryListScreen(_props: CategoryListScreenProps) {
     </View>
   );
 }
+*/
