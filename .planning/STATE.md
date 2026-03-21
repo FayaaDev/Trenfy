@@ -20,7 +20,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Users can open the app and immediately see what's trending right now across gaming, music, and entertainment - filtered to what they care about, tappable to the source.
-**Current focus:** Phase 11 — foundation
+**Current focus:** Phase 12 — navigation-shell
 
 ## Position
 
@@ -38,7 +38,9 @@ Last activity: 2026-03-21
 - 2026-03-21: Completed 11-01 — Rebranded to Trenfy, installed 8 packages (flash-list, reanimated v3, etc.), purged mockData/starterCopy, minimal App.tsx entry
 - 2026-03-21: Completed 11-02 — Trenfy brand tokens (midnight #0A0F1E, teal #14B8A6, amber #F59E0B, Arabic typography scale)
 - 2026-03-21: Completed 11-03 — Mobile API client layer: apiFetch<T> wrapper + fetchTrends (status=approved enforced) + fetchTrendsPreview; EXPO_PUBLIC_API_URL; zero NocoDB calls
-- 2026-03-21: Completed 11-04 — FoundationScreen with live API trend preview (hero gradient, 4–6 trend cards, Refresh + error/retry, Trenfy brand tokens); App.tsx wired; Phase 11 complete
+  - 2026-03-21: Completed 11-04 — FoundationScreen with live API trend preview (hero gradient, 4–6 trend cards, Refresh + error/retry, Trenfy brand tokens); App.tsx wired; Phase 11 complete
+- 2026-03-21: Completed 12-01 — react-native-svg + react-native-iconify installed; navigation/types.ts (RootTabParamList, CategoryStackParamList); 4 stub screens (TrendingNow, CategoryList, CategoryFeed, ProfileStub)
+- 2026-03-21: Completed 12-02 tasks 1+2 — AppNavigator rewritten (3-tab + category nested stack, Iconify icons); App.tsx renders AppNavigator; IoniconName removed from types/index.ts; awaiting visual verify checkpoint
 
 ## Accumulated Context
 
