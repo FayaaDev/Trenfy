@@ -30,7 +30,7 @@
 
 | # | Phase | Goal | Requirements | Plans |
 |---|-------|------|--------------|-------|
-| 11 | Foundation | Build and run Trenfy-branded app wired to live FastAPI with no mock data | MOBL-01..05 | TBD |
+| 11 | Foundation | Build and run Trenfy-branded app wired to live FastAPI with no mock data | MOBL-01..05 | 4 plans |
 | 12 | Navigation Shell | 3-tab nav with typed route params and safe area handling | NAV-01..03 | TBD |
 | 13 | Trending Feed + Cards | Live FlashList feed with complete TrendCard and full feed lifecycle | FEED-01..07, CARD-01..07 | TBD |
 | 14 | Filters | Platform/category/region filter chips with collapsible animated header and persistence | FLTR-01..07 | TBD |
@@ -50,7 +50,12 @@
   3. `grep -r mockData` and `grep -r starterCopy` across `src/` return zero results — both files deleted
   4. `npx tsc --noEmit` passes clean with all 8 new packages present in `package.json`
   5. Changing `EXPO_PUBLIC_API_URL` in `.env.local` redirects all API traffic — no NocoDB direct calls remain anywhere in the codebase
-**Plans:** TBD
+**Plans:** 4 plans
+Plans:
+- [ ] 11-01-PLAN.md — Rebrand + purge mock data + install 8 packages
+- [ ] 11-02-PLAN.md — Retune theme tokens to Trenfy brand
+- [ ] 11-03-PLAN.md — API client layer (src/api/client.ts, trends.ts, .env.local)
+- [ ] 11-04-PLAN.md — FoundationScreen with live API preview + final App.tsx wiring
 
 ### Phase 12: Navigation Shell
 **Goal:** App has a stable 3-tab navigation structure with TypeScript-enforced route params and correct safe area handling on both platforms.
@@ -130,7 +135,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 11. Foundation | 0/? | Not started | — |
+| 11. Foundation | 4/4 | Not started | — |
 | 12. Navigation Shell | 0/? | Not started | — |
 | 13. Trending Feed + Cards | 0/? | Not started | — |
 | 14. Filters | 0/? | Not started | — |
