@@ -37,6 +37,9 @@ const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <AdminPage /> },
+      { path: 'trends', element: <AdminPage /> },
+      { path: 'sources', element: <AdminPage /> },
+      { path: 'categories', element: <AdminPage /> },
     ],
   },
 
