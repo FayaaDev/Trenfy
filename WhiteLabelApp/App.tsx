@@ -4,7 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import FoundationScreen from './src/screens/FoundationScreen';
+import AppNavigator from './src/navigation/AppNavigator';
 import { colors } from './src/theme/tokens';
 
 export default function App() {
@@ -12,7 +12,7 @@ export default function App() {
     <GestureHandlerRootView style={styles.root}>
       <SafeAreaProvider>
         <StatusBar style="light" />
-        <FoundationScreen />
+        <AppNavigator />
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
