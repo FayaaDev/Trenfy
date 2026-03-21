@@ -73,9 +73,11 @@ export function TrendEditModal({ trend, onClose }: TrendEditModalProps) {
   });
 
   const onSubmit = (values: EditFormValues) => {
+    const arTranslation = values.ar_translation.trim();
+
     mutation.mutate({
       ...values,
-      ar_translation: values.ar_translation.trim(),
+      ar_translation: arTranslation || null,
     });
   };
 
