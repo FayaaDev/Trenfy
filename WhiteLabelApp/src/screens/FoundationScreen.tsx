@@ -1,3 +1,5 @@
+// ARCHIVED: Phase 13 replaced this screen with TrendingNowScreen (FlashList feed).
+// No longer imported anywhere. Kept for reference only.
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
