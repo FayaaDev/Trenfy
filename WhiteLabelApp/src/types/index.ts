@@ -26,6 +26,21 @@ export interface TrendsListResponse {
   paging: TrendsPaging;
 }
 
+export type TrendPlatform = 'youtube' | 'x';
+export type TrendRegion = 'US' | 'SA' | 'JP';
+
+export interface CategoryOption {
+  value: string;
+  label: string;
+  count?: number;
+}
+
+export interface TrendFeedFilters {
+  platform: TrendPlatform | null;
+  selectedCategories: string[];
+  regionCode: TrendRegion | null;
+}
+
 export interface TrendFilters {
   platform?: string | null;
   category?: string | null;

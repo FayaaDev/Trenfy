@@ -22,6 +22,7 @@ sources_router = APIRouter(prefix="/api", tags=["sources"])
 
 VALID_SORT_FIELDS = {"fetched_at", "metric_value", "published_date"}
 MOCKUP_PAGE_SIZE = 200
+CATEGORY_PAGE_SIZE = 200
 MOCKUP_SCOPE_FILTERS: Dict[str, Tuple[str, Optional[str]]] = {
     "yt": ("youtube", None),
     "x": ("x", None),
@@ -309,6 +310,40 @@ async def patch_source(source_id: str, payload: PatchSourceRequest):
     return result
 
 
+categories_router = APIRouter(prefix="/api", tags=["categories"])
+
+
+@categories_router.get("/categories")
+async def list_categories():
+    """Return distinct non-empty categories derived from approved trends."""
+    seen: set = set()
+    categories = []
+
+    offset = 0
+    while True:
+        rows = await nocodb_trends.query_trends(
+            status="approved",
+            limit=CATEGORY_PAGE_SIZE,
+            offset=offset,
+            sort="-fetched_at",
+        )
+
+        for row in rows:
+            cat = str(row.get("category") or "").strip()
+            if cat and cat not in seen:
+                seen.add(cat)
+                label = cat.replace("_", " ").replace("-", " ").title()
+                categories.append({"value": cat, "label": label})
+
+        if len(rows) < CATEGORY_PAGE_SIZE:
+            break
+
+        offset += CATEGORY_PAGE_SIZE
+
+    return sorted(categories, key=lambda x: x["label"])
+
+
 router = APIRouter()
 router.include_router(trends_router)
 router.include_router(sources_router)
+router.include_router(categories_router)

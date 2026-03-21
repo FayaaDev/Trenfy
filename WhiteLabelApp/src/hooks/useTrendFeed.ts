@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { fetchTrends } from '../api/trends';
-import { Trend } from '../types';
+import { Trend, TrendFeedFilters } from '../types';
 
 export interface UseTrendFeedResult {
   items: Trend[];
@@ -15,8 +15,10 @@ export interface UseTrendFeedResult {
   loadMore: () => void;     // load next cursor page, append to items
 }
 
-export default function useTrendFeed(): UseTrendFeedResult {
-  const [items, setItems] = useState<Trend[]>([]);
+export type { TrendFeedFilters } from '../types';
+
+export default function useTrendFeed(filters: TrendFeedFilters): UseTrendFeedResult {
+  const [rawItems, setRawItems] = useState<Trend[]>([]);
   const [isLoading, setIsLoading] = useState(true);      // true on mount
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -24,13 +26,27 @@ export default function useTrendFeed(): UseTrendFeedResult {
   const [searchQuery, setSearchQuery] = useState('');
   const [cursor, setCursor] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
+  const isSearchMounted = useRef(false);
+  const isFilterMounted = useRef(false);
+  const serverFilterKey = `${filters.platform ?? ''}|${filters.regionCode ?? ''}`;
+  const selectedCategories = filters.selectedCategories;
 
-  async function loadPage(opts: {
+  const items = useMemo(() => {
+    if (selectedCategories.length === 0) {
+      return rawItems;
+    }
+
+    return rawItems.filter((item) =>
+      item.category ? selectedCategories.includes(item.category) : false
+    );
+  }, [rawItems, selectedCategories]);
+
+  const loadPage = useCallback(async (opts: {
     q: string;
     cursor: string | null;
     append: boolean;   // true = loadMore, false = replace
     refreshing: boolean;
-  }) {
+  }) => {
     if (opts.append) setIsLoadingMore(true);
     else if (opts.refreshing) setIsRefreshing(true);
     else setIsLoading(true);
@@ -38,14 +54,29 @@ export default function useTrendFeed(): UseTrendFeedResult {
 
     try {
       const result = await fetchTrends({
+        platform: filters.platform ?? undefined,
+        region_code: filters.regionCode ?? undefined,
         q: opts.q || undefined,
         cursor: opts.cursor || undefined,
         limit: 20,
       });
+
       if (opts.append) {
-        setItems(prev => [...prev, ...result.items]);
+        setRawItems((prev) => {
+          const seen = new Set(prev.map((item) => item.id));
+          const nextItems = result.items.filter((item) => {
+            if (seen.has(item.id)) {
+              return false;
+            }
+
+            seen.add(item.id);
+            return true;
+          });
+
+          return [...prev, ...nextItems];
+        });
       } else {
-        setItems(result.items);
+        setRawItems(result.items);
       }
       setCursor(result.paging.next_cursor);
       setHasMore(result.paging.has_more);
@@ -56,18 +87,17 @@ export default function useTrendFeed(): UseTrendFeedResult {
       setIsLoadingMore(false);
       setIsRefreshing(false);
     }
-  }
+  }, [filters.platform, filters.regionCode]);
 
   // Initial load on mount
   useEffect(() => {
     loadPage({ q: '', cursor: null, append: false, refreshing: false });
-  }, []);
+  }, [loadPage]);
 
   // Debounced search — skip on first mount to avoid double-firing with initial load
-  const isMounted = useRef(false);
   useEffect(() => {
-    if (!isMounted.current) {
-      isMounted.current = true;
+    if (!isSearchMounted.current) {
+      isSearchMounted.current = true;
       return;
     }
     const timer = setTimeout(() => {
@@ -75,17 +105,27 @@ export default function useTrendFeed(): UseTrendFeedResult {
       loadPage({ q: searchQuery, cursor: null, append: false, refreshing: false });
     }, 300);
     return () => clearTimeout(timer);
-  }, [searchQuery]);
+  }, [searchQuery, loadPage]);
+
+  useEffect(() => {
+    if (!isFilterMounted.current) {
+      isFilterMounted.current = true;
+      return;
+    }
+
+    setCursor(null);
+    loadPage({ q: searchQuery, cursor: null, append: false, refreshing: false });
+  }, [serverFilterKey, loadPage]);
 
   const refresh = useCallback(() => {
     setCursor(null);
     loadPage({ q: searchQuery, cursor: null, append: false, refreshing: true });
-  }, [searchQuery]);
+  }, [loadPage, searchQuery]);
 
   const loadMore = useCallback(() => {
     if (!hasMore || isLoadingMore || isLoading) return;
     loadPage({ q: searchQuery, cursor, append: true, refreshing: false });
-  }, [hasMore, isLoadingMore, isLoading, searchQuery, cursor]);
+  }, [cursor, hasMore, isLoading, isLoadingMore, loadPage, searchQuery]);
 
   return {
     items,

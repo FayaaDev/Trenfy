@@ -1,6 +1,7 @@
 import sys
 from contextlib import asynccontextmanager
 from pathlib import Path
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
@@ -164,6 +165,32 @@ def test_get_trends_stats_returns_platform_totals_and_recency() -> None:
         "x",
     }
     assert payload["total_trends"] == sum(row["total_trends"] for row in by_platform)
+
+
+def test_get_categories_returns_sorted_unique_labels() -> None:
+    from api.routes import trends as trends_route
+
+    async def fake_query_trends(**kwargs):
+        assert kwargs["status"] == "approved"
+        return [
+            {"category": "music"},
+            {"category": " gaming "},
+            {"category": "music"},
+            {"category": ""},
+            {},
+            {"category": "world_news"},
+        ]
+
+    with patch.object(trends_route.nocodb_trends, "query_trends", fake_query_trends):
+        client = _make_client()
+        response = client.get("/api/categories")
+
+    assert response.status_code == 200
+    assert response.json() == [
+        {"value": "gaming", "label": "Gaming"},
+        {"value": "music", "label": "Music"},
+        {"value": "world_news", "label": "World News"},
+    ]
 
 
 def test_health_integrations_reports_config_without_leaking_secrets() -> None:

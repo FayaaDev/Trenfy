@@ -11,6 +11,8 @@ module.exports = function (api) {
             'streamline-plump:trending-content',
             'si:grid-line',
             'iconamoon:profile-fill',
+            'logos:youtube-icon',
+            'ri:twitter-x-fill',
           ],
         },
       ],

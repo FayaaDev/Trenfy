@@ -1,5 +1,5 @@
 import { apiFetch } from './client';
-import { Trend, TrendFilters, TrendsListResponse } from '../types';
+import { CategoryOption, Trend, TrendFilters, TrendsListResponse } from '../types';
 
 type RawTrend = Omit<Trend, 'id'> & {
   id?: string | number;
@@ -10,6 +10,27 @@ type RawTrendsListResponse = {
   items: RawTrend[];
   paging: TrendsListResponse['paging'];
 };
+
+type RawCategoryItem =
+  | string
+  | {
+      category?: string;
+      name?: string;
+      value?: string;
+      count?: number;
+    };
+
+type RawCategoriesResponse = RawCategoryItem[] | { items?: RawCategoryItem[] };
+
+function titleCaseCategory(value: string): string {
+  return value
+    .replace(/[_-]+/g, ' ')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1).toLowerCase())
+    .join(' ');
+}
 
 function normalizeTrend(item: RawTrend): Trend {
   const { id, Id, ...rest } = item;
@@ -54,4 +75,41 @@ export async function fetchTrends(
 export async function fetchTrendsPreview(limit = 6): Promise<Trend[]> {
   const result = await fetchTrends({ limit });
   return result.items;
+}
+
+export async function fetchCategories(): Promise<CategoryOption[]> {
+  const result = await apiFetch<RawCategoriesResponse>('/api/categories');
+  const rawItems = Array.isArray(result) ? result : result.items ?? [];
+  const seen = new Set<string>();
+
+  return rawItems
+    .map((item) => {
+      if (typeof item === 'string') {
+        const value = item.trim();
+        return value
+          ? { value, label: titleCaseCategory(value) }
+          : null;
+      }
+
+      const value = (item.value ?? item.category ?? item.name ?? '').trim();
+
+      if (!value || seen.has(value)) {
+        return null;
+      }
+
+      return {
+        value,
+        label: titleCaseCategory(value),
+        count: typeof item.count === 'number' ? item.count : undefined,
+      };
+    })
+    .filter((item): item is CategoryOption => {
+      if (!item || seen.has(item.value)) {
+        return false;
+      }
+
+      seen.add(item.value);
+      return true;
+    })
+    .sort((a, b) => a.label.localeCompare(b.label));
 }

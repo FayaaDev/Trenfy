@@ -12,6 +12,29 @@ export interface TrendCardProps {
   onPress?: (trend: Trend) => void;
 }
 
+const METRIC_LABELS: Record<string, string> = {
+  view_count: 'views',
+  views: 'views',
+  like_count: 'likes',
+  likes: 'likes',
+  comment_count: 'comments',
+  comments: 'comments',
+  stream_count: 'streams',
+  streams: 'streams',
+  engagement: 'engagement',
+};
+
+const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+function formatMetricType(type?: string): string | undefined {
+  if (!type) {
+    return undefined;
+  }
+
+  const normalized = type.trim().toLowerCase();
+  return METRIC_LABELS[normalized] ?? normalized.replace(/[_-]+/g, ' ');
+}
+
 function formatMetric(value: number, type?: string): string {
   let formatted: string;
   if (value >= 1_000_000) {
@@ -21,7 +44,34 @@ function formatMetric(value: number, type?: string): string {
   } else {
     formatted = value.toString();
   }
-  return type ? `${formatted} ${type}` : formatted;
+
+  const metricType = formatMetricType(type);
+  return metricType ? `${formatted} ${metricType}` : formatted;
+}
+
+function formatPublishedDate(value: string): string {
+  const dateOnlyMatch = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+
+  if (dateOnlyMatch) {
+    const [, year, month, day] = dateOnlyMatch;
+    const monthIndex = Number(month) - 1;
+
+    if (MONTH_LABELS[monthIndex]) {
+      return `${MONTH_LABELS[monthIndex]} ${Number(day)}, ${year}`;
+    }
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(date);
 }
 
 function PlatformIcon({ platform }: { platform?: string }) {
@@ -112,9 +162,7 @@ export default function TrendCard({ trend, onPress }: TrendCardProps) {
               </Text>
             ) : null}
             {trend.published_date ? (
-              <Text style={styles.date}>
-                {new Date(trend.published_date).toLocaleDateString()}
-              </Text>
+              <Text style={styles.date}>{formatPublishedDate(trend.published_date)}</Text>
             ) : null}
           </View>
         </View>

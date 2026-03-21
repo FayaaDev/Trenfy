@@ -132,13 +132,13 @@ Which phases cover which requirements. Populated during roadmap creation.
 | CARD-05 | Phase 13 | Pending |
 | CARD-06 | Phase 13 | Pending |
 | CARD-07 | Phase 13 | Pending |
-| FLTR-01 | Phase 14 | Pending |
-| FLTR-02 | Phase 14 | Pending |
-| FLTR-03 | Phase 14 | Pending |
-| FLTR-04 | Phase 14 | Pending |
-| FLTR-05 | Phase 14 | Pending |
-| FLTR-06 | Phase 14 | Pending |
-| FLTR-07 | Phase 14 | Pending |
+| FLTR-01 | Phase 14 | ✅ Complete |
+| FLTR-02 | Phase 14 | ✅ Complete |
+| FLTR-03 | Phase 14 | ✅ Complete |
+| FLTR-04 | Phase 14 | ✅ Complete |
+| FLTR-05 | Phase 14 | ✅ Complete |
+| FLTR-06 | Phase 14 | ✅ Complete |
+| FLTR-07 | Phase 14 | ✅ Complete |
 | CATS-01 | Phase 15 | Pending |
 | CATS-02 | Phase 15 | Pending |
 | CATS-03 | Phase 15 | Pending |

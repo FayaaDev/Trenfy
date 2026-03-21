@@ -1,7 +1,7 @@
 # Phase 14: Filters - Context
 
 **Gathered:** 2026-03-21
-**Status:** Ready for planning
+**Status:** Planned
 
 <domain>
 ## Phase Boundary
@@ -85,6 +85,6 @@ Phase 14 adds a collapsible filter header to the Trending Now screen. Users can 
 <deferred>
 ## Deferred Ideas
 
-None — discussion stayed within phase scope.
+- Full category-correctness across unloaded pages is explicitly deferred: Phase 14 keeps multi-category narrowing client-side over the currently loaded feed, so matches outside loaded pages can be missed until the dedicated categories/drill-down work in Phase 15.
 
 </deferred>

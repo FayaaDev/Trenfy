@@ -4,13 +4,13 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 14
 status: ready
-last_updated: "2026-03-21T13:05:00.000Z"
+last_updated: "2026-03-21T18:10:00.000Z"
 last_activity: 2026-03-21
 progress:
   total_phases: 7
-  completed_phases: 3
-  total_plans: 9
-  completed_plans: 9
+  completed_phases: 4
+  total_plans: 12
+  completed_plans: 11
 ---
 
 # Session State
@@ -20,13 +20,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Users can open the app and immediately see what's trending right now across gaming, music, and entertainment - filtered to what they care about, tappable to the source.
-**Current focus:** Phase 14 — filters
+**Current focus:** Phase 15 readiness — categories tab planning/execution
 
 ## Position
 
 **Milestone:** v1.3 React Native Mobile App
 **Current phase:** 14
-**Status:** Ready for Phase 14
+**Status:** Phase 14 verified complete — Phase 15 next
 Last activity: 2026-03-21
 
 ## Session Log
@@ -43,6 +43,11 @@ Last activity: 2026-03-21
 - 2026-03-21: Completed 12-02 — AppNavigator rewritten (3-tab + category nested stack, Iconify icons, brand tokens); App.tsx renders AppNavigator; visual verification approved; Phase 12 complete
 - 2026-03-21: Phase 13 in progress — 13-01 (TrendCard+SkeletonCard) ✓, 13-02 (useTrendFeed hook) ✓, 13-03 at checkpoint:human-verify (TrendingNowScreen FlashList feed built, awaiting visual approval)
 - 2026-03-21: Completed Phase 13 — TrendingNowScreen live feed approved; reanimated downgraded to ~3.17.4 (Expo SDK 53 compat); Phase 14 ready
+- 2026-03-21: Planned Phase 14 — split into 14-01 data/persistence, 14-02 filter UI primitives, 14-03 screen integration + visual checkpoint
+- 2026-03-21: Executed 14-01 — added shared filter types, normalized `/api/categories`, sync kv-store filter prefs, and filter-aware `useTrendFeed`
+- 2026-03-21: Executed 14-02 — built `FilterChip` and animated `FilterHeader`; existing icon registry already covered used icons
+- 2026-03-21: Executed 14-03 implementation — `TrendingNowScreen` now composes persisted filters and collapsible filter header; category loading/header spacing fixes applied and metric/date formatting polished
+- 2026-03-21: Verified Phase 14 complete — `npm run typecheck` and `.venv/bin/pytest tests/test_api_trends_read.py` passed; deferred one accepted gap: category chips only narrow currently loaded feed, with full unloaded-page correctness moved to Phase 15
 
 ## Accumulated Context
 
@@ -59,3 +64,4 @@ Last activity: 2026-03-21
   - Apple Sign-In: persist `fullName`/`email` immediately on first callback — Apple only delivers credentials once
 - **API field names to verify in Phase 11:** `url` vs `source_url`, `ar_translation` vs `ar_title`, `metric_value` vs `view_count`, `region_code` query param name
 - **API client established:** All mobile reads go through `apiFetch<T>` in `src/api/client.ts` via `EXPO_PUBLIC_API_URL` — no NocoDB direct calls. `fetchTrends` always enforces `status=approved`.
+- **Deferred Phase 14 follow-up:** Multi-category filtering is intentionally incomplete across unloaded pages because Phase 14 filters loaded feed items client-side; Phase 15 should own the complete category-driven feed/drill-down solution instead of patching Phase 14 in place.

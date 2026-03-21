@@ -1,25 +1,45 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Pressable,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { Ionicons } from '@expo/vector-icons';
+import Animated, {
+  Extrapolation,
+  interpolate,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  useSharedValue,
+} from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { TrendingNowTabProps } from '../navigation/types';
-import useTrendFeed from '../hooks/useTrendFeed';
-import TrendCard from '../components/TrendCard';
-import SkeletonCard from '../components/SkeletonCard';
+import { fetchCategories } from '../api/trends';
+import FilterHeader, { FILTER_HEADER_HEIGHT } from '../components/FilterHeader';
 import SearchInput from '../components/SearchInput';
-import { Trend } from '../types';
+import SkeletonCard from '../components/SkeletonCard';
+import TrendCard from '../components/TrendCard';
+import useFilterPrefs from '../hooks/useFilterPrefs';
+import useTrendFeed from '../hooks/useTrendFeed';
+import { TrendingNowTabProps } from '../navigation/types';
+import { CategoryOption, Trend } from '../types';
 import { colors, radii, spacing, typography } from '../theme/tokens';
 
+const AnimatedFlashList = Animated.createAnimatedComponent(FlashList as React.ComponentType<any>);
+
 export default function TrendingNowScreen(_: TrendingNowTabProps) {
+  const insets = useSafeAreaInsets();
+  const { platform, region, setPlatform, setRegion, clearPersistedFilters } = useFilterPrefs();
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [availableCategories, setAvailableCategories] = useState<CategoryOption[]>([]);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
+  const [headerContentHeight, setHeaderContentHeight] = useState(0);
+  const [filterHeaderHeight, setFilterHeaderHeight] = useState(FILTER_HEADER_HEIGHT);
+  const scrollY = useSharedValue(0);
+
   const {
     items,
     isLoading,
@@ -30,9 +50,63 @@ export default function TrendingNowScreen(_: TrendingNowTabProps) {
     setSearchQuery,
     refresh,
     loadMore,
-  } = useTrendFeed();
+  } = useTrendFeed({
+    platform,
+    selectedCategories,
+    regionCode: region,
+  });
 
-  const insets = useSafeAreaInsets();
+  useEffect(() => {
+    let isActive = true;
+    setIsLoadingCategories(true);
+
+    fetchCategories()
+      .then((result) => {
+        if (isActive) {
+          setAvailableCategories(result);
+        }
+      })
+      .catch(() => {
+        if (isActive) {
+          setAvailableCategories([]);
+        }
+      })
+      .finally(() => {
+        if (isActive) {
+          setIsLoadingCategories(false);
+        }
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
+  const toggleCategory = useCallback((category: string) => {
+    setSelectedCategories((prev) =>
+      prev.includes(category)
+        ? prev.filter((value) => value !== category)
+        : [...prev, category]
+    );
+  }, []);
+
+  const activeFilterCount = (platform ? 1 : 0) + selectedCategories.length + (region ? 1 : 0);
+
+  const handleClearAll = useCallback(() => {
+    setSelectedCategories([]);
+    clearPersistedFilters();
+  }, [clearPersistedFilters]);
+
+  const topInsetOffset = insets.top + spacing.sm;
+  const contentTopPadding = topInsetOffset + headerContentHeight + filterHeaderHeight + spacing.lg;
+
+  const emptySubtitle = useMemo(() => {
+    if (activeFilterCount > 0 || searchQuery.length > 0) {
+      return 'Try different search terms or filters';
+    }
+
+    return 'No trends available right now';
+  }, [activeFilterCount, searchQuery.length]);
 
   const renderItem = useCallback(
     ({ item }: { item: Trend }) => <TrendCard trend={item} />,
@@ -44,97 +118,146 @@ export default function TrendingNowScreen(_: TrendingNowTabProps) {
   const ListFooter = useCallback(
     () =>
       isLoadingMore ? (
-        <ActivityIndicator
-          color={colors.primary}
-          style={{ marginVertical: spacing.xl }}
-        />
+        <ActivityIndicator color={colors.primary} style={styles.footerLoader} />
       ) : null,
     [isLoadingMore]
   );
 
-  const ItemSeparator = useCallback(
-    () => <View style={{ height: spacing.md }} />,
-    []
+  const ItemSeparator = useCallback(() => <View style={styles.itemSeparator} />, []);
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+
+  const collapsingContentStyle = useAnimatedStyle(
+    () => ({
+      transform: [
+        {
+          translateY: -interpolate(
+            scrollY.value,
+            [0, 80],
+            [0, filterHeaderHeight],
+            Extrapolation.CLAMP
+          ),
+        },
+      ],
+    }),
+    [filterHeaderHeight]
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background }}>
-      {/* Sticky header bar */}
-      <View style={[styles.header, { paddingTop: insets.top + spacing.sm }]}>
-        <Text style={styles.headerTitle}>Trending Now</Text>
-        {/* Search row */}
-        <View style={styles.searchRow}>
-          <View style={{ flex: 1 }}>
-            <SearchInput
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              placeholder="Search trends…"
-            />
+    <View style={styles.container}>
+      <View style={[styles.headerOverlay, { paddingTop: topInsetOffset }]} pointerEvents="box-none">
+        <View
+          onLayout={(event) => setHeaderContentHeight(event.nativeEvent.layout.height)}
+          style={styles.headerContent}
+        >
+          <Text style={styles.headerTitle}>Trending Now</Text>
+          <View style={styles.searchRow}>
+            <View style={styles.searchInputWrap}>
+              <SearchInput
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                placeholder="Search trends..."
+              />
+            </View>
+            {searchQuery.length > 0 ? (
+              <Pressable onPress={() => setSearchQuery('')} style={styles.clearButton}>
+                <Ionicons name="close-circle" size={22} color={colors.muted} />
+              </Pressable>
+            ) : null}
           </View>
-          {searchQuery.length > 0 && (
-            <TouchableOpacity
-              onPress={() => setSearchQuery('')}
-              style={styles.clearButton}
-            >
-              <Ionicons name="close-circle" size={22} color={colors.muted} />
-            </TouchableOpacity>
-          )}
+        </View>
+
+        <View style={[styles.filterHeaderWrap, { top: topInsetOffset + headerContentHeight }]}>
+          <FilterHeader
+            scrollY={scrollY}
+            activeFilterCount={activeFilterCount}
+            selectedPlatform={platform}
+            onSelectPlatform={setPlatform}
+            categories={availableCategories}
+            isLoadingCategories={isLoadingCategories}
+            onExpandedHeightChange={setFilterHeaderHeight}
+            selectedCategories={selectedCategories}
+            onToggleCategory={toggleCategory}
+            selectedRegion={region}
+            onSelectRegion={setRegion}
+            onClearAll={handleClearAll}
+          />
         </View>
       </View>
 
-      {/* Loading skeleton — 4 SkeletonCards */}
-      {isLoading && (
-        <View style={styles.skeletonList}>
-          {[0, 1, 2, 3].map(i => (
-            <SkeletonCard key={i} />
-          ))}
-        </View>
-      )}
+      {isLoading ? (
+        <Animated.View style={collapsingContentStyle}>
+          <View style={[styles.skeletonList, { paddingTop: contentTopPadding }]}>
+            {[0, 1, 2, 3].map((item) => (
+              <SkeletonCard key={item} />
+            ))}
+          </View>
+        </Animated.View>
+      ) : null}
 
-      {/* Error state */}
-      {!isLoading && error && (
-        <View style={styles.centered}>
-          <Ionicons name="cloud-offline-outline" size={48} color={colors.error} />
-          <Text style={styles.errorTitle}>Couldn't load trends</Text>
-          <Text style={styles.errorDetail}>{error}</Text>
-          <Pressable onPress={refresh} style={styles.retryButton}>
-            <Text style={styles.retryButtonText}>Retry</Text>
-          </Pressable>
-        </View>
-      )}
+      {!isLoading && error ? (
+        <Animated.View style={collapsingContentStyle}>
+          <View style={[styles.centered, { paddingTop: contentTopPadding }]}>
+            <Ionicons name="cloud-offline-outline" size={48} color={colors.error} />
+            <Text style={styles.errorTitle}>Couldn't load trends</Text>
+            <Text style={styles.errorDetail}>{error}</Text>
+            <Pressable onPress={refresh} style={styles.retryButton}>
+              <Text style={styles.retryButtonText}>Retry</Text>
+            </Pressable>
+          </View>
+        </Animated.View>
+      ) : null}
 
-      {/* Empty state */}
-      {!isLoading && !error && items.length === 0 && (
-        <View style={styles.centered}>
-          <Ionicons name="search-outline" size={48} color={colors.muted} />
-          <Text style={styles.emptyTitle}>No trends found</Text>
-          <Text style={styles.emptySubtitle}>Try different filters</Text>
-        </View>
-      )}
+      {!isLoading && !error && items.length === 0 ? (
+        <Animated.View style={collapsingContentStyle}>
+          <View style={[styles.centered, { paddingTop: contentTopPadding }]}>
+            <Ionicons name="search-outline" size={48} color={colors.muted} />
+            <Text style={styles.emptyTitle}>No trends found</Text>
+            <Text style={styles.emptySubtitle}>{emptySubtitle}</Text>
+          </View>
+        </Animated.View>
+      ) : null}
 
-      {/* Feed — FlashList */}
-      {!isLoading && !error && items.length > 0 && (
-        <FlashList
+      {!isLoading && !error && items.length > 0 ? (
+        <AnimatedFlashList
           data={items}
+          style={collapsingContentStyle}
           keyExtractor={keyExtractor}
           renderItem={renderItem}
           onEndReached={loadMore}
           onEndReachedThreshold={0.3}
           onRefresh={refresh}
           refreshing={isRefreshing}
-          contentContainerStyle={styles.listContent}
+          onScroll={scrollHandler}
+          scrollEventThrottle={16}
+          contentContainerStyle={[styles.listContent, { paddingTop: contentTopPadding }]}
           ItemSeparatorComponent={ItemSeparator}
           ListFooterComponent={ListFooter}
         />
-      )}
+      ) : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
+  container: {
+    flex: 1,
     backgroundColor: colors.background,
+  },
+  headerOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
     paddingHorizontal: spacing.lg,
+    backgroundColor: colors.background,
+  },
+  headerContent: {
     paddingBottom: spacing.sm,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
@@ -149,19 +272,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.sm,
   },
+  searchInputWrap: {
+    flex: 1,
+  },
   clearButton: {
     padding: spacing.xs,
+  },
+  filterHeaderWrap: {
+    position: 'absolute',
+    left: spacing.lg,
+    right: spacing.lg,
   },
   skeletonList: {
     flex: 1,
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.lg,
     gap: spacing.md,
   },
   centered: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     gap: spacing.md,
     paddingHorizontal: spacing.xl,
   },
@@ -191,9 +321,16 @@ const styles = StyleSheet.create({
   emptySubtitle: {
     ...typography.bodyMedium,
     color: colors.muted,
+    textAlign: 'center',
   },
   listContent: {
     paddingHorizontal: spacing.lg,
     paddingBottom: spacing.xxl,
+  },
+  itemSeparator: {
+    height: spacing.md,
+  },
+  footerLoader: {
+    marginVertical: spacing.xl,
   },
 });

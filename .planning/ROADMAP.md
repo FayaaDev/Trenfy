@@ -21,7 +21,7 @@
 - [x] **Phase 11: Foundation** — Rename scaffold to Trenfy, install packages, wire API client, purge mock data (completed 2026-03-21)
 - [x] **Phase 12: Navigation Shell** — 3-tab bottom nav, nested stacks, safe area insets (completed 2026-03-21)
 - [x] **Phase 13: Trending Feed + Cards** — FlashList feed, TrendCard component, pull-to-refresh, infinite scroll, search, skeletons, error/empty states (completed 2026-03-21)
-- [ ] **Phase 14: Filters** — Platform/category/region chips, collapsible animated header, active filter indicators, clear-all, persisted prefs
+- [x] **Phase 14: Filters** — Platform/category/region chips, collapsible animated header, active filter indicators, clear-all, persisted prefs (completed 2026-03-21; category completeness across unloaded pages deferred to Phase 15)
 - [ ] **Phase 15: Categories Tab** — Rich category grid with drill-down to filtered feed
 - [ ] **Phase 16: Bookmarks + Profile** — Local bookmark saves, Profile tab with saved list, default preferences
 - [ ] **Phase 17: Theming & Accessibility** — Dark mode, theme context, RTL Arabic text handling
@@ -33,7 +33,7 @@
 | 11 | Foundation | 4/4 | Complete    | 2026-03-21 |
 | 12 | Navigation Shell | 3-tab nav with typed route params and safe area handling | NAV-01..03 | TBD |
 | 13 | Trending Feed + Cards | Live FlashList feed with complete TrendCard and full feed lifecycle | FEED-01..07, CARD-01..07 | TBD |
-| 14 | Filters | Platform/category/region filter chips with collapsible animated header and persistence | FLTR-01..07 | TBD |
+| 14 | Filters | Platform/category/region filter chips with collapsible animated header and persistence | FLTR-01..07 | 3 plans (2026-03-21) |
 | 15 | Categories Tab | Category grid with drill-down to category-filtered feed | CATS-01..03 | TBD |
 | 16 | Bookmarks + Profile | Local bookmark saves, Profile tab saved list, default filter preferences | BKMK-01..04, PROF-01..04 | TBD |
 | 17 | Theming & Accessibility | Dark mode on all screens, theme token context, RTL Arabic text in cards | THME-01..04 | TBD |
@@ -101,7 +101,13 @@ Plans:
   5. When filters are active and the header is collapsed, a badge on the feed header bar shows the count of active filters
   6. Tapping "Clear all" resets all chips to unselected state and reverts the feed to unfiltered results in one tap
   7. Closing and re-opening the app pre-selects the same platform and region chips the user last used
-**Plans:** TBD
+**Plans:** 3/3 plans complete
+Plans:
+- [x] 14-01-PLAN.md — Shared filter types, `fetchCategories()`, `useFilterPrefs()`, and filter-aware `useTrendFeed()`
+- [x] 14-02-PLAN.md — `FilterChip` + `FilterHeader` reusable UI primitives and icon registry verification
+- [x] 14-03-PLAN.md — `TrendingNowScreen` integration, collapsible header wiring, and verification closure with one deferred category-completeness gap
+
+**Deferred follow-up:** Multi-category filtering currently narrows the loaded feed client-side, which can miss matches outside fetched pages. Preserve Phase 14 behavior for now and solve the complete category result flow in Phase 15 when category drill-down/feed ownership is added.
 
 ### Phase 15: Categories Tab
 **Goal:** User can browse all trend categories in a rich grid and drill down into any category to see a fully functional filtered trend feed.
@@ -145,11 +151,11 @@ Plans:
 | 11. Foundation | 4/4 | ✅ Complete | 2026-03-21 |
 | 12. Navigation Shell | 2/2 | ✅ Complete | 2026-03-21 |
 | 13. Trending Feed + Cards | 3/3 | ✅ Complete | 2026-03-21 |
-| 14. Filters | 0/? | Not started | — |
+| 14. Filters | 3/3 | ✅ Complete (1 deferred follow-up) | 2026-03-21 |
 | 15. Categories Tab | 0/? | Not started | — |
 | 16. Bookmarks + Profile | 0/? | Not started | — |
 | 17. Theming & Accessibility | 0/? | Not started | — |
 
 ---
 *Roadmap created: 2026-03-21*
-*Last updated: 2026-03-21 — Phase 13 complete (human-verify approved)*
+*Last updated: 2026-03-21 — Phase 14 verified complete; unloaded-page category completeness deferred to Phase 15*
