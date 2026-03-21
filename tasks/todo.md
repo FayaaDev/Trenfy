@@ -1,12 +1,10 @@
-# Admin Dropdown Styling
+# Complete v1.2 Milestone
 
-- [x] Inspect admin select/dropdown usage and confirm the remaining light menus live in `TrendsPage`
-- [x] Reuse the shared dark admin select styles for page-level admin dropdown triggers and popups
-- [x] Verify the affected files with targeted linting and a frontend build
+- [ ] Review audit status, roadmap readiness, and requirements completion for `v1.2`
+- [ ] Prepare milestone scope, stats, and accomplishments for the verification gate
+- [ ] Archive `v1.2` roadmap and requirements, then update `.planning/ROADMAP.md`, `.planning/PROJECT.md`, and `.planning/STATE.md`
+- [ ] Verify the planning changes, create the milestone commit, and tag `v1.2`
 
-## Review
+## Notes
 
-- Extended the shared admin dark style module with page-level select trigger/content classes so admin filters and dialog selects share the same slate palette.
-- Applied the dark trigger and popup styling to every filter dropdown on `web/src/pages/admin/TrendsPage.tsx`.
-- Verification: targeted `npx eslint src/pages/admin/TrendsPage.tsx src/components/admin/adminDialogStyles.ts` passed.
-- Verification: `npm run build` passed; Vite still reports the existing chunk-size warning only.
+- Active target: archive the shipped `v1.2 Web Admin + Demo Feed` milestone without losing historical detail.
