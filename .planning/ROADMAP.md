@@ -81,7 +81,12 @@ Tasks:
 
 **Requirements covered:** WEB-01 through WEB-09, AUTH-01 through AUTH-04
 
-**Plans:**
+**Plans:** 3 plans
+
+Plans:
+- [ ] 08-01-PLAN.md — Vite + React + TS scaffold, Tailwind v3, shadcn/ui, runtime deps
+- [ ] 08-02-PLAN.md — Typed API client layer (types.ts, client.ts, trends.ts, sources.ts, Vite proxy)
+- [ ] 08-03-PLAN.md — React Router v6 routes, AdminGuard, LoginPage, AdminLayout, stub pages
 
 ### 08-01: Vite + React Scaffold
 
