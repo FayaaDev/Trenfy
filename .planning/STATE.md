@@ -51,7 +51,8 @@ Last activity: 2026-03-21
 - Build approach: evolve WhiteLabelApp in-place (rename, restructure, wire to API) rather than scaffold fresh.
 - The existing Trenfy backend (FastAPI + NocoDB) exposes `/api/trends`, `/api/sources`, `/api/categories` — the mobile app will consume these directly.
 - **Critical pitfalls logged:**
-  - Reanimated: pinned to ~3.17.4 — Expo SDK 53 compatible; v3.19.x crashes at runtime
+  - Reanimated: pin to EXACT Expo SDK 53 compatible version (~3.17.4) — ~3.19.5 installs a newer JS package than the native runtime has, throwing a fatal ReanimatedError at startup. Always run `npx expo install --check react-native-reanimated` before committing.
+  - react-native-iconify babel registry: EVERY icon string used in any component must be explicitly listed in `babel.config.js` under `react-native-iconify/babel` → `icons`. Icons missing from that list compile silently but render blank at runtime. Planners must add babel.config.js icon additions as explicit tasks when new icons are introduced.
   - FlashList v2 (`@shopify/flash-list@2.3.0`, New Architecture): `estimatedItemSize` removed — use automatic measurement; never add `key` prop inside `renderItem`, use only `keyExtractor` on the `<FlashList>` element
   - Collapsible header: animate `translateY` + `opacity` only, never `height` — height animation causes FlashList layout recalculations
   - Mock data: purge `mockData.ts` and `starterCopy.ts` imports completely before any API wiring begins
