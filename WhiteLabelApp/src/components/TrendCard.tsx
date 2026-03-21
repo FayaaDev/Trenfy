@@ -1,0 +1,222 @@
+import React from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image } from 'expo-image';
+import * as Linking from 'expo-linking';
+import { Iconify } from 'react-native-iconify';
+
+import { Trend } from '../types';
+import { colors, radii, shadows, spacing, typography } from '../theme/tokens';
+
+export interface TrendCardProps {
+  trend: Trend;
+  onPress?: (trend: Trend) => void;
+}
+
+function formatMetric(value: number, type?: string): string {
+  let formatted: string;
+  if (value >= 1_000_000) {
+    formatted = (value / 1_000_000).toFixed(1) + 'M';
+  } else if (value >= 1_000) {
+    formatted = (value / 1_000).toFixed(0) + 'K';
+  } else {
+    formatted = value.toString();
+  }
+  return type ? `${formatted} ${type}` : formatted;
+}
+
+function PlatformIcon({ platform }: { platform?: string }) {
+  if (!platform) return null;
+  if (platform === 'youtube') {
+    return (
+      <View style={styles.platformIconWrapper}>
+        <Iconify icon="logos:youtube-icon" size={20} color="#FF0000" />
+      </View>
+    );
+  }
+  if (platform === 'x') {
+    return (
+      <View style={styles.platformIconWrapper}>
+        <Iconify icon="ri:twitter-x-fill" size={18} color={colors.text} />
+      </View>
+    );
+  }
+  return null;
+}
+
+export default function TrendCard({ trend, onPress }: TrendCardProps) {
+  const handlePress = () => {
+    if (onPress) {
+      onPress(trend);
+      return;
+    }
+    if (trend.url) Linking.openURL(trend.url);
+  };
+
+  return (
+    <View style={styles.shadow}>
+      <Pressable onPress={handlePress} style={styles.card}>
+        {/* Thumbnail block */}
+        <View style={styles.thumbnailContainer}>
+          {trend.thumbnail_url ? (
+            <Image
+              source={{ uri: trend.thumbnail_url }}
+              style={styles.thumbnail}
+              contentFit="cover"
+            />
+          ) : (
+            <View style={styles.thumbnailPlaceholder} />
+          )}
+          {/* Platform icon overlay */}
+          <View style={styles.platformIconPosition}>
+            <PlatformIcon platform={trend.platform} />
+          </View>
+        </View>
+
+        {/* Content area */}
+        <View style={styles.content}>
+          {/* Top row: badges */}
+          <View style={styles.badgeRow}>
+            {trend.category ? (
+              <View style={styles.categoryBadge}>
+                <Text style={styles.categoryText}>{trend.category}</Text>
+              </View>
+            ) : null}
+            {trend.region_code ? (
+              <View style={styles.regionBadge}>
+                <Text style={styles.regionText}>{trend.region_code}</Text>
+              </View>
+            ) : null}
+          </View>
+
+          {/* Title */}
+          <Text style={styles.title} numberOfLines={2} ellipsizeMode="tail">
+            {trend.title}
+          </Text>
+
+          {/* Arabic translation (RTL) */}
+          {trend.ar_translation ? (
+            <Text
+              style={styles.arabicText}
+              numberOfLines={2}
+              ellipsizeMode="tail"
+            >
+              {trend.ar_translation}
+            </Text>
+          ) : null}
+
+          {/* Footer row */}
+          <View style={styles.footer}>
+            {trend.metric_value != null ? (
+              <Text style={styles.metric}>
+                {formatMetric(trend.metric_value, trend.metric_type)}
+              </Text>
+            ) : null}
+            {trend.published_date ? (
+              <Text style={styles.date}>
+                {new Date(trend.published_date).toLocaleDateString()}
+              </Text>
+            ) : null}
+          </View>
+        </View>
+      </Pressable>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  shadow: {
+    ...shadows.card,
+    borderRadius: radii.md,
+  },
+  card: {
+    borderRadius: radii.md,
+    overflow: 'hidden',
+    backgroundColor: colors.surface,
+  },
+  thumbnailContainer: {
+    height: 140,
+    position: 'relative',
+  },
+  thumbnail: {
+    height: 140,
+    width: '100%',
+    borderTopLeftRadius: radii.md,
+    borderTopRightRadius: radii.md,
+    backgroundColor: colors.primary,
+  },
+  thumbnailPlaceholder: {
+    height: 140,
+    width: '100%',
+    borderTopLeftRadius: radii.md,
+    borderTopRightRadius: radii.md,
+    backgroundColor: colors.primary,
+  },
+  platformIconPosition: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+  },
+  platformIconWrapper: {
+    backgroundColor: colors.overlay,
+    borderRadius: radii.sm,
+    padding: 4,
+  },
+  content: {
+    padding: spacing.md,
+    backgroundColor: colors.surface,
+    borderBottomLeftRadius: radii.md,
+    borderBottomRightRadius: radii.md,
+  },
+  badgeRow: {
+    flexDirection: 'row',
+    gap: spacing.xs,
+    marginBottom: spacing.sm,
+    flexWrap: 'wrap',
+  },
+  categoryBadge: {
+    backgroundColor: colors.primarySoft,
+    borderRadius: radii.pill,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+  },
+  categoryText: {
+    ...typography.labelSmall,
+    color: colors.primary,
+  },
+  regionBadge: {
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: radii.pill,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+  },
+  regionText: {
+    ...typography.labelSmall,
+    color: colors.muted,
+  },
+  title: {
+    ...typography.headingSmall,
+    color: colors.text,
+    marginBottom: 4,
+  },
+  arabicText: {
+    ...typography.arabicBody,
+    color: colors.textSecondary,
+    writingDirection: 'rtl',
+    textAlign: 'right',
+    marginBottom: 4,
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: spacing.xs,
+  },
+  metric: {
+    ...typography.labelLarge,
+    color: colors.accent,
+  },
+  date: {
+    ...typography.bodySmall,
+    color: colors.muted,
+  },
+});
