@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Select,
   SelectContent,
@@ -42,6 +43,8 @@ export function TrendsPage() {
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
   const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
   const [editTarget, setEditTarget] = useState<Trend | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [isBulkPending, setIsBulkPending] = useState(false);
 
   const queryKey = ['trends', filters, cursor, sortBy, sortDir] as const;
 
@@ -56,6 +59,11 @@ export function TrendsPage() {
         signal,
       }),
   });
+
+  const allVisibleIds = data?.items.map((t) => t.Id) ?? [];
+  const allSelected =
+    allVisibleIds.length > 0 &&
+    allVisibleIds.every((id) => selectedIds.has(id));
 
   const patchMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: PatchTrendPayload }) =>
@@ -118,6 +126,7 @@ export function TrendsPage() {
     setFilters((prev) => ({ ...prev, [key]: value || undefined }));
     setCursor(undefined);
     setCursorStack([]);
+    setSelectedIds(new Set());
   }
 
   function handleSort(field: SortField) {
@@ -129,12 +138,14 @@ export function TrendsPage() {
     }
     setCursor(undefined);
     setCursorStack([]);
+    setSelectedIds(new Set());
   }
 
   function handleNext() {
     if (!data?.paging.next_cursor) return;
     setCursorStack((prev) => [...prev, cursor ?? '']);
     setCursor(data.paging.next_cursor);
+    setSelectedIds(new Set());
   }
 
   function handlePrev() {
@@ -143,6 +154,42 @@ export function TrendsPage() {
     const prev = stack.pop();
     setCursorStack(stack);
     setCursor(prev || undefined);
+    setSelectedIds(new Set());
+  }
+
+  function toggleSelectAll() {
+    if (allSelected) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(allVisibleIds));
+    }
+  }
+
+  function toggleSelectOne(id: number) {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  async function handleBulkAction(status: 'approved' | 'rejected') {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    setIsBulkPending(true);
+    try {
+      await Promise.all(ids.map((id) => patchTrend(id, { status })));
+      toast.success(
+        `${status === 'approved' ? 'Approved' : 'Rejected'} ${ids.length} trend${ids.length === 1 ? '' : 's'}`
+      );
+    } catch {
+      toast.error('Some updates failed — refresh to see current state');
+    } finally {
+      setSelectedIds(new Set());
+      setIsBulkPending(false);
+      queryClient.invalidateQueries({ queryKey: ['trends'] });
+    }
   }
 
   function sortIndicator(field: SortField) {
@@ -223,10 +270,42 @@ export function TrendsPage() {
         </Select>
       </div>
 
+      {/* Bulk action bar — visible when 2+ rows are selected */}
+      {selectedIds.size >= 2 && (
+        <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2">
+          <span className="text-sm text-slate-600">
+            {selectedIds.size} selected
+          </span>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={isBulkPending}
+            onClick={() => handleBulkAction('approved')}
+          >
+            Approve {selectedIds.size}
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={isBulkPending}
+            onClick={() => handleBulkAction('rejected')}
+          >
+            Reject {selectedIds.size}
+          </Button>
+        </div>
+      )}
+
       {/* Table */}
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead className="w-10">
+              <Checkbox
+                checked={allSelected}
+                onCheckedChange={toggleSelectAll}
+                aria-label="Select all"
+              />
+            </TableHead>
             <TableHead>Title</TableHead>
             <TableHead>Platform</TableHead>
             <TableHead>Category</TableHead>
@@ -251,7 +330,7 @@ export function TrendsPage() {
           {isLoading && (
             <TableRow>
               <TableCell
-                colSpan={8}
+                colSpan={9}
                 className="text-center text-muted-foreground py-8"
               >
                 Loading…
@@ -261,7 +340,7 @@ export function TrendsPage() {
           {isError && (
             <TableRow>
               <TableCell
-                colSpan={8}
+                colSpan={9}
                 className="text-center text-muted-foreground py-8"
               >
                 Failed to load trends.
@@ -270,6 +349,13 @@ export function TrendsPage() {
           )}
           {data?.items.map((trend) => (
             <TableRow key={trend.Id}>
+              <TableCell>
+                <Checkbox
+                  checked={selectedIds.has(trend.Id)}
+                  onCheckedChange={() => toggleSelectOne(trend.Id)}
+                  aria-label={`Select trend ${trend.Id}`}
+                />
+              </TableCell>
               <TableCell className="max-w-[240px] truncate font-medium">
                 {trend.title}
               </TableCell>
