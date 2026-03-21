@@ -47,3 +47,4 @@ See: .planning/PROJECT.md (updated 2026-03-20)
 - 2026-03-20: Phase 7 context gathered — backend readiness decisions captured for planning
 - 2026-03-20: Phase 7 planned — research, validation strategy, and plans 07-01 through 07-04 written
 - 2026-03-20: Phase 7 complete — 138 tests green, all BAPI-01..BAPI-07 requirements verified, 07-VERIFICATION.md written
+- 2026-03-21: Phase 8 context gathered — web scaffold + auth decisions captured for planning
