@@ -110,55 +110,55 @@ Which phases cover which requirements. Populated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| MOBL-01 | — | Pending |
-| MOBL-02 | — | Pending |
-| MOBL-03 | — | Pending |
-| MOBL-04 | — | Pending |
-| MOBL-05 | — | Pending |
-| NAV-01 | — | Pending |
-| NAV-02 | — | Pending |
-| NAV-03 | — | Pending |
-| FEED-01 | — | Pending |
-| FEED-02 | — | Pending |
-| FEED-03 | — | Pending |
-| FEED-04 | — | Pending |
-| FEED-05 | — | Pending |
-| FEED-06 | — | Pending |
-| FEED-07 | — | Pending |
-| CARD-01 | — | Pending |
-| CARD-02 | — | Pending |
-| CARD-03 | — | Pending |
-| CARD-04 | — | Pending |
-| CARD-05 | — | Pending |
-| CARD-06 | — | Pending |
-| CARD-07 | — | Pending |
-| FLTR-01 | — | Pending |
-| FLTR-02 | — | Pending |
-| FLTR-03 | — | Pending |
-| FLTR-04 | — | Pending |
-| FLTR-05 | — | Pending |
-| FLTR-06 | — | Pending |
-| FLTR-07 | — | Pending |
-| CATS-01 | — | Pending |
-| CATS-02 | — | Pending |
-| CATS-03 | — | Pending |
-| BKMK-01 | — | Pending |
-| BKMK-02 | — | Pending |
-| BKMK-03 | — | Pending |
-| BKMK-04 | — | Pending |
-| PROF-01 | — | Pending |
-| PROF-02 | — | Pending |
-| PROF-03 | — | Pending |
-| PROF-04 | — | Pending |
-| THME-01 | — | Pending |
-| THME-02 | — | Pending |
-| THME-03 | — | Pending |
-| THME-04 | — | Pending |
+| MOBL-01 | Phase 11 | Pending |
+| MOBL-02 | Phase 11 | Pending |
+| MOBL-03 | Phase 11 | Pending |
+| MOBL-04 | Phase 11 | Pending |
+| MOBL-05 | Phase 11 | Pending |
+| NAV-01 | Phase 12 | Pending |
+| NAV-02 | Phase 12 | Pending |
+| NAV-03 | Phase 12 | Pending |
+| FEED-01 | Phase 13 | Pending |
+| FEED-02 | Phase 13 | Pending |
+| FEED-03 | Phase 13 | Pending |
+| FEED-04 | Phase 13 | Pending |
+| FEED-05 | Phase 13 | Pending |
+| FEED-06 | Phase 13 | Pending |
+| FEED-07 | Phase 13 | Pending |
+| CARD-01 | Phase 13 | Pending |
+| CARD-02 | Phase 13 | Pending |
+| CARD-03 | Phase 13 | Pending |
+| CARD-04 | Phase 13 | Pending |
+| CARD-05 | Phase 13 | Pending |
+| CARD-06 | Phase 13 | Pending |
+| CARD-07 | Phase 13 | Pending |
+| FLTR-01 | Phase 14 | Pending |
+| FLTR-02 | Phase 14 | Pending |
+| FLTR-03 | Phase 14 | Pending |
+| FLTR-04 | Phase 14 | Pending |
+| FLTR-05 | Phase 14 | Pending |
+| FLTR-06 | Phase 14 | Pending |
+| FLTR-07 | Phase 14 | Pending |
+| CATS-01 | Phase 15 | Pending |
+| CATS-02 | Phase 15 | Pending |
+| CATS-03 | Phase 15 | Pending |
+| BKMK-01 | Phase 16 | Pending |
+| BKMK-02 | Phase 16 | Pending |
+| BKMK-03 | Phase 16 | Pending |
+| BKMK-04 | Phase 16 | Pending |
+| PROF-01 | Phase 16 | Pending |
+| PROF-02 | Phase 16 | Pending |
+| PROF-03 | Phase 16 | Pending |
+| PROF-04 | Phase 16 | Pending |
+| THME-01 | Phase 17 | Pending |
+| THME-02 | Phase 17 | Pending |
+| THME-03 | Phase 17 | Pending |
+| THME-04 | Phase 17 | Pending |
 
 **Coverage:**
 - v1 requirements: 44 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 44 ⚠️
+- Mapped to phases: 44 ✓
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-21*
