@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { colors, spacing } from '../theme/tokens';
+import { useTheme } from '../theme/ThemeContext';
 
 interface SectionHeaderProps {
   title: string;
@@ -16,6 +16,37 @@ export default function SectionHeader({
   actionLabel,
   onActionPress,
 }: SectionHeaderProps) {
+  const { colors, spacing } = useTheme();
+
+  const styles = StyleSheet.create({
+    row: {
+      alignItems: 'flex-start',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      gap: spacing.md,
+    },
+    copy: {
+      flex: 1,
+      gap: 4,
+    },
+    title: {
+      color: colors.text,
+      fontSize: 20,
+      fontWeight: '700',
+    },
+    subtitle: {
+      color: colors.muted,
+      fontSize: 14,
+      lineHeight: 20,
+    },
+    action: {
+      color: colors.primaryDark,
+      fontSize: 14,
+      fontWeight: '700',
+      marginTop: 4,
+    },
+  });
+
   return (
     <View style={styles.row}>
       <View style={styles.copy}>
@@ -30,32 +61,3 @@ export default function SectionHeader({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  row: {
-    alignItems: 'flex-start',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: spacing.md,
-  },
-  copy: {
-    flex: 1,
-    gap: 4,
-  },
-  title: {
-    color: colors.text,
-    fontSize: 20,
-    fontWeight: '700',
-  },
-  subtitle: {
-    color: colors.muted,
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  action: {
-    color: colors.primaryDark,
-    fontSize: 14,
-    fontWeight: '700',
-    marginTop: 4,
-  },
-});

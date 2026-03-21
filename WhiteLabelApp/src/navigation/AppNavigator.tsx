@@ -8,23 +8,11 @@ import TrendingNowScreen from '../screens/TrendingNowScreen';
 import CategoryListScreen from '../screens/CategoryListScreen';
 import CategoryFeedScreen from '../screens/CategoryFeedScreen';
 import ProfileStubScreen from '../screens/ProfileStubScreen';
-import { colors } from '../theme/tokens';
+import { useTheme } from '../theme/ThemeContext';
 import type { RootTabParamList, CategoryStackParamList } from './types';
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 const CategoryStack = createNativeStackNavigator<CategoryStackParamList>();
-
-const navigationTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    background: colors.background,
-    border: colors.border,
-    card: colors.surface,
-    primary: colors.primary,
-    text: colors.text,
-  },
-};
 
 /**
  * Nested native stack for the Categories tab.
@@ -33,6 +21,7 @@ const navigationTheme = {
  * route.params.categoryName as the back-navigable screen title.
  */
 function CategoriesStack() {
+  const { colors } = useTheme();
   return (
     <CategoryStack.Navigator
       screenOptions={{
@@ -62,8 +51,22 @@ function CategoriesStack() {
  * Tab bar: height 88, surface background, primary active tint (per D-12 to D-15).
  */
 export default function AppNavigator() {
+  const { colors } = useTheme();
+
+  const navTheme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      background: colors.background,
+      border: colors.border,
+      card: colors.surface,
+      primary: colors.primary,
+      text: colors.text,
+    },
+  };
+
   return (
-    <NavigationContainer theme={navigationTheme}>
+    <NavigationContainer theme={navTheme}>
       <Tab.Navigator
         screenOptions={({ route }) => ({
           headerShown: false,

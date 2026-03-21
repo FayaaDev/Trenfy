@@ -26,11 +26,12 @@ import useFilterPrefs from '../hooks/useFilterPrefs';
 import useTrendFeed from '../hooks/useTrendFeed';
 import { TrendingNowTabProps } from '../navigation/types';
 import { CategoryOption, Trend } from '../types';
-import { colors, radii, spacing, typography } from '../theme/tokens';
+import { useTheme } from '../theme/ThemeContext';
 
 const AnimatedFlashList = Animated.createAnimatedComponent(FlashList as React.ComponentType<any>);
 
 export default function TrendingNowScreen(_: TrendingNowTabProps) {
+  const { colors, radii, spacing, typography } = useTheme();
   const insets = useSafeAreaInsets();
   const { platform, region, setPlatform, setRegion, clearPersistedFilters } = useFilterPrefs();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -108,6 +109,98 @@ export default function TrendingNowScreen(_: TrendingNowTabProps) {
     return 'No trends available right now';
   }, [activeFilterCount, searchQuery.length]);
 
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    headerOverlay: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      zIndex: 10,
+      paddingHorizontal: spacing.lg,
+      backgroundColor: colors.background,
+    },
+    headerContent: {
+      paddingBottom: spacing.sm,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    headerTitle: {
+      ...typography.headingLarge,
+      color: colors.text,
+      marginBottom: spacing.sm,
+    },
+    searchRow: {
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+      gap: spacing.sm,
+    },
+    searchInputWrap: {
+      flex: 1,
+    },
+    clearButton: {
+      padding: spacing.xs,
+    },
+    filterHeaderWrap: {
+      position: 'absolute' as const,
+      left: spacing.lg,
+      right: spacing.lg,
+    },
+    skeletonList: {
+      flex: 1,
+      paddingHorizontal: spacing.lg,
+      gap: spacing.md,
+    },
+    centered: {
+      flex: 1,
+      alignItems: 'center' as const,
+      justifyContent: 'flex-start' as const,
+      gap: spacing.md,
+      paddingHorizontal: spacing.xl,
+    },
+    errorTitle: {
+      ...typography.headingSmall,
+      color: colors.error,
+    },
+    errorDetail: {
+      ...typography.bodySmall,
+      color: colors.muted,
+      textAlign: 'center' as const,
+    },
+    retryButton: {
+      backgroundColor: colors.primary,
+      borderRadius: radii.md,
+      paddingHorizontal: spacing.xl,
+      paddingVertical: spacing.sm,
+    },
+    retryButtonText: {
+      ...typography.labelLarge,
+      color: colors.surface,
+    },
+    emptyTitle: {
+      ...typography.headingSmall,
+      color: colors.text,
+    },
+    emptySubtitle: {
+      ...typography.bodyMedium,
+      color: colors.muted,
+      textAlign: 'center' as const,
+    },
+    listContent: {
+      paddingHorizontal: spacing.lg,
+      paddingBottom: spacing.xxl,
+    },
+    itemSeparator: {
+      height: spacing.md,
+    },
+    footerLoader: {
+      marginVertical: spacing.xl,
+    },
+  });
+
   const renderItem = useCallback(
     ({ item }: { item: Trend }) => <TrendCard trend={item} />,
     []
@@ -120,7 +213,7 @@ export default function TrendingNowScreen(_: TrendingNowTabProps) {
       isLoadingMore ? (
         <ActivityIndicator color={colors.primary} style={styles.footerLoader} />
       ) : null,
-    [isLoadingMore]
+    [isLoadingMore, colors.primary]
   );
 
   const ItemSeparator = useCallback(() => <View style={styles.itemSeparator} />, []);
@@ -242,95 +335,3 @@ export default function TrendingNowScreen(_: TrendingNowTabProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  headerOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 10,
-    paddingHorizontal: spacing.lg,
-    backgroundColor: colors.background,
-  },
-  headerContent: {
-    paddingBottom: spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  headerTitle: {
-    ...typography.headingLarge,
-    color: colors.text,
-    marginBottom: spacing.sm,
-  },
-  searchRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  searchInputWrap: {
-    flex: 1,
-  },
-  clearButton: {
-    padding: spacing.xs,
-  },
-  filterHeaderWrap: {
-    position: 'absolute',
-    left: spacing.lg,
-    right: spacing.lg,
-  },
-  skeletonList: {
-    flex: 1,
-    paddingHorizontal: spacing.lg,
-    gap: spacing.md,
-  },
-  centered: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    gap: spacing.md,
-    paddingHorizontal: spacing.xl,
-  },
-  errorTitle: {
-    ...typography.headingSmall,
-    color: colors.error,
-  },
-  errorDetail: {
-    ...typography.bodySmall,
-    color: colors.muted,
-    textAlign: 'center',
-  },
-  retryButton: {
-    backgroundColor: colors.primary,
-    borderRadius: radii.md,
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.sm,
-  },
-  retryButtonText: {
-    ...typography.labelLarge,
-    color: '#FFFFFF',
-  },
-  emptyTitle: {
-    ...typography.headingSmall,
-    color: colors.text,
-  },
-  emptySubtitle: {
-    ...typography.bodyMedium,
-    color: colors.muted,
-    textAlign: 'center',
-  },
-  listContent: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.xxl,
-  },
-  itemSeparator: {
-    height: spacing.md,
-  },
-  footerLoader: {
-    marginVertical: spacing.xl,
-  },
-});

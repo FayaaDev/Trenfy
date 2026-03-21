@@ -8,9 +8,10 @@ import Animated, {
   useAnimatedStyle,
 } from 'react-native-reanimated';
 
-import { colors, radii, shadows, spacing } from '../theme/tokens';
+import { useTheme } from '../theme/ThemeContext';
 
 export default function SkeletonCard() {
+  const { colors, radii, shadows, spacing } = useTheme();
   const opacity = useSharedValue(0.4);
 
   useEffect(() => {
@@ -25,6 +26,49 @@ export default function SkeletonCard() {
   }, []);
 
   const animatedStyle = useAnimatedStyle(() => ({ opacity: opacity.value }));
+
+  const styles = StyleSheet.create({
+    wrapper: {
+      ...shadows.card,
+      borderRadius: radii.md,
+      overflow: 'hidden',
+      backgroundColor: colors.surface,
+    },
+    thumbnailBlock: {
+      height: 140,
+      width: '100%',
+      backgroundColor: colors.surfaceStrong,
+      borderTopLeftRadius: radii.md,
+      borderTopRightRadius: radii.md,
+    },
+    content: {
+      padding: spacing.md,
+      backgroundColor: colors.surface,
+      borderBottomLeftRadius: radii.md,
+      borderBottomRightRadius: radii.md,
+    },
+    shimmerLine: {
+      height: 16,
+      backgroundColor: colors.surfaceStrong,
+      borderRadius: radii.sm,
+    },
+    line60: {
+      width: '60%',
+    },
+    line40: {
+      width: '40%',
+    },
+    line30: {
+      width: '30%',
+      height: 12,
+    },
+    lineSpacing: {
+      marginTop: 8,
+    },
+    footerSpacer: {
+      height: 14,
+    },
+  });
 
   return (
     <View style={styles.wrapper}>
@@ -45,46 +89,3 @@ export default function SkeletonCard() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  wrapper: {
-    ...shadows.card,
-    borderRadius: radii.md,
-    overflow: 'hidden',
-    backgroundColor: colors.surface,
-  },
-  thumbnailBlock: {
-    height: 140,
-    width: '100%',
-    backgroundColor: colors.surfaceStrong,
-    borderTopLeftRadius: radii.md,
-    borderTopRightRadius: radii.md,
-  },
-  content: {
-    padding: spacing.md,
-    backgroundColor: colors.surface,
-    borderBottomLeftRadius: radii.md,
-    borderBottomRightRadius: radii.md,
-  },
-  shimmerLine: {
-    height: 16,
-    backgroundColor: colors.surfaceStrong,
-    borderRadius: radii.sm,
-  },
-  line60: {
-    width: '60%',
-  },
-  line40: {
-    width: '40%',
-  },
-  line30: {
-    width: '30%',
-    height: 12,
-  },
-  lineSpacing: {
-    marginTop: 8,
-  },
-  footerSpacer: {
-    height: 14,
-  },
-});

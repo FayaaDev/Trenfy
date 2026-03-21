@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { colors, radii } from '../theme/tokens';
+import { useTheme } from '../theme/ThemeContext';
 
 interface ProfileAvatarProps {
   name: string;
@@ -12,8 +12,11 @@ interface ProfileAvatarProps {
 export default function ProfileAvatar({
   name,
   size = 56,
-  backgroundColor = colors.primary,
+  backgroundColor,
 }: ProfileAvatarProps) {
+  const { colors, radii } = useTheme();
+  const bgColor = backgroundColor ?? colors.primary;
+
   const initials = name
     .split(' ')
     .filter(Boolean)
@@ -22,7 +25,7 @@ export default function ProfileAvatar({
     .join('');
 
   return (
-    <View style={[styles.container, { width: size, height: size, borderRadius: radii.pill, backgroundColor }]}>
+    <View style={[styles.container, { width: size, height: size, borderRadius: radii.pill, backgroundColor: bgColor }]}>
       <Text style={[styles.text, { fontSize: size * 0.34 }]}>{initials || 'WL'}</Text>
     </View>
   );
@@ -34,7 +37,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   text: {
-    color: '#FFFFFF',
+    color: '#FFFFFF', // Initials are always white on colored background — not theme-sensitive
     fontWeight: '700',
   },
 });

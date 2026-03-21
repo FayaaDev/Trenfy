@@ -12,7 +12,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { colors, radii, spacing } from '../theme/tokens';
+import { useTheme } from '../theme/ThemeContext';
 
 interface SheetModalProps {
   visible: boolean;
@@ -23,7 +23,57 @@ interface SheetModalProps {
 }
 
 export default function SheetModal({ visible, title, subtitle, onClose, children }: SheetModalProps) {
+  const { colors, radii, spacing } = useTheme();
   const insets = useSafeAreaInsets();
+
+  const styles = StyleSheet.create({
+    overlay: {
+      backgroundColor: colors.overlay,
+      flex: 1,
+      justifyContent: 'flex-end',
+    },
+    backdrop: {
+      ...StyleSheet.absoluteFillObject,
+    },
+    sheet: {
+      backgroundColor: colors.surface,
+      borderTopLeftRadius: radii.lg,
+      borderTopRightRadius: radii.lg,
+      maxHeight: '86%',
+      paddingBottom: spacing.xxl,
+      paddingHorizontal: spacing.lg,
+      paddingTop: spacing.sm,
+    },
+    handle: {
+      alignSelf: 'center',
+      backgroundColor: colors.border,
+      borderRadius: radii.pill,
+      height: 5,
+      marginBottom: spacing.md,
+      width: 56,
+    },
+    header: {
+      alignItems: 'flex-start',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: spacing.lg,
+    },
+    copy: {
+      flex: 1,
+      gap: 6,
+      paddingRight: spacing.md,
+    },
+    title: {
+      color: colors.text,
+      fontSize: 22,
+      fontWeight: '800',
+    },
+    subtitle: {
+      color: colors.muted,
+      fontSize: 14,
+      lineHeight: 21,
+    },
+  });
 
   return (
     <Modal animationType="slide" onRequestClose={onClose} transparent visible={visible}>
@@ -51,52 +101,3 @@ export default function SheetModal({ visible, title, subtitle, onClose, children
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    backgroundColor: colors.overlay,
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  sheet: {
-    backgroundColor: colors.surface,
-    borderTopLeftRadius: radii.lg,
-    borderTopRightRadius: radii.lg,
-    maxHeight: '86%',
-    paddingBottom: spacing.xxl,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.sm,
-  },
-  handle: {
-    alignSelf: 'center',
-    backgroundColor: colors.border,
-    borderRadius: radii.pill,
-    height: 5,
-    marginBottom: spacing.md,
-    width: 56,
-  },
-  header: {
-    alignItems: 'flex-start',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: spacing.lg,
-  },
-  copy: {
-    flex: 1,
-    gap: 6,
-    paddingRight: spacing.md,
-  },
-  title: {
-    color: colors.text,
-    fontSize: 22,
-    fontWeight: '800',
-  },
-  subtitle: {
-    color: colors.muted,
-    fontSize: 14,
-    lineHeight: 21,
-  },
-});

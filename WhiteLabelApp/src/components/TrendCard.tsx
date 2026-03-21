@@ -5,7 +5,7 @@ import * as Linking from 'expo-linking';
 import { Iconify } from 'react-native-iconify';
 
 import { Trend } from '../types';
-import { colors, radii, shadows, spacing, typography } from '../theme/tokens';
+import { useTheme } from '../theme/ThemeContext';
 
 export interface TrendCardProps {
   trend: Trend;
@@ -74,26 +74,108 @@ function formatPublishedDate(value: string): string {
   }).format(date);
 }
 
-function PlatformIcon({ platform }: { platform?: string }) {
-  if (!platform) return null;
-  if (platform === 'youtube') {
-    return (
-      <View style={styles.platformIconWrapper}>
-        <Iconify icon="logos:youtube-icon" size={20} color="#FF0000" />
-      </View>
-    );
-  }
-  if (platform === 'x') {
-    return (
-      <View style={styles.platformIconWrapper}>
-        <Iconify icon="ri:twitter-x-fill" size={18} color={colors.text} />
-      </View>
-    );
-  }
-  return null;
-}
-
 export default function TrendCard({ trend, onPress }: TrendCardProps) {
+  const { colors, radii, shadows, spacing, typography } = useTheme();
+
+  const styles = StyleSheet.create({
+    shadow: {
+      ...shadows.card,
+      borderRadius: radii.md,
+    },
+    card: {
+      borderRadius: radii.md,
+      overflow: 'hidden',
+      backgroundColor: colors.surface,
+    },
+    thumbnailContainer: {
+      height: 140,
+      position: 'relative',
+    },
+    thumbnail: {
+      height: 140,
+      width: '100%',
+      borderTopLeftRadius: radii.md,
+      borderTopRightRadius: radii.md,
+      backgroundColor: colors.primary,
+    },
+    thumbnailPlaceholder: {
+      height: 140,
+      width: '100%',
+      borderTopLeftRadius: radii.md,
+      borderTopRightRadius: radii.md,
+      backgroundColor: colors.primary,
+    },
+    platformIconPosition: {
+      position: 'absolute',
+      top: 8,
+      right: 8,
+    },
+    platformIconWrapper: {
+      backgroundColor: colors.overlay,
+      borderRadius: radii.sm,
+      padding: 4,
+    },
+    content: {
+      padding: spacing.md,
+      backgroundColor: colors.surface,
+      borderBottomLeftRadius: radii.md,
+      borderBottomRightRadius: radii.md,
+    },
+    badgeRow: {
+      flexDirection: 'row',
+      gap: spacing.xs,
+      marginBottom: spacing.sm,
+      flexWrap: 'wrap',
+    },
+    categoryBadge: {
+      backgroundColor: colors.primarySoft,
+      borderRadius: radii.pill,
+      paddingHorizontal: 10,
+      paddingVertical: 3,
+    },
+    categoryText: {
+      ...typography.labelSmall,
+      color: colors.primary,
+    },
+    regionBadge: {
+      backgroundColor: colors.surfaceMuted,
+      borderRadius: radii.pill,
+      paddingHorizontal: 10,
+      paddingVertical: 3,
+    },
+    regionText: {
+      ...typography.labelSmall,
+      color: colors.muted,
+    },
+    title: {
+      ...typography.headingSmall,
+      color: colors.text,
+      marginBottom: 4,
+    },
+    // RTL: per-element writingDirection only — card layout stays LTR (THME-04)
+    arabicText: {
+      ...typography.arabicBody,
+      color: colors.textSecondary,
+      writingDirection: 'rtl',
+      textAlign: 'right',
+      marginBottom: 4,
+    },
+    footer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginTop: spacing.xs,
+    },
+    metric: {
+      ...typography.labelLarge,
+      color: colors.accent,
+    },
+    date: {
+      ...typography.bodySmall,
+      color: colors.muted,
+    },
+  });
+
   const handlePress = () => {
     if (onPress) {
       onPress(trend);
@@ -118,7 +200,15 @@ export default function TrendCard({ trend, onPress }: TrendCardProps) {
           )}
           {/* Platform icon overlay */}
           <View style={styles.platformIconPosition}>
-            <PlatformIcon platform={trend.platform} />
+            {trend.platform === 'youtube' ? (
+              <View style={styles.platformIconWrapper}>
+                <Iconify icon="logos:youtube-icon" size={20} color="#FF0000" />
+              </View>
+            ) : trend.platform === 'x' ? (
+              <View style={styles.platformIconWrapper}>
+                <Iconify icon="ri:twitter-x-fill" size={18} color={colors.text} />
+              </View>
+            ) : null}
           </View>
         </View>
 
@@ -170,101 +260,3 @@ export default function TrendCard({ trend, onPress }: TrendCardProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  shadow: {
-    ...shadows.card,
-    borderRadius: radii.md,
-  },
-  card: {
-    borderRadius: radii.md,
-    overflow: 'hidden',
-    backgroundColor: colors.surface,
-  },
-  thumbnailContainer: {
-    height: 140,
-    position: 'relative',
-  },
-  thumbnail: {
-    height: 140,
-    width: '100%',
-    borderTopLeftRadius: radii.md,
-    borderTopRightRadius: radii.md,
-    backgroundColor: colors.primary,
-  },
-  thumbnailPlaceholder: {
-    height: 140,
-    width: '100%',
-    borderTopLeftRadius: radii.md,
-    borderTopRightRadius: radii.md,
-    backgroundColor: colors.primary,
-  },
-  platformIconPosition: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-  },
-  platformIconWrapper: {
-    backgroundColor: colors.overlay,
-    borderRadius: radii.sm,
-    padding: 4,
-  },
-  content: {
-    padding: spacing.md,
-    backgroundColor: colors.surface,
-    borderBottomLeftRadius: radii.md,
-    borderBottomRightRadius: radii.md,
-  },
-  badgeRow: {
-    flexDirection: 'row',
-    gap: spacing.xs,
-    marginBottom: spacing.sm,
-    flexWrap: 'wrap',
-  },
-  categoryBadge: {
-    backgroundColor: colors.primarySoft,
-    borderRadius: radii.pill,
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-  },
-  categoryText: {
-    ...typography.labelSmall,
-    color: colors.primary,
-  },
-  regionBadge: {
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radii.pill,
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-  },
-  regionText: {
-    ...typography.labelSmall,
-    color: colors.muted,
-  },
-  title: {
-    ...typography.headingSmall,
-    color: colors.text,
-    marginBottom: 4,
-  },
-  arabicText: {
-    ...typography.arabicBody,
-    color: colors.textSecondary,
-    writingDirection: 'rtl',
-    textAlign: 'right',
-    marginBottom: 4,
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: spacing.xs,
-  },
-  metric: {
-    ...typography.labelLarge,
-    color: colors.accent,
-  },
-  date: {
-    ...typography.bodySmall,
-    color: colors.muted,
-  },
-});

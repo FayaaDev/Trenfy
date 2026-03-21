@@ -10,7 +10,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import type { CategoryOption, TrendPlatform, TrendRegion } from '../types';
-import { colors, radii, spacing, typography } from '../theme/tokens';
+import { useTheme } from '../theme/ThemeContext';
 import FilterChip from './FilterChip';
 
 const PLATFORM_OPTIONS: Array<{
@@ -20,7 +20,7 @@ const PLATFORM_OPTIONS: Array<{
   iconColor: string;
 }> = [
   { value: 'youtube', label: 'YouTube', icon: 'logos:youtube-icon', iconColor: '#FF0000' },
-  { value: 'x', label: 'X', icon: 'ri:twitter-x-fill', iconColor: colors.text },
+  { value: 'x', label: 'X', icon: 'ri:twitter-x-fill', iconColor: '' }, // iconColor set dynamically
 ];
 
 const REGION_OPTIONS: Array<{ value: TrendRegion; label: string }> = [
@@ -62,7 +62,61 @@ export default function FilterHeader({
   onSelectRegion,
   onClearAll,
 }: FilterHeaderProps) {
+  const { colors, radii, spacing, typography } = useTheme();
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const styles = StyleSheet.create({
+    root: {
+      minHeight: FILTER_HEADER_HEIGHT,
+    },
+    rows: {
+      gap: spacing.xs,
+    },
+    rowHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: spacing.xs,
+    },
+    sectionLabel: {
+      ...typography.labelSmall,
+      color: colors.muted,
+      textTransform: 'uppercase',
+    },
+    chipRow: {
+      gap: spacing.sm,
+      paddingRight: spacing.lg,
+      paddingBottom: spacing.sm,
+    },
+    clearButton: {
+      paddingVertical: 4,
+    },
+    clearButtonText: {
+      ...typography.labelSmall,
+      color: colors.primary,
+    },
+    loadingText: {
+      ...typography.bodySmall,
+      color: colors.muted,
+      paddingVertical: 8,
+      paddingBottom: spacing.sm,
+    },
+    badgeWrap: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+    },
+    badge: {
+      backgroundColor: colors.primary,
+      borderRadius: radii.pill,
+      paddingHorizontal: spacing.sm,
+      paddingVertical: 6,
+    },
+    badgeText: {
+      ...typography.labelSmall,
+      color: colors.background,
+    },
+  });
 
   const rowsStyle = useAnimatedStyle(() => ({
     opacity: interpolate(scrollY.value, [0, 50], [1, 0], Extrapolation.CLAMP),
@@ -137,7 +191,7 @@ export default function FilterHeader({
                   onSelectPlatform(selectedPlatform === option.value ? null : option.value)
                 }
                 icon={option.icon}
-                iconColor={option.iconColor}
+                iconColor={option.value === 'x' ? colors.text : option.iconColor}
               />
             ))}
           </ScrollView>
@@ -193,56 +247,3 @@ export default function FilterHeader({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  root: {
-    minHeight: FILTER_HEADER_HEIGHT,
-  },
-  rows: {
-    gap: spacing.xs,
-  },
-  rowHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.xs,
-  },
-  sectionLabel: {
-    ...typography.labelSmall,
-    color: colors.muted,
-    textTransform: 'uppercase',
-  },
-  chipRow: {
-    gap: spacing.sm,
-    paddingRight: spacing.lg,
-    paddingBottom: spacing.sm,
-  },
-  clearButton: {
-    paddingVertical: 4,
-  },
-  clearButtonText: {
-    ...typography.labelSmall,
-    color: colors.primary,
-  },
-  loadingText: {
-    ...typography.bodySmall,
-    color: colors.muted,
-    paddingVertical: 8,
-    paddingBottom: spacing.sm,
-  },
-  badgeWrap: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-  },
-  badge: {
-    backgroundColor: colors.primary,
-    borderRadius: radii.pill,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 6,
-  },
-  badgeText: {
-    ...typography.labelSmall,
-    color: colors.background,
-  },
-});

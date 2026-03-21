@@ -1,6 +1,12 @@
 import React from 'react';
 import { Text, View, StyleSheet } from 'react-native';
+import { useTheme } from '../theme/ThemeContext';
+
 export default function ProfileScreen() {
-  return <View style={s.root}><Text style={s.text}>Trenfy</Text></View>;
+  const { colors, typography } = useTheme();
+  const styles = StyleSheet.create({
+    root: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.background },
+    text: { ...typography.headingLarge, color: colors.text },
+  });
+  return <View style={styles.root}><Text style={styles.text}>Trenfy</Text></View>;
 }
-const s = StyleSheet.create({ root: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#0A0F1E' }, text: { color: '#FFFFFF', fontSize: 32, fontWeight: '800' } });
