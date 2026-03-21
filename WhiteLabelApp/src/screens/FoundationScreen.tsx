@@ -49,6 +49,9 @@ export default function FoundationScreen() {
     return platform ?? '';
   };
 
+  const trendKey = (item: Trend, index: number) =>
+    item.id || item.url || `${item.title}-${item.published_date ?? 'trend'}-${index}`;
+
   const renderTrendItem = ({ item }: { item: Trend }) => (
     <View style={styles.trendCard}>
       <View style={styles.trendTop}>
@@ -140,7 +143,7 @@ export default function FoundationScreen() {
           {loadState === 'success' && trends.length > 0 && (
             <FlatList
               data={trends}
-              keyExtractor={(item) => item.id}
+              keyExtractor={trendKey}
               renderItem={renderTrendItem}
               scrollEnabled={false}
               ItemSeparatorComponent={() => <View style={styles.separator} />}

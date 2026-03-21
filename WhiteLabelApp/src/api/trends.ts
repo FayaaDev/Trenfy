@@ -1,6 +1,25 @@
 import { apiFetch } from './client';
 import { Trend, TrendFilters, TrendsListResponse } from '../types';
 
+type RawTrend = Omit<Trend, 'id'> & {
+  id?: string | number;
+  Id?: string | number;
+};
+
+type RawTrendsListResponse = {
+  items: RawTrend[];
+  paging: TrendsListResponse['paging'];
+};
+
+function normalizeTrend(item: RawTrend): Trend {
+  const { id, Id, ...rest } = item;
+
+  return {
+    ...rest,
+    id: String(id ?? Id ?? ''),
+  };
+}
+
 /**
  * Fetch a page of approved trends.
  * Always enforces status=approved — consumers must never see pending/rejected.
@@ -20,27 +39,19 @@ export async function fetchTrends(
   if (filters.cursor) params.set('cursor', filters.cursor);
   params.set('limit', String(filters.limit ?? 20));
 
-  return apiFetch<TrendsListResponse>(`/api/trends?${params.toString()}`);
+  const result = await apiFetch<RawTrendsListResponse>(`/api/trends?${params.toString()}`);
+
+  return {
+    ...result,
+    items: result.items.map(normalizeTrend),
+  };
 }
 
 /**
  * Fetch a small preview set of approved trends for the foundation screen.
- * Uses /api/trends/mockup which returns a compact list without pagination.
- * Falls back to fetchTrends with limit=6 if /api/trends/mockup is unavailable.
+ * Calls the approved-only endpoint directly — no mockup intermediary.
  */
 export async function fetchTrendsPreview(limit = 6): Promise<Trend[]> {
-  try {
-    // /api/trends/mockup returns items directly (not wrapped in paging)
-    const data = await apiFetch<Trend[] | TrendsListResponse>(
-      `/api/trends/mockup?limit=${limit}`
-    );
-    // Handle both array response and wrapped response
-    if (Array.isArray(data)) return data;
-    if ('items' in data) return data.items;
-    return [];
-  } catch {
-    // Fallback: use regular trends endpoint with limit
-    const fallback = await fetchTrends({ limit });
-    return fallback.items;
-  }
+  const result = await fetchTrends({ limit });
+  return result.items;
 }

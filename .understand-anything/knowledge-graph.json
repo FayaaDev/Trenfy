@@ -1,0 +1,2684 @@
+{
+  "version": "1.0.0",
+  "project": {
+    "name": "Trenfy",
+    "languages": [
+      "css",
+      "docker",
+      "json",
+      "python",
+      "toml",
+      "typescript",
+      "yaml"
+    ],
+    "frameworks": [
+      "FastAPI",
+      "React",
+      "React Native",
+      "Vite"
+    ],
+    "description": "Trend-catching platform with a FastAPI backend, React admin UI, and React Native white-label app.",
+    "analyzedAt": "2026-03-21T09:16:26.089618+00:00",
+    "gitCommitHash": "8af01ec28b876a1415eddf7d6dac711d197ed404"
+  },
+  "nodes": [
+    {
+      "id": "file:Dockerfile",
+      "type": "file",
+      "name": "Dockerfile",
+      "filePath": "Dockerfile",
+      "summary": "Container configuration for local deployment and runtime setup.",
+      "tags": [
+        "docker"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:WhiteLabelApp/App.tsx",
+      "type": "file",
+      "name": "App.tsx",
+      "filePath": "WhiteLabelApp/App.tsx",
+      "summary": "Bootstrap or package configuration for the React Native app.",
+      "tags": [
+        "mobile",
+        "react-native",
+        "typescript",
+        "whitelabelapp"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:WhiteLabelApp/index.ts",
+      "type": "file",
+      "name": "index.ts",
+      "filePath": "WhiteLabelApp/index.ts",
+      "summary": "Bootstrap or package configuration for the React Native app.",
+      "tags": [
+        "mobile",
+        "react-native",
+        "typescript",
+        "whitelabelapp"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:WhiteLabelApp/package.json",
+      "type": "file",
+      "name": "package.json",
+      "filePath": "WhiteLabelApp/package.json",
+      "summary": "Bootstrap or package configuration for the React Native app.",
+      "tags": [
+        "json",
+        "mobile",
+        "react-native",
+        "whitelabelapp"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:WhiteLabelApp/src/components/BrandPreviewCard.tsx",
+      "type": "file",
+      "name": "BrandPreviewCard.tsx",
+      "filePath": "WhiteLabelApp/src/components/BrandPreviewCard.tsx",
+      "summary": "Reusable React Native component for the mobile app UI.",
+      "tags": [
+        "components",
+        "mobile",
+        "react-native",
+        "typescript",
+        "whitelabelapp"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:WhiteLabelApp/src/components/FeedCard.tsx",
+      "type": "file",
+      "name": "FeedCard.tsx",
+      "filePath": "WhiteLabelApp/src/components/FeedCard.tsx",
+      "summary": "Reusable React Native component for the mobile app UI.",
+      "tags": [
+        "components",
+        "mobile",
+        "react-native",
+        "typescript",
+        "whitelabelapp"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:WhiteLabelApp/src/components/FloatingActionButton.tsx",
+      "type": "file",
+      "name": "FloatingActionButton.tsx",
+      "filePath": "WhiteLabelApp/src/components/FloatingActionButton.tsx",
+      "summary": "Reusable React Native component for the mobile app UI.",
+      "tags": [
+        "components",
+        "mobile",
+        "react-native",
+        "typescript",
+        "whitelabelapp"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:WhiteLabelApp/src/components/ProfileAvatar.tsx",
+      "type": "file",
+      "name": "ProfileAvatar.tsx",
+      "filePath": "WhiteLabelApp/src/components/ProfileAvatar.tsx",
+      "summary": "Reusable React Native component for the mobile app UI.",
+      "tags": [
+        "components",
+        "mobile",
+        "react-native",
+        "typescript",
+        "whitelabelapp"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:WhiteLabelApp/src/components/SearchInput.tsx",
+      "type": "file",
+      "name": "SearchInput.tsx",
+      "filePath": "WhiteLabelApp/src/components/SearchInput.tsx",
+      "summary": "Reusable React Native component for the mobile app UI.",
+      "tags": [
+        "components",
+        "mobile",
+        "react-native",
+        "typescript",
+        "whitelabelapp"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:WhiteLabelApp/src/components/SectionHeader.tsx",
+      "type": "file",
+      "name": "SectionHeader.tsx",
+      "filePath": "WhiteLabelApp/src/components/SectionHeader.tsx",
+      "summary": "Reusable React Native component for the mobile app UI.",
+      "tags": [
+        "components",
+        "mobile",
+        "react-native",
+        "typescript",
+        "whitelabelapp"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:WhiteLabelApp/src/components/SheetModal.tsx",
+      "type": "file",
+      "name": "SheetModal.tsx",
+      "filePath": "WhiteLabelApp/src/components/SheetModal.tsx",
+      "summary": "Reusable React Native component for the mobile app UI.",
+      "tags": [
+        "components",
+        "mobile",
+        "react-native",
+        "typescript",
+        "whitelabelapp"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:WhiteLabelApp/src/components/StatCard.tsx",
+      "type": "file",
+      "name": "StatCard.tsx",
+      "filePath": "WhiteLabelApp/src/components/StatCard.tsx",
+      "summary": "Reusable React Native component for the mobile app UI.",
+      "tags": [
+        "components",
+        "mobile",
+        "react-native",
+        "typescript",
+        "whitelabelapp"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:WhiteLabelApp/src/data/mockData.ts",
+      "type": "file",
+      "name": "mockData.ts",
+      "filePath": "WhiteLabelApp/src/data/mockData.ts",
+      "summary": "Seeded mobile content or starter copy used by the white-label app.",
+      "tags": [
+        "data",
+        "mobile",
+        "react-native",
+        "typescript",
+        "whitelabelapp"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:WhiteLabelApp/src/data/starterCopy.ts",
+      "type": "file",
+      "name": "starterCopy.ts",
+      "filePath": "WhiteLabelApp/src/data/starterCopy.ts",
+      "summary": "Seeded mobile content or starter copy used by the white-label app.",
+      "tags": [
+        "data",
+        "mobile",
+        "react-native",
+        "typescript",
+        "whitelabelapp"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:WhiteLabelApp/src/navigation/AppNavigator.tsx",
+      "type": "file",
+      "name": "AppNavigator.tsx",
+      "filePath": "WhiteLabelApp/src/navigation/AppNavigator.tsx",
+      "summary": "Bootstrap or package configuration for the React Native app.",
+      "tags": [
+        "mobile",
+        "react-native",
+        "typescript",
+        "whitelabelapp"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:WhiteLabelApp/src/screens/ActivityScreen.tsx",
+      "type": "file",
+      "name": "ActivityScreen.tsx",
+      "filePath": "WhiteLabelApp/src/screens/ActivityScreen.tsx",
+      "summary": "React Native screen composing the white-label mobile experience.",
+      "tags": [
+        "mobile",
+        "react-native",
+        "typescript",
+        "whitelabelapp"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:WhiteLabelApp/src/screens/HomeScreen.tsx",
+      "type": "file",
+      "name": "HomeScreen.tsx",
+      "filePath": "WhiteLabelApp/src/screens/HomeScreen.tsx",
+      "summary": "React Native screen composing the white-label mobile experience.",
+      "tags": [
+        "mobile",
+        "react-native",
+        "typescript",
+        "whitelabelapp"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:WhiteLabelApp/src/screens/LibraryScreen.tsx",
+      "type": "file",
+      "name": "LibraryScreen.tsx",
+      "filePath": "WhiteLabelApp/src/screens/LibraryScreen.tsx",
+      "summary": "React Native screen composing the white-label mobile experience.",
+      "tags": [
+        "mobile",
+        "react-native",
+        "typescript",
+        "whitelabelapp"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:WhiteLabelApp/src/screens/ProfileScreen.tsx",
+      "type": "file",
+      "name": "ProfileScreen.tsx",
+      "filePath": "WhiteLabelApp/src/screens/ProfileScreen.tsx",
+      "summary": "React Native screen composing the white-label mobile experience.",
+      "tags": [
+        "mobile",
+        "react-native",
+        "typescript",
+        "whitelabelapp"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:WhiteLabelApp/src/screens/WelcomeScreen.tsx",
+      "type": "file",
+      "name": "WelcomeScreen.tsx",
+      "filePath": "WhiteLabelApp/src/screens/WelcomeScreen.tsx",
+      "summary": "React Native screen composing the white-label mobile experience.",
+      "tags": [
+        "mobile",
+        "react-native",
+        "typescript",
+        "whitelabelapp"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:WhiteLabelApp/src/theme/tokens.ts",
+      "type": "file",
+      "name": "tokens.ts",
+      "filePath": "WhiteLabelApp/src/theme/tokens.ts",
+      "summary": "Theme tokens and design primitives for the mobile app.",
+      "tags": [
+        "mobile",
+        "react-native",
+        "theme",
+        "typescript",
+        "whitelabelapp"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:WhiteLabelApp/src/types/index.ts",
+      "type": "file",
+      "name": "index.ts",
+      "filePath": "WhiteLabelApp/src/types/index.ts",
+      "summary": "Bootstrap or package configuration for the React Native app.",
+      "tags": [
+        "mobile",
+        "react-native",
+        "typescript",
+        "whitelabelapp"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:api/contracts.py",
+      "type": "file",
+      "name": "contracts.py",
+      "filePath": "api/contracts.py",
+      "summary": "Backend API contract or shared interface definition.",
+      "tags": [
+        "api",
+        "python"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:api/routes/trends.py",
+      "type": "file",
+      "name": "trends.py",
+      "filePath": "api/routes/trends.py",
+      "summary": "FastAPI route module exposing trend endpoints to clients.",
+      "tags": [
+        "api",
+        "python",
+        "routes"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:app.py",
+      "type": "file",
+      "name": "app.py",
+      "filePath": "app.py",
+      "summary": "FastAPI application entry point that wires Trenfy backend routes and app configuration.",
+      "tags": [
+        "backend",
+        "entrypoint",
+        "python"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:config/trend_sources.json",
+      "type": "file",
+      "name": "trend_sources.json",
+      "filePath": "config/trend_sources.json",
+      "summary": "Trend source configuration used by ingestion and refresh flows.",
+      "tags": [
+        "config",
+        "json"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:docker-compose.yml",
+      "type": "file",
+      "name": "docker-compose.yml",
+      "filePath": "docker-compose.yml",
+      "summary": "Container configuration for local deployment and runtime setup.",
+      "tags": [
+        "yaml"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:pyproject.toml",
+      "type": "file",
+      "name": "pyproject.toml",
+      "filePath": "pyproject.toml",
+      "summary": "Python project manifest describing backend dependencies and test configuration.",
+      "tags": [
+        "toml"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_api_refresh_and_sources.py",
+      "type": "file",
+      "name": "test_api_refresh_and_sources.py",
+      "filePath": "tests/test_api_refresh_and_sources.py",
+      "summary": "Automated test module covering backend, integrations, or workflow behavior.",
+      "tags": [
+        "python",
+        "tests"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:tests/test_api_trends_mockup.py",
+      "type": "file",
+      "name": "test_api_trends_mockup.py",
+      "filePath": "tests/test_api_trends_mockup.py",
+      "summary": "Automated test module covering backend, integrations, or workflow behavior.",
+      "tags": [
+        "python",
+        "tests"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:tests/test_api_trends_read.py",
+      "type": "file",
+      "name": "test_api_trends_read.py",
+      "filePath": "tests/test_api_trends_read.py",
+      "summary": "Automated test module covering backend, integrations, or workflow behavior.",
+      "tags": [
+        "python",
+        "tests"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:tests/test_app_cors.py",
+      "type": "file",
+      "name": "test_app_cors.py",
+      "filePath": "tests/test_app_cors.py",
+      "summary": "Automated test module covering backend, integrations, or workflow behavior.",
+      "tags": [
+        "python",
+        "tests"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:tests/test_infra_config.py",
+      "type": "file",
+      "name": "test_infra_config.py",
+      "filePath": "tests/test_infra_config.py",
+      "summary": "Automated test module covering backend, integrations, or workflow behavior.",
+      "tags": [
+        "python",
+        "tests"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_nocodb_trends_client.py",
+      "type": "file",
+      "name": "test_nocodb_trends_client.py",
+      "filePath": "tests/test_nocodb_trends_client.py",
+      "summary": "Automated test module covering backend, integrations, or workflow behavior.",
+      "tags": [
+        "python",
+        "tests"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:tests/test_openai_client.py",
+      "type": "file",
+      "name": "test_openai_client.py",
+      "filePath": "tests/test_openai_client.py",
+      "summary": "Automated test module covering backend, integrations, or workflow behavior.",
+      "tags": [
+        "python",
+        "tests"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_phase06_api_filters.py",
+      "type": "file",
+      "name": "test_phase06_api_filters.py",
+      "filePath": "tests/test_phase06_api_filters.py",
+      "summary": "Automated test module covering backend, integrations, or workflow behavior.",
+      "tags": [
+        "python",
+        "tests"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:tests/test_phase06_ingestion_filters.py",
+      "type": "file",
+      "name": "test_phase06_ingestion_filters.py",
+      "filePath": "tests/test_phase06_ingestion_filters.py",
+      "summary": "Automated test module covering backend, integrations, or workflow behavior.",
+      "tags": [
+        "python",
+        "tests"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:tests/test_phase06_models.py",
+      "type": "file",
+      "name": "test_phase06_models.py",
+      "filePath": "tests/test_phase06_models.py",
+      "summary": "Automated test module covering backend, integrations, or workflow behavior.",
+      "tags": [
+        "python",
+        "tests"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:tests/test_phase06_translation.py",
+      "type": "file",
+      "name": "test_phase06_translation.py",
+      "filePath": "tests/test_phase06_translation.py",
+      "summary": "Automated test module covering backend, integrations, or workflow behavior.",
+      "tags": [
+        "python",
+        "tests"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:tests/test_phase07_models.py",
+      "type": "file",
+      "name": "test_phase07_models.py",
+      "filePath": "tests/test_phase07_models.py",
+      "summary": "Automated test module covering backend, integrations, or workflow behavior.",
+      "tags": [
+        "python",
+        "tests"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:tests/test_trend_client_contracts.py",
+      "type": "file",
+      "name": "test_trend_client_contracts.py",
+      "filePath": "tests/test_trend_client_contracts.py",
+      "summary": "Automated test module covering backend, integrations, or workflow behavior.",
+      "tags": [
+        "python",
+        "tests"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:tests/test_trends_workflow.py",
+      "type": "file",
+      "name": "test_trends_workflow.py",
+      "filePath": "tests/test_trends_workflow.py",
+      "summary": "Automated test module covering backend, integrations, or workflow behavior.",
+      "tags": [
+        "python",
+        "tests"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:tests/test_x_client.py",
+      "type": "file",
+      "name": "test_x_client.py",
+      "filePath": "tests/test_x_client.py",
+      "summary": "Automated test module covering backend, integrations, or workflow behavior.",
+      "tags": [
+        "python",
+        "tests"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:tests/test_youtube_client.py",
+      "type": "file",
+      "name": "test_youtube_client.py",
+      "filePath": "tests/test_youtube_client.py",
+      "summary": "Automated test module covering backend, integrations, or workflow behavior.",
+      "tags": [
+        "python",
+        "tests"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:tools/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "tools/__init__.py",
+      "summary": "Backend support utility for content extraction, translation, or third-party access.",
+      "tags": [
+        "python",
+        "tools"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tools/html_extraction.py",
+      "type": "file",
+      "name": "html_extraction.py",
+      "filePath": "tools/html_extraction.py",
+      "summary": "Backend support utility for content extraction, translation, or third-party access.",
+      "tags": [
+        "python",
+        "tools"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tools/nocodb_trends_client.py",
+      "type": "file",
+      "name": "nocodb_trends_client.py",
+      "filePath": "tools/nocodb_trends_client.py",
+      "summary": "Backend support utility for content extraction, translation, or third-party access.",
+      "tags": [
+        "python",
+        "tools"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:tools/openai_client.py",
+      "type": "file",
+      "name": "openai_client.py",
+      "filePath": "tools/openai_client.py",
+      "summary": "Backend support utility for content extraction, translation, or third-party access.",
+      "tags": [
+        "python",
+        "tools"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:tools/translation.py",
+      "type": "file",
+      "name": "translation.py",
+      "filePath": "tools/translation.py",
+      "summary": "Backend support utility for content extraction, translation, or third-party access.",
+      "tags": [
+        "python",
+        "tools"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:tools/trend_clients/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "tools/trend_clients/__init__.py",
+      "summary": "External trend-source client adapter used by ingestion workflows.",
+      "tags": [
+        "python",
+        "tools",
+        "trend_clients"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tools/trend_clients/base.py",
+      "type": "file",
+      "name": "base.py",
+      "filePath": "tools/trend_clients/base.py",
+      "summary": "External trend-source client adapter used by ingestion workflows.",
+      "tags": [
+        "python",
+        "tools",
+        "trend_clients"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tools/trend_clients/common.py",
+      "type": "file",
+      "name": "common.py",
+      "filePath": "tools/trend_clients/common.py",
+      "summary": "External trend-source client adapter used by ingestion workflows.",
+      "tags": [
+        "python",
+        "tools",
+        "trend_clients"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tools/trend_clients/x_client.py",
+      "type": "file",
+      "name": "x_client.py",
+      "filePath": "tools/trend_clients/x_client.py",
+      "summary": "External trend-source client adapter used by ingestion workflows.",
+      "tags": [
+        "python",
+        "tools",
+        "trend_clients"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:tools/trend_clients/youtube_client.py",
+      "type": "file",
+      "name": "youtube_client.py",
+      "filePath": "tools/trend_clients/youtube_client.py",
+      "summary": "External trend-source client adapter used by ingestion workflows.",
+      "tags": [
+        "python",
+        "tools",
+        "trend_clients"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:trend_agents/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "trend_agents/__init__.py",
+      "summary": "Shared domain model or registry module for trend-source handling.",
+      "tags": [
+        "python"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:trend_agents/shared/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "trend_agents/shared/__init__.py",
+      "summary": "Shared domain model or registry module for trend-source handling.",
+      "tags": [
+        "python",
+        "shared"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:trend_agents/shared/models.py",
+      "type": "file",
+      "name": "models.py",
+      "filePath": "trend_agents/shared/models.py",
+      "summary": "Shared domain model or registry module for trend-source handling.",
+      "tags": [
+        "python",
+        "shared"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:trend_agents/shared/source_registry.py",
+      "type": "file",
+      "name": "source_registry.py",
+      "filePath": "trend_agents/shared/source_registry.py",
+      "summary": "Shared domain model or registry module for trend-source handling.",
+      "tags": [
+        "python",
+        "shared"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:web/package.json",
+      "type": "file",
+      "name": "package.json",
+      "filePath": "web/package.json",
+      "summary": "Build or package configuration for the web frontend.",
+      "tags": [
+        "frontend",
+        "json",
+        "react",
+        "web"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:web/src/App.css",
+      "type": "file",
+      "name": "App.css",
+      "filePath": "web/src/App.css",
+      "summary": "Source file in the Vite React frontend.",
+      "tags": [
+        "css",
+        "frontend",
+        "react",
+        "web"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:web/src/App.tsx",
+      "type": "file",
+      "name": "App.tsx",
+      "filePath": "web/src/App.tsx",
+      "summary": "Source file in the Vite React frontend.",
+      "tags": [
+        "frontend",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:web/src/api/client.ts",
+      "type": "file",
+      "name": "client.ts",
+      "filePath": "web/src/api/client.ts",
+      "summary": "Frontend API client or request/response typing for the web app.",
+      "tags": [
+        "api",
+        "frontend",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:web/src/api/sources.ts",
+      "type": "file",
+      "name": "sources.ts",
+      "filePath": "web/src/api/sources.ts",
+      "summary": "Frontend API client or request/response typing for the web app.",
+      "tags": [
+        "api",
+        "frontend",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:web/src/api/trends.ts",
+      "type": "file",
+      "name": "trends.ts",
+      "filePath": "web/src/api/trends.ts",
+      "summary": "Frontend API client or request/response typing for the web app.",
+      "tags": [
+        "api",
+        "frontend",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:web/src/api/types.ts",
+      "type": "file",
+      "name": "types.ts",
+      "filePath": "web/src/api/types.ts",
+      "summary": "Frontend API client or request/response typing for the web app.",
+      "tags": [
+        "api",
+        "frontend",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:web/src/components/admin/DeleteConfirmDialog.tsx",
+      "type": "file",
+      "name": "DeleteConfirmDialog.tsx",
+      "filePath": "web/src/components/admin/DeleteConfirmDialog.tsx",
+      "summary": "Reusable React UI component for the web application.",
+      "tags": [
+        "admin",
+        "components",
+        "frontend",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:web/src/components/admin/SourceToggle.tsx",
+      "type": "file",
+      "name": "SourceToggle.tsx",
+      "filePath": "web/src/components/admin/SourceToggle.tsx",
+      "summary": "Reusable React UI component for the web application.",
+      "tags": [
+        "admin",
+        "components",
+        "frontend",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:web/src/components/admin/TrendEditModal.tsx",
+      "type": "file",
+      "name": "TrendEditModal.tsx",
+      "filePath": "web/src/components/admin/TrendEditModal.tsx",
+      "summary": "Reusable React UI component for the web application.",
+      "tags": [
+        "admin",
+        "components",
+        "frontend",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:web/src/components/admin/adminDialogStyles.ts",
+      "type": "file",
+      "name": "adminDialogStyles.ts",
+      "filePath": "web/src/components/admin/adminDialogStyles.ts",
+      "summary": "Reusable React UI component for the web application.",
+      "tags": [
+        "admin",
+        "components",
+        "frontend",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:web/src/components/auth/AdminGuard.tsx",
+      "type": "file",
+      "name": "AdminGuard.tsx",
+      "filePath": "web/src/components/auth/AdminGuard.tsx",
+      "summary": "Reusable React UI component for the web application.",
+      "tags": [
+        "components",
+        "frontend",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:web/src/components/demo/TrendCard.tsx",
+      "type": "file",
+      "name": "TrendCard.tsx",
+      "filePath": "web/src/components/demo/TrendCard.tsx",
+      "summary": "Reusable React UI component for the web application.",
+      "tags": [
+        "components",
+        "demo",
+        "frontend",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:web/src/components/layout/AdminLayout.tsx",
+      "type": "file",
+      "name": "AdminLayout.tsx",
+      "filePath": "web/src/components/layout/AdminLayout.tsx",
+      "summary": "Reusable React UI component for the web application.",
+      "tags": [
+        "components",
+        "frontend",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:web/src/components/ui/badge.tsx",
+      "type": "file",
+      "name": "badge.tsx",
+      "filePath": "web/src/components/ui/badge.tsx",
+      "summary": "Reusable React UI component for the web application.",
+      "tags": [
+        "components",
+        "frontend",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:web/src/components/ui/button.tsx",
+      "type": "file",
+      "name": "button.tsx",
+      "filePath": "web/src/components/ui/button.tsx",
+      "summary": "Reusable React UI component for the web application.",
+      "tags": [
+        "components",
+        "frontend",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:web/src/components/ui/checkbox.tsx",
+      "type": "file",
+      "name": "checkbox.tsx",
+      "filePath": "web/src/components/ui/checkbox.tsx",
+      "summary": "Reusable React UI component for the web application.",
+      "tags": [
+        "components",
+        "frontend",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:web/src/components/ui/dialog.tsx",
+      "type": "file",
+      "name": "dialog.tsx",
+      "filePath": "web/src/components/ui/dialog.tsx",
+      "summary": "Reusable React UI component for the web application.",
+      "tags": [
+        "components",
+        "frontend",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:web/src/components/ui/input.tsx",
+      "type": "file",
+      "name": "input.tsx",
+      "filePath": "web/src/components/ui/input.tsx",
+      "summary": "Reusable React UI component for the web application.",
+      "tags": [
+        "components",
+        "frontend",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:web/src/components/ui/select.tsx",
+      "type": "file",
+      "name": "select.tsx",
+      "filePath": "web/src/components/ui/select.tsx",
+      "summary": "Reusable React UI component for the web application.",
+      "tags": [
+        "components",
+        "frontend",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:web/src/components/ui/sonner.tsx",
+      "type": "file",
+      "name": "sonner.tsx",
+      "filePath": "web/src/components/ui/sonner.tsx",
+      "summary": "Reusable React UI component for the web application.",
+      "tags": [
+        "components",
+        "frontend",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:web/src/components/ui/table.tsx",
+      "type": "file",
+      "name": "table.tsx",
+      "filePath": "web/src/components/ui/table.tsx",
+      "summary": "Reusable React UI component for the web application.",
+      "tags": [
+        "components",
+        "frontend",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:web/src/index.css",
+      "type": "file",
+      "name": "index.css",
+      "filePath": "web/src/index.css",
+      "summary": "Source file in the Vite React frontend.",
+      "tags": [
+        "css",
+        "frontend",
+        "react",
+        "web"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:web/src/lib/utils.ts",
+      "type": "file",
+      "name": "utils.ts",
+      "filePath": "web/src/lib/utils.ts",
+      "summary": "Source file in the Vite React frontend.",
+      "tags": [
+        "frontend",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:web/src/main.tsx",
+      "type": "file",
+      "name": "main.tsx",
+      "filePath": "web/src/main.tsx",
+      "summary": "Source file in the Vite React frontend.",
+      "tags": [
+        "frontend",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:web/src/pages/admin/AdminPage.tsx",
+      "type": "file",
+      "name": "AdminPage.tsx",
+      "filePath": "web/src/pages/admin/AdminPage.tsx",
+      "summary": "Route-level React page in the Trenfy web admin or demo app.",
+      "tags": [
+        "admin",
+        "frontend",
+        "pages",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:web/src/pages/admin/CategoriesPage.tsx",
+      "type": "file",
+      "name": "CategoriesPage.tsx",
+      "filePath": "web/src/pages/admin/CategoriesPage.tsx",
+      "summary": "Route-level React page in the Trenfy web admin or demo app.",
+      "tags": [
+        "admin",
+        "frontend",
+        "pages",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:web/src/pages/admin/LoginPage.tsx",
+      "type": "file",
+      "name": "LoginPage.tsx",
+      "filePath": "web/src/pages/admin/LoginPage.tsx",
+      "summary": "Route-level React page in the Trenfy web admin or demo app.",
+      "tags": [
+        "admin",
+        "frontend",
+        "pages",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:web/src/pages/admin/SourcesPage.tsx",
+      "type": "file",
+      "name": "SourcesPage.tsx",
+      "filePath": "web/src/pages/admin/SourcesPage.tsx",
+      "summary": "Route-level React page in the Trenfy web admin or demo app.",
+      "tags": [
+        "admin",
+        "frontend",
+        "pages",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:web/src/pages/admin/TrendsPage.tsx",
+      "type": "file",
+      "name": "TrendsPage.tsx",
+      "filePath": "web/src/pages/admin/TrendsPage.tsx",
+      "summary": "Route-level React page in the Trenfy web admin or demo app.",
+      "tags": [
+        "admin",
+        "frontend",
+        "pages",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:web/src/pages/demo/DemoPage.tsx",
+      "type": "file",
+      "name": "DemoPage.tsx",
+      "filePath": "web/src/pages/demo/DemoPage.tsx",
+      "summary": "Route-level React page in the Trenfy web admin or demo app.",
+      "tags": [
+        "demo",
+        "frontend",
+        "pages",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:web/src/vite-env.d.ts",
+      "type": "file",
+      "name": "vite-env.d.ts",
+      "filePath": "web/src/vite-env.d.ts",
+      "summary": "Source file in the Vite React frontend.",
+      "tags": [
+        "frontend",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:web/vite.config.ts",
+      "type": "file",
+      "name": "vite.config.ts",
+      "filePath": "web/vite.config.ts",
+      "summary": "Build or package configuration for the web frontend.",
+      "tags": [
+        "frontend",
+        "react",
+        "typescript",
+        "web"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:workflows/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "workflows/__init__.py",
+      "summary": "Workflow orchestration for trend ingestion, scheduling, and refresh operations.",
+      "tags": [
+        "python",
+        "workflows"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:workflows/trends_scheduler.py",
+      "type": "file",
+      "name": "trends_scheduler.py",
+      "filePath": "workflows/trends_scheduler.py",
+      "summary": "Workflow orchestration for trend ingestion, scheduling, and refresh operations.",
+      "tags": [
+        "python",
+        "workflows"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:workflows/trends_workflow.py",
+      "type": "file",
+      "name": "trends_workflow.py",
+      "filePath": "workflows/trends_workflow.py",
+      "summary": "Workflow orchestration for trend ingestion, scheduling, and refresh operations.",
+      "tags": [
+        "python",
+        "workflows"
+      ],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:WhiteLabelApp/App.tsx",
+      "target": "file:WhiteLabelApp/src/navigation/AppNavigator.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:WhiteLabelApp/App.tsx",
+      "target": "file:WhiteLabelApp/src/screens/WelcomeScreen.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:WhiteLabelApp/App.tsx",
+      "target": "file:WhiteLabelApp/src/theme/tokens.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:WhiteLabelApp/index.ts",
+      "target": "file:WhiteLabelApp/App.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:api/routes/trends.py",
+      "target": "file:api/contracts.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:api/routes/trends.py",
+      "target": "file:trend_agents/shared/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:api/routes/trends.py",
+      "target": "file:trend_agents/shared/source_registry.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:api/routes/trends.py",
+      "target": "file:tools/nocodb_trends_client.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:api/routes/trends.py",
+      "target": "file:workflows/trends_scheduler.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app.py",
+      "target": "file:api/routes/trends.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app.py",
+      "target": "file:trend_agents/shared/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app.py",
+      "target": "file:trend_agents/shared/source_registry.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app.py",
+      "target": "file:tools/nocodb_trends_client.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app.py",
+      "target": "file:workflows/trends_scheduler.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_api_refresh_and_sources.py",
+      "target": "file:trend_agents/shared/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_api_refresh_and_sources.py",
+      "target": "file:app.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_api_refresh_and_sources.py",
+      "target": "file:api/routes/trends.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_api_trends_mockup.py",
+      "target": "file:app.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_api_trends_mockup.py",
+      "target": "file:api/routes/trends.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_api_trends_read.py",
+      "target": "file:app.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_api_trends_read.py",
+      "target": "file:api/contracts.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_api_trends_read.py",
+      "target": "file:api/routes/trends.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_api_trends_read.py",
+      "target": "file:tools/nocodb_trends_client.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_app_cors.py",
+      "target": "file:app.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_nocodb_trends_client.py",
+      "target": "file:trend_agents/shared/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_nocodb_trends_client.py",
+      "target": "file:tools/nocodb_trends_client.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_openai_client.py",
+      "target": "file:tools/openai_client.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_phase06_api_filters.py",
+      "target": "file:tools/nocodb_trends_client.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_phase06_api_filters.py",
+      "target": "file:api/routes/trends.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_phase06_api_filters.py",
+      "target": "file:api/contracts.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_phase06_ingestion_filters.py",
+      "target": "file:workflows/trends_workflow.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_phase06_ingestion_filters.py",
+      "target": "file:trend_agents/shared/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_phase06_models.py",
+      "target": "file:trend_agents/shared/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_phase06_translation.py",
+      "target": "file:trend_agents/shared/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_phase06_translation.py",
+      "target": "file:tools/translation.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_phase07_models.py",
+      "target": "file:trend_agents/shared/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_phase07_models.py",
+      "target": "file:tools/nocodb_trends_client.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_phase07_models.py",
+      "target": "file:api/contracts.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_trend_client_contracts.py",
+      "target": "file:trend_agents/shared/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_trend_client_contracts.py",
+      "target": "file:tools/trend_clients/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_trend_client_contracts.py",
+      "target": "file:tools/trend_clients/base.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_trend_client_contracts.py",
+      "target": "file:tools/trend_clients/common.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_trend_client_contracts.py",
+      "target": "file:tools/trend_clients/x_client.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_trend_client_contracts.py",
+      "target": "file:tools/trend_clients/youtube_client.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_trends_workflow.py",
+      "target": "file:workflows/trends_workflow.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_trends_workflow.py",
+      "target": "file:trend_agents/shared/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_trends_workflow.py",
+      "target": "file:tools/trend_clients/common.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_x_client.py",
+      "target": "file:trend_agents/shared/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_x_client.py",
+      "target": "file:tools/trend_clients/x_client.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_youtube_client.py",
+      "target": "file:trend_agents/shared/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_youtube_client.py",
+      "target": "file:tools/trend_clients/youtube_client.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tools/nocodb_trends_client.py",
+      "target": "file:trend_agents/shared/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tools/nocodb_trends_client.py",
+      "target": "file:trend_agents/shared/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tools/nocodb_trends_client.py",
+      "target": "file:trend_agents/shared/source_registry.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tools/translation.py",
+      "target": "file:trend_agents/shared/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tools/trend_clients/__init__.py",
+      "target": "file:tools/trend_clients/base.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tools/trend_clients/base.py",
+      "target": "file:trend_agents/shared/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tools/trend_clients/common.py",
+      "target": "file:trend_agents/shared/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tools/trend_clients/x_client.py",
+      "target": "file:trend_agents/shared/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tools/trend_clients/x_client.py",
+      "target": "file:tools/trend_clients/base.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tools/trend_clients/x_client.py",
+      "target": "file:tools/trend_clients/common.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tools/trend_clients/youtube_client.py",
+      "target": "file:trend_agents/shared/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tools/trend_clients/youtube_client.py",
+      "target": "file:tools/trend_clients/base.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tools/trend_clients/youtube_client.py",
+      "target": "file:tools/trend_clients/common.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:trend_agents/shared/source_registry.py",
+      "target": "file:trend_agents/shared/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/api/sources.ts",
+      "target": "file:web/src/api/client.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/api/sources.ts",
+      "target": "file:web/src/api/types.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/api/trends.ts",
+      "target": "file:web/src/api/client.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/components/admin/DeleteConfirmDialog.tsx",
+      "target": "file:web/src/components/ui/dialog.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/components/admin/DeleteConfirmDialog.tsx",
+      "target": "file:web/src/components/ui/button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/components/admin/TrendEditModal.tsx",
+      "target": "file:web/src/api/trends.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/components/admin/TrendEditModal.tsx",
+      "target": "file:web/src/api/types.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/components/admin/TrendEditModal.tsx",
+      "target": "file:web/src/components/ui/dialog.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/components/admin/TrendEditModal.tsx",
+      "target": "file:web/src/components/ui/input.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/components/admin/TrendEditModal.tsx",
+      "target": "file:web/src/components/ui/button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/components/demo/TrendCard.tsx",
+      "target": "file:web/src/api/types.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/components/demo/TrendCard.tsx",
+      "target": "file:web/src/components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/components/layout/AdminLayout.tsx",
+      "target": "file:web/src/components/ui/button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/components/ui/badge.tsx",
+      "target": "file:web/src/lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/components/ui/button.tsx",
+      "target": "file:web/src/lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/components/ui/checkbox.tsx",
+      "target": "file:web/src/lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/components/ui/dialog.tsx",
+      "target": "file:web/src/lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/components/ui/dialog.tsx",
+      "target": "file:web/src/components/ui/button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/components/ui/input.tsx",
+      "target": "file:web/src/lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/components/ui/select.tsx",
+      "target": "file:web/src/lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/components/ui/table.tsx",
+      "target": "file:web/src/lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/main.tsx",
+      "target": "file:web/src/components/auth/AdminGuard.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/main.tsx",
+      "target": "file:web/src/components/layout/AdminLayout.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/main.tsx",
+      "target": "file:web/src/pages/admin/LoginPage.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/main.tsx",
+      "target": "file:web/src/pages/admin/AdminPage.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/main.tsx",
+      "target": "file:web/src/pages/admin/TrendsPage.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/main.tsx",
+      "target": "file:web/src/pages/admin/SourcesPage.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/main.tsx",
+      "target": "file:web/src/pages/admin/CategoriesPage.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/main.tsx",
+      "target": "file:web/src/pages/demo/DemoPage.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/main.tsx",
+      "target": "file:web/src/components/ui/sonner.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/pages/admin/CategoriesPage.tsx",
+      "target": "file:web/src/api/trends.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/pages/admin/LoginPage.tsx",
+      "target": "file:web/src/components/ui/button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/pages/admin/LoginPage.tsx",
+      "target": "file:web/src/components/ui/input.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/pages/admin/SourcesPage.tsx",
+      "target": "file:web/src/api/sources.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/pages/admin/SourcesPage.tsx",
+      "target": "file:web/src/api/types.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/pages/admin/SourcesPage.tsx",
+      "target": "file:web/src/components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/pages/admin/SourcesPage.tsx",
+      "target": "file:web/src/components/admin/SourceToggle.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/pages/admin/TrendsPage.tsx",
+      "target": "file:web/src/api/trends.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/pages/admin/TrendsPage.tsx",
+      "target": "file:web/src/api/types.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/pages/admin/TrendsPage.tsx",
+      "target": "file:web/src/components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/pages/admin/TrendsPage.tsx",
+      "target": "file:web/src/components/ui/button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/pages/admin/TrendsPage.tsx",
+      "target": "file:web/src/components/ui/checkbox.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/pages/admin/TrendsPage.tsx",
+      "target": "file:web/src/components/admin/DeleteConfirmDialog.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/pages/admin/TrendsPage.tsx",
+      "target": "file:web/src/components/admin/TrendEditModal.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/pages/demo/DemoPage.tsx",
+      "target": "file:web/src/api/trends.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/pages/demo/DemoPage.tsx",
+      "target": "file:web/src/api/types.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/pages/demo/DemoPage.tsx",
+      "target": "file:web/src/components/demo/TrendCard.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:web/src/pages/demo/DemoPage.tsx",
+      "target": "file:web/src/components/ui/button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:workflows/trends_scheduler.py",
+      "target": "file:trend_agents/shared/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:workflows/trends_scheduler.py",
+      "target": "file:trend_agents/shared/source_registry.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:workflows/trends_scheduler.py",
+      "target": "file:trend_agents/shared/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:workflows/trends_scheduler.py",
+      "target": "file:tools/nocodb_trends_client.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:workflows/trends_scheduler.py",
+      "target": "file:workflows/trends_workflow.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:workflows/trends_workflow.py",
+      "target": "file:trend_agents/shared/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:workflows/trends_workflow.py",
+      "target": "file:tools/nocodb_trends_client.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:workflows/trends_workflow.py",
+      "target": "file:tools/translation.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:workflows/trends_workflow.py",
+      "target": "file:tools/trend_clients/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:workflows/trends_workflow.py",
+      "target": "file:tools/trend_clients/common.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:workflows/trends_workflow.py",
+      "target": "file:trend_agents/shared/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:workflows/trends_workflow.py",
+      "target": "file:trend_agents/shared/source_registry.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:trend_agents/shared/models.py",
+      "target": "file:tests/test_api_refresh_and_sources.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:app.py",
+      "target": "file:tests/test_api_refresh_and_sources.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:api/routes/trends.py",
+      "target": "file:tests/test_api_refresh_and_sources.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:app.py",
+      "target": "file:tests/test_api_trends_mockup.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:api/routes/trends.py",
+      "target": "file:tests/test_api_trends_mockup.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:app.py",
+      "target": "file:tests/test_api_trends_read.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:api/contracts.py",
+      "target": "file:tests/test_api_trends_read.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:api/routes/trends.py",
+      "target": "file:tests/test_api_trends_read.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tools/nocodb_trends_client.py",
+      "target": "file:tests/test_api_trends_read.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:app.py",
+      "target": "file:tests/test_app_cors.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:trend_agents/shared/models.py",
+      "target": "file:tests/test_nocodb_trends_client.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tools/nocodb_trends_client.py",
+      "target": "file:tests/test_nocodb_trends_client.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tools/openai_client.py",
+      "target": "file:tests/test_openai_client.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tools/nocodb_trends_client.py",
+      "target": "file:tests/test_phase06_api_filters.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:api/routes/trends.py",
+      "target": "file:tests/test_phase06_api_filters.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:api/contracts.py",
+      "target": "file:tests/test_phase06_api_filters.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:workflows/trends_workflow.py",
+      "target": "file:tests/test_phase06_ingestion_filters.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:trend_agents/shared/models.py",
+      "target": "file:tests/test_phase06_ingestion_filters.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:trend_agents/shared/models.py",
+      "target": "file:tests/test_phase06_models.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:trend_agents/shared/models.py",
+      "target": "file:tests/test_phase06_translation.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tools/translation.py",
+      "target": "file:tests/test_phase06_translation.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:trend_agents/shared/models.py",
+      "target": "file:tests/test_phase07_models.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tools/nocodb_trends_client.py",
+      "target": "file:tests/test_phase07_models.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:api/contracts.py",
+      "target": "file:tests/test_phase07_models.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:trend_agents/shared/models.py",
+      "target": "file:tests/test_trend_client_contracts.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tools/trend_clients/__init__.py",
+      "target": "file:tests/test_trend_client_contracts.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tools/trend_clients/base.py",
+      "target": "file:tests/test_trend_client_contracts.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tools/trend_clients/common.py",
+      "target": "file:tests/test_trend_client_contracts.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tools/trend_clients/x_client.py",
+      "target": "file:tests/test_trend_client_contracts.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tools/trend_clients/youtube_client.py",
+      "target": "file:tests/test_trend_client_contracts.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:workflows/trends_workflow.py",
+      "target": "file:tests/test_trends_workflow.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:trend_agents/shared/models.py",
+      "target": "file:tests/test_trends_workflow.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tools/trend_clients/common.py",
+      "target": "file:tests/test_trends_workflow.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:trend_agents/shared/models.py",
+      "target": "file:tests/test_x_client.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tools/trend_clients/x_client.py",
+      "target": "file:tests/test_x_client.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:trend_agents/shared/models.py",
+      "target": "file:tests/test_youtube_client.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tools/trend_clients/youtube_client.py",
+      "target": "file:tests/test_youtube_client.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ],
+  "layers": [
+    {
+      "id": "layer:api-layer",
+      "name": "API Layer",
+      "description": "HTTP entry points, route handlers, and backend API contracts.",
+      "nodeIds": [
+        "file:api/contracts.py",
+        "file:api/routes/trends.py",
+        "file:app.py"
+      ]
+    },
+    {
+      "id": "layer:workflow-layer",
+      "name": "Workflow Layer",
+      "description": "Orchestration and domain modules that shape trend processing.",
+      "nodeIds": [
+        "file:trend_agents/__init__.py",
+        "file:trend_agents/shared/__init__.py",
+        "file:trend_agents/shared/models.py",
+        "file:trend_agents/shared/source_registry.py",
+        "file:workflows/__init__.py",
+        "file:workflows/trends_scheduler.py",
+        "file:workflows/trends_workflow.py"
+      ]
+    },
+    {
+      "id": "layer:integration-layer",
+      "name": "Integration Layer",
+      "description": "Third-party clients, extraction helpers, and backend support utilities.",
+      "nodeIds": [
+        "file:tools/__init__.py",
+        "file:tools/html_extraction.py",
+        "file:tools/nocodb_trends_client.py",
+        "file:tools/openai_client.py",
+        "file:tools/translation.py",
+        "file:tools/trend_clients/__init__.py",
+        "file:tools/trend_clients/base.py",
+        "file:tools/trend_clients/common.py",
+        "file:tools/trend_clients/x_client.py",
+        "file:tools/trend_clients/youtube_client.py"
+      ]
+    },
+    {
+      "id": "layer:web-ui-layer",
+      "name": "Web UI Layer",
+      "description": "React admin and demo frontend built with Vite.",
+      "nodeIds": [
+        "file:web/package.json",
+        "file:web/src/App.css",
+        "file:web/src/App.tsx",
+        "file:web/src/api/client.ts",
+        "file:web/src/api/sources.ts",
+        "file:web/src/api/trends.ts",
+        "file:web/src/api/types.ts",
+        "file:web/src/components/admin/DeleteConfirmDialog.tsx",
+        "file:web/src/components/admin/SourceToggle.tsx",
+        "file:web/src/components/admin/TrendEditModal.tsx",
+        "file:web/src/components/admin/adminDialogStyles.ts",
+        "file:web/src/components/auth/AdminGuard.tsx",
+        "file:web/src/components/demo/TrendCard.tsx",
+        "file:web/src/components/layout/AdminLayout.tsx",
+        "file:web/src/components/ui/badge.tsx",
+        "file:web/src/components/ui/button.tsx",
+        "file:web/src/components/ui/checkbox.tsx",
+        "file:web/src/components/ui/dialog.tsx",
+        "file:web/src/components/ui/input.tsx",
+        "file:web/src/components/ui/select.tsx",
+        "file:web/src/components/ui/sonner.tsx",
+        "file:web/src/components/ui/table.tsx",
+        "file:web/src/index.css",
+        "file:web/src/lib/utils.ts",
+        "file:web/src/main.tsx",
+        "file:web/src/pages/admin/AdminPage.tsx",
+        "file:web/src/pages/admin/CategoriesPage.tsx",
+        "file:web/src/pages/admin/LoginPage.tsx",
+        "file:web/src/pages/admin/SourcesPage.tsx",
+        "file:web/src/pages/admin/TrendsPage.tsx",
+        "file:web/src/pages/demo/DemoPage.tsx",
+        "file:web/src/vite-env.d.ts",
+        "file:web/vite.config.ts"
+      ]
+    },
+    {
+      "id": "layer:mobile-ui-layer",
+      "name": "Mobile UI Layer",
+      "description": "React Native white-label mobile application.",
+      "nodeIds": [
+        "file:WhiteLabelApp/App.tsx",
+        "file:WhiteLabelApp/index.ts",
+        "file:WhiteLabelApp/package.json",
+        "file:WhiteLabelApp/src/components/BrandPreviewCard.tsx",
+        "file:WhiteLabelApp/src/components/FeedCard.tsx",
+        "file:WhiteLabelApp/src/components/FloatingActionButton.tsx",
+        "file:WhiteLabelApp/src/components/ProfileAvatar.tsx",
+        "file:WhiteLabelApp/src/components/SearchInput.tsx",
+        "file:WhiteLabelApp/src/components/SectionHeader.tsx",
+        "file:WhiteLabelApp/src/components/SheetModal.tsx",
+        "file:WhiteLabelApp/src/components/StatCard.tsx",
+        "file:WhiteLabelApp/src/data/mockData.ts",
+        "file:WhiteLabelApp/src/data/starterCopy.ts",
+        "file:WhiteLabelApp/src/navigation/AppNavigator.tsx",
+        "file:WhiteLabelApp/src/screens/ActivityScreen.tsx",
+        "file:WhiteLabelApp/src/screens/HomeScreen.tsx",
+        "file:WhiteLabelApp/src/screens/LibraryScreen.tsx",
+        "file:WhiteLabelApp/src/screens/ProfileScreen.tsx",
+        "file:WhiteLabelApp/src/screens/WelcomeScreen.tsx",
+        "file:WhiteLabelApp/src/theme/tokens.ts",
+        "file:WhiteLabelApp/src/types/index.ts"
+      ]
+    },
+    {
+      "id": "layer:test-layer",
+      "name": "Test Layer",
+      "description": "Automated tests validating workflows, API behavior, and integrations.",
+      "nodeIds": [
+        "file:tests/test_api_refresh_and_sources.py",
+        "file:tests/test_api_trends_mockup.py",
+        "file:tests/test_api_trends_read.py",
+        "file:tests/test_app_cors.py",
+        "file:tests/test_infra_config.py",
+        "file:tests/test_nocodb_trends_client.py",
+        "file:tests/test_openai_client.py",
+        "file:tests/test_phase06_api_filters.py",
+        "file:tests/test_phase06_ingestion_filters.py",
+        "file:tests/test_phase06_models.py",
+        "file:tests/test_phase06_translation.py",
+        "file:tests/test_phase07_models.py",
+        "file:tests/test_trend_client_contracts.py",
+        "file:tests/test_trends_workflow.py",
+        "file:tests/test_x_client.py",
+        "file:tests/test_youtube_client.py"
+      ]
+    },
+    {
+      "id": "layer:support-layer",
+      "name": "Support Layer",
+      "description": "Configuration and deployment files that support the application.",
+      "nodeIds": [
+        "file:Dockerfile",
+        "file:config/trend_sources.json",
+        "file:docker-compose.yml",
+        "file:pyproject.toml"
+      ]
+    }
+  ],
+  "tour": [
+    {
+      "order": 1,
+      "title": "Start At The Entry Points",
+      "description": "Begin with the backend and the two client bootstraps to see how Trenfy starts up across server, web, and mobile surfaces.",
+      "nodeIds": [
+        "file:app.py",
+        "file:web/src/main.tsx",
+        "file:WhiteLabelApp/index.ts",
+        "file:WhiteLabelApp/App.tsx"
+      ],
+      "languageLesson": "Entry files usually reveal composition roots and dependency direction."
+    },
+    {
+      "order": 2,
+      "title": "Trace The Backend API",
+      "description": "Read the FastAPI app, trend routes, and contracts together to understand the public backend surface consumed by clients.",
+      "nodeIds": [
+        "file:app.py",
+        "file:api/routes/trends.py",
+        "file:api/contracts.py"
+      ],
+      "languageLesson": "Typed API contracts make backend changes easier to reason about."
+    },
+    {
+      "order": 3,
+      "title": "Follow Trend Processing",
+      "description": "These workflow and shared-agent modules show how source data is scheduled, normalized, and moved through the backend.",
+      "nodeIds": [
+        "file:workflows/trends_workflow.py",
+        "file:workflows/trends_scheduler.py",
+        "file:trend_agents/shared/models.py",
+        "file:trend_agents/shared/source_registry.py"
+      ],
+      "languageLesson": "Keep orchestration separate from model definitions so state shape stays clear."
+    },
+    {
+      "order": 4,
+      "title": "Inspect External Integrations",
+      "description": "The tool layer contains the adapters that talk to NocoDB, OpenAI, X, YouTube, translation, and HTML extraction helpers.",
+      "nodeIds": [
+        "file:tools/openai_client.py",
+        "file:tools/nocodb_trends_client.py",
+        "file:tools/translation.py",
+        "file:tools/html_extraction.py",
+        "file:tools/trend_clients/base.py",
+        "file:tools/trend_clients/x_client.py",
+        "file:tools/trend_clients/youtube_client.py"
+      ],
+      "languageLesson": "Adapter modules reduce the amount of third-party detail that leaks into core workflows."
+    },
+    {
+      "order": 5,
+      "title": "Walk The Web Admin",
+      "description": "These React files cover app bootstrap, major admin pages, shared layout, and the API client boundary in the web experience.",
+      "nodeIds": [
+        "file:web/src/App.tsx",
+        "file:web/src/pages/admin/AdminPage.tsx",
+        "file:web/src/pages/admin/TrendsPage.tsx",
+        "file:web/src/components/layout/AdminLayout.tsx",
+        "file:web/src/api/trends.ts"
+      ],
+      "languageLesson": "Web UI is easier to follow when pages, shared layout, and API wrappers are read together."
+    },
+    {
+      "order": 6,
+      "title": "Walk The Mobile App",
+      "description": "The mobile files show how the white-label experience is composed from screens, reusable cards, seeded content, and theme tokens.",
+      "nodeIds": [
+        "file:WhiteLabelApp/App.tsx",
+        "file:WhiteLabelApp/src/screens/HomeScreen.tsx",
+        "file:WhiteLabelApp/src/components/FeedCard.tsx",
+        "file:WhiteLabelApp/src/data/mockData.ts",
+        "file:WhiteLabelApp/src/theme/tokens.ts"
+      ],
+      "languageLesson": "Token-driven mobile apps centralize brand styling and keep screens lightweight."
+    },
+    {
+      "order": 7,
+      "title": "Finish With Validation And Ops",
+      "description": "Tests and deployment files close the loop by showing how the system is verified and configured outside runtime code.",
+      "nodeIds": [
+        "file:tests/test_trends_workflow.py",
+        "file:tests/test_api_trends_read.py",
+        "file:config/trend_sources.json",
+        "file:pyproject.toml",
+        "file:docker-compose.yml"
+      ],
+      "languageLesson": "Operational files and tests are part of the architecture, not just scaffolding."
+    }
+  ]
+}

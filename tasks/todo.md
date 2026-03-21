@@ -1,10 +1,26 @@
-# Complete v1.2 Milestone
+# Start New Milestone
 
-- [ ] Review audit status, roadmap readiness, and requirements completion for `v1.2`
-- [ ] Prepare milestone scope, stats, and accomplishments for the verification gate
-- [ ] Archive `v1.2` roadmap and requirements, then update `.planning/ROADMAP.md`, `.planning/PROJECT.md`, and `.planning/STATE.md`
-- [ ] Verify the planning changes, create the milestone commit, and tag `v1.2`
+- [x] Review current planning context (`PROJECT.md`, `MILESTONES.md`, `STATE.md`, workflow init)
+- [ ] Gather milestone goals from user and confirm version/name
+- [ ] Update `.planning/PROJECT.md` with current milestone scope and active requirements
+- [ ] Reset `.planning/STATE.md` for milestone planning and commit planning docs
+- [ ] Run milestone research if selected and synthesize outputs under `.planning/research/`
+- [ ] Define scoped milestone requirements in `.planning/REQUIREMENTS.md` and commit
+- [ ] Create `.planning/ROADMAP.md`, update traceability, get approval, and commit
 
 ## Notes
 
-- Active target: archive the shipped `v1.2 Web Admin + Demo Feed` milestone without losing historical detail.
+- Last shipped milestone: `v1.2 Web Admin + Demo Feed` on 2026-03-21.
+- Existing deferred themes already called out in project docs: React Native app delivery, verification debt closure, and deciding web/admin maintenance scope.
+- Default phase numbering mode will continue from the previous milestone unless `--reset-phase-numbers` is explicitly requested.
+
+## Review
+
+- In progress.
+
+## Expo Key Warning Investigation
+
+- [x] Locate the `VirtualizedList` render path in the React Native app.
+- [in_progress] Trace the list item identity from backend response to `FlatList.keyExtractor`.
+- [ ] Fix the mobile trend model or response normalization so list items always have a stable unique key.
+- [ ] Verify the warning is eliminated with a bundle/build check and document the root cause.
