@@ -20,7 +20,7 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Users can open the app and immediately see what's trending right now across gaming, music, and entertainment — filtered to what they care about, tappable to the source.
 **Current focus:** Phase 10 — demo-feed
-Last activity: 2026-03-21 - Completed quick task 260321-bw2: Phase 09 admin UI fixes: populate title and include ar_translation
+Last activity: 2026-03-21 - Phase 10 shipped — PR #1 (phase/10-demo-feed → master)
 
 ## Position
 
