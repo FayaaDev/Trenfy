@@ -28,6 +28,7 @@ Users can open the app and immediately see what's trending right now across gami
 - React web surface is live under `web/`: admin auth gate, trends moderation table, sources toggles, categories view, and the public approved-only `/demo` feed.
 - Historical milestone artifacts live in `.planning/milestones/v1.2-ROADMAP.md` and `.planning/milestones/v1.2-REQUIREMENTS.md`.
 - v1.3 milestone started 2026-03-21. Building the React Native mobile consumer app on top of the existing WhiteLabelApp/ scaffold.
+- **Phase 11 complete (2026-03-21)** — WhiteLabelApp rebranded to Trenfy, 8 deps installed, mock data purged, brand tokens retuned to midnight/teal/amber, typed API client wired to FastAPI, FoundationScreen rendering live trend data with Arabic RTL support.
 
 ## Requirements Snapshot
 
@@ -38,10 +39,11 @@ Users can open the app and immediately see what's trending right now across gami
 - [x] v1.2 backend moderation endpoints and explicit CORS contract.
 - [x] v1.2 React web admin panel for trends, sources, and categories.
 - [x] v1.2 public demo feed for approved trends.
+- [x] v1.3 Phase 11 — Trenfy branding, brand tokens, API client, FoundationScreen with live trend data (Validated in Phase 11: Foundation)
 
 ### Active
 
-- [ ] React Native mobile app: 3-tab consumer feed for Trenfy (v1.3)
+- [ ] React Native mobile app: 3-tab consumer feed for Trenfy (v1.3) — navigation shell, feed, categories, profile
 
 ### Deferred
 
