@@ -8,13 +8,6 @@ import {
 } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { Ionicons } from '@expo/vector-icons';
-import Animated, {
-  Extrapolation,
-  interpolate,
-  useAnimatedScrollHandler,
-  useAnimatedStyle,
-  useSharedValue,
-} from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { fetchCategories } from '../api/trends';
@@ -28,18 +21,15 @@ import { TrendingNowTabProps } from '../navigation/types';
 import { CategoryOption, Trend } from '../types';
 import { useTheme } from '../theme/ThemeContext';
 
-const AnimatedFlashList = Animated.createAnimatedComponent(FlashList as React.ComponentType<any>);
-
 export default function TrendingNowScreen(_: TrendingNowTabProps) {
   const { colors, radii, spacing, typography } = useTheme();
   const insets = useSafeAreaInsets();
-  const { platform, region, setPlatform, setRegion, clearPersistedFilters } = useFilterPrefs();
+  const { platform, region, setRegion, clearPersistedFilters } = useFilterPrefs();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [availableCategories, setAvailableCategories] = useState<CategoryOption[]>([]);
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [headerContentHeight, setHeaderContentHeight] = useState(0);
   const [filterHeaderHeight, setFilterHeaderHeight] = useState(FILTER_HEADER_HEIGHT);
-  const scrollY = useSharedValue(0);
 
   const {
     items,
@@ -91,7 +81,7 @@ export default function TrendingNowScreen(_: TrendingNowTabProps) {
     );
   }, []);
 
-  const activeFilterCount = (platform ? 1 : 0) + selectedCategories.length + (region ? 1 : 0);
+  const activeFilterCount = selectedCategories.length + (region ? 1 : 0);
 
   const handleClearAll = useCallback(() => {
     setSelectedCategories([]);
@@ -146,8 +136,10 @@ export default function TrendingNowScreen(_: TrendingNowTabProps) {
     },
     filterHeaderWrap: {
       position: 'absolute' as const,
-      left: spacing.lg,
-      right: spacing.lg,
+      left: 0,
+      right: 0,
+      paddingHorizontal: spacing.lg,
+      backgroundColor: colors.background,
     },
     skeletonList: {
       flex: 1,
@@ -218,28 +210,6 @@ export default function TrendingNowScreen(_: TrendingNowTabProps) {
 
   const ItemSeparator = useCallback(() => <View style={styles.itemSeparator} />, []);
 
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      scrollY.value = event.contentOffset.y;
-    },
-  });
-
-  const collapsingContentStyle = useAnimatedStyle(
-    () => ({
-      transform: [
-        {
-          translateY: -interpolate(
-            scrollY.value,
-            [0, 80],
-            [0, filterHeaderHeight],
-            Extrapolation.CLAMP
-          ),
-        },
-      ],
-    }),
-    [filterHeaderHeight]
-  );
-
   return (
     <View style={styles.container}>
       <View style={[styles.headerOverlay, { paddingTop: topInsetOffset }]} pointerEvents="box-none">
@@ -266,13 +236,10 @@ export default function TrendingNowScreen(_: TrendingNowTabProps) {
 
         <View style={[styles.filterHeaderWrap, { top: topInsetOffset + headerContentHeight }]}>
           <FilterHeader
-            scrollY={scrollY}
             activeFilterCount={activeFilterCount}
-            selectedPlatform={platform}
-            onSelectPlatform={setPlatform}
+            onExpandedHeightChange={setFilterHeaderHeight}
             categories={availableCategories}
             isLoadingCategories={isLoadingCategories}
-            onExpandedHeightChange={setFilterHeaderHeight}
             selectedCategories={selectedCategories}
             onToggleCategory={toggleCategory}
             selectedRegion={region}
@@ -283,50 +250,41 @@ export default function TrendingNowScreen(_: TrendingNowTabProps) {
       </View>
 
       {isLoading ? (
-        <Animated.View style={collapsingContentStyle}>
-          <View style={[styles.skeletonList, { paddingTop: contentTopPadding }]}>
-            {[0, 1, 2, 3].map((item) => (
-              <SkeletonCard key={item} />
-            ))}
-          </View>
-        </Animated.View>
+        <View style={[styles.skeletonList, { paddingTop: contentTopPadding }]}>
+          {[0, 1, 2, 3].map((item) => (
+            <SkeletonCard key={item} />
+          ))}
+        </View>
       ) : null}
 
       {!isLoading && error ? (
-        <Animated.View style={collapsingContentStyle}>
-          <View style={[styles.centered, { paddingTop: contentTopPadding }]}>
-            <Ionicons name="cloud-offline-outline" size={48} color={colors.error} />
-            <Text style={styles.errorTitle}>Couldn't load trends</Text>
-            <Text style={styles.errorDetail}>{error}</Text>
-            <Pressable onPress={refresh} style={styles.retryButton}>
-              <Text style={styles.retryButtonText}>Retry</Text>
-            </Pressable>
-          </View>
-        </Animated.View>
+        <View style={[styles.centered, { paddingTop: contentTopPadding }]}>
+          <Ionicons name="cloud-offline-outline" size={48} color={colors.error} />
+          <Text style={styles.errorTitle}>Couldn't load trends</Text>
+          <Text style={styles.errorDetail}>{error}</Text>
+          <Pressable onPress={refresh} style={styles.retryButton}>
+            <Text style={styles.retryButtonText}>Retry</Text>
+          </Pressable>
+        </View>
       ) : null}
 
       {!isLoading && !error && items.length === 0 ? (
-        <Animated.View style={collapsingContentStyle}>
-          <View style={[styles.centered, { paddingTop: contentTopPadding }]}>
-            <Ionicons name="search-outline" size={48} color={colors.muted} />
-            <Text style={styles.emptyTitle}>No trends found</Text>
-            <Text style={styles.emptySubtitle}>{emptySubtitle}</Text>
-          </View>
-        </Animated.View>
+        <View style={[styles.centered, { paddingTop: contentTopPadding }]}>
+          <Ionicons name="search-outline" size={48} color={colors.muted} />
+          <Text style={styles.emptyTitle}>No trends found</Text>
+          <Text style={styles.emptySubtitle}>{emptySubtitle}</Text>
+        </View>
       ) : null}
 
       {!isLoading && !error && items.length > 0 ? (
-        <AnimatedFlashList
+        <FlashList
           data={items}
-          style={collapsingContentStyle}
           keyExtractor={keyExtractor}
           renderItem={renderItem}
           onEndReached={loadMore}
           onEndReachedThreshold={0.3}
           onRefresh={refresh}
           refreshing={isRefreshing}
-          onScroll={scrollHandler}
-          scrollEventThrottle={16}
           contentContainerStyle={[styles.listContent, { paddingTop: contentTopPadding }]}
           ItemSeparatorComponent={ItemSeparator}
           ListFooterComponent={ListFooter}
