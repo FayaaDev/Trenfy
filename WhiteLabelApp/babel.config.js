@@ -13,8 +13,6 @@ module.exports = function (api) {
             'iconamoon:profile-fill',
             'logos:youtube-icon',
             'ri:twitter-x-fill',
-            'material-symbols:grid-view-rounded',
-            'material-symbols:public',
             'material-symbols:close-rounded',
           ],
         },

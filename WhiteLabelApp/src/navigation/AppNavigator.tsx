@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import {
   Animated,
   Pressable,
@@ -15,8 +15,6 @@ import { Iconify } from 'react-native-iconify';
 import TrendingNowScreen from '../screens/TrendingNowScreen';
 import { useTheme } from '../theme/ThemeContext';
 import { FilterProvider, useFilters } from '../context/FilterContext';
-import FilterChip from '../components/FilterChip';
-import SheetModal from '../components/SheetModal';
 import type { RootTabParamList } from './types';
 import type { TrendRegion } from '../types';
 
@@ -27,71 +25,101 @@ import type { TrendRegion } from '../types';
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
 const CIRCLE_SIZE = 56;
-const FAN_GAP = 64; // vertical distance between fan item centres
-const FAN_FIRST_OFFSET = CIRCLE_SIZE + 12; // distance of first pill from container base
+const FAN_GAP = 52;       // px between each pill centre
+const FAN_FIRST_OFFSET = CIRCLE_SIZE + 12; // bottom of first pill from cluster base
+const GROUP_BONUS = 14;   // extra gap between category group and region group
+const MAX_FAN = 10;       // pre-allocated animation values (≥ max expected items)
 
-const REGION_OPTIONS: Array<{ value: TrendRegion; label: string; flag: string }> = [
-  { value: 'US', label: 'United States', flag: '🇺🇸' },
-  { value: 'SA', label: 'Saudi Arabia', flag: '🇸🇦' },
-  { value: 'JP', label: 'Japan', flag: '🇯🇵' },
+const REGION_OPTIONS: Array<{ value: TrendRegion; flag: string; short: string }> = [
+  { value: 'US', flag: '🇺🇸', short: 'US' },
+  { value: 'SA', flag: '🇸🇦', short: 'SA' },
+  { value: 'JP', flag: '🇯🇵', short: 'JP' },
 ];
 
 // ---------------------------------------------------------------------------
-// Fan item config
+// FilterFAB
 // ---------------------------------------------------------------------------
 
-type FanId = 'categories' | 'region';
-
-const FAN_ITEMS: Array<{ id: FanId; label: string; icon: string }> = [
-  { id: 'categories', label: 'Categories', icon: 'material-symbols:grid-view-rounded' },
-  { id: 'region', label: 'Region', icon: 'material-symbols:public' },
-];
-
-// ---------------------------------------------------------------------------
-// FilterFAB (replaces FloatingTabBar)
-// ---------------------------------------------------------------------------
+type FanItem = {
+  key: string;
+  label: string;
+  active: boolean;
+  group: 'category' | 'region';
+  onToggle: () => void;
+};
 
 function FilterFAB(_props: BottomTabBarProps) {
   const { colors, radii, spacing, typography, shadows } = useTheme();
   const insets = useSafeAreaInsets();
   const {
     availableCategories,
-    isLoadingCategories,
     selectedCategories,
     region,
     activeFilterCount,
     toggleCategory,
     setRegion,
+    clearAll,
   } = useFilters();
 
   const [isOpen, setIsOpen] = useState(false);
-  const [activeSheet, setActiveSheet] = useState<FanId | null>(null);
 
-  // One animation value per fan item (0 = hidden, 1 = visible)
-  const fanAnims = useRef(FAN_ITEMS.map(() => new Animated.Value(0))).current;
+  // Pre-allocated animation values — enough for MAX_FAN items
+  const fanAnims = useRef(
+    Array.from({ length: MAX_FAN }, () => new Animated.Value(0))
+  ).current;
   const backdropAnim = useRef(new Animated.Value(0)).current;
-  // FAB icon swap (0 = trending icon, 1 = close icon)
-  const fabFlip = useRef(new Animated.Value(0)).current;
+  const fabFlip = useRef(new Animated.Value(0)).current;  // 0=trending, 1=close
+  const fabScale = useRef(new Animated.Value(1)).current; // for long-press bounce
 
-  // ── open / close helpers ────────────────────────────────────────────────
+  // ── fan items (categories below, regions above) ──────────────────────────
+  //
+  // Index 0 is the CLOSEST pill to the FAB (visually lowest).
+  // Categories are closest, regions fan out above them.
+
+  const fanItems = useMemo<FanItem[]>(
+    () => [
+      // ── categories (indices 0 … n-1, just above FAB) ──────────────────
+      ...availableCategories.map((cat) => ({
+        key: `cat:${cat.value}`,
+        label: cat.label,
+        active: selectedCategories.includes(cat.value),
+        group: 'category' as const,
+        onToggle: () => toggleCategory(cat.value),
+      })),
+      // ── regions (indices n … n+2, highest in the fan) ─────────────────
+      ...REGION_OPTIONS.map((r) => ({
+        key: `region:${r.value}`,
+        label: `${r.flag}  ${r.short}`,
+        active: region === r.value,
+        group: 'region' as const,
+        onToggle: () => setRegion(region === r.value ? null : r.value),
+      })),
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [availableCategories, selectedCategories, region]
+  );
+
+  // bottom offset for each pill (adds a gap between the two groups)
+  const bottomFor = useCallback(
+    (index: number) => {
+      const catCount = availableCategories.length;
+      const bonus = index >= catCount ? GROUP_BONUS : 0;
+      return FAN_FIRST_OFFSET + index * FAN_GAP + bonus;
+    },
+    [availableCategories.length]
+  );
+
+  // ── open / close ──────────────────────────────────────────────────────────
 
   const openFan = useCallback(() => {
     setIsOpen(true);
     Animated.parallel([
-      Animated.timing(backdropAnim, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-      Animated.timing(fabFlip, {
-        toValue: 1,
-        duration: 180,
-        useNativeDriver: true,
-      }),
+      Animated.timing(backdropAnim, { toValue: 1, duration: 180, useNativeDriver: true }),
+      Animated.timing(fabFlip, { toValue: 1, duration: 160, useNativeDriver: true }),
       Animated.stagger(
-        70,
-        fanAnims.map((anim) =>
-          Animated.spring(anim, {
+        45,
+        fanItems.map((_, i) =>
+          Animated.spring(fanAnims[i], {
             toValue: 1,
             damping: 14,
             stiffness: 220,
@@ -100,65 +128,39 @@ function FilterFAB(_props: BottomTabBarProps) {
         )
       ),
     ]).start();
-  }, [backdropAnim, fabFlip, fanAnims]);
+  }, [backdropAnim, fabFlip, fanAnims, fanItems]);
 
   const closeFan = useCallback(() => {
     Animated.parallel([
-      Animated.timing(backdropAnim, {
-        toValue: 0,
-        duration: 150,
-        useNativeDriver: true,
-      }),
-      Animated.timing(fabFlip, {
-        toValue: 0,
-        duration: 150,
-        useNativeDriver: true,
-      }),
+      Animated.timing(backdropAnim, { toValue: 0, duration: 140, useNativeDriver: true }),
+      Animated.timing(fabFlip, { toValue: 0, duration: 140, useNativeDriver: true }),
       ...fanAnims.map((anim) =>
-        Animated.timing(anim, {
-          toValue: 0,
-          duration: 120,
-          useNativeDriver: true,
-        })
+        Animated.timing(anim, { toValue: 0, duration: 100, useNativeDriver: true })
       ),
     ]).start(() => setIsOpen(false));
   }, [backdropAnim, fabFlip, fanAnims]);
 
   const toggleFan = useCallback(() => {
-    if (isOpen) {
-      closeFan();
-    } else {
-      openFan();
-    }
+    if (isOpen) closeFan();
+    else openFan();
   }, [isOpen, openFan, closeFan]);
 
-  const handleFanItemPress = useCallback(
-    (id: FanId) => {
-      closeFan();
-      // Short delay so the fan collapses before the sheet slides in
-      setTimeout(() => setActiveSheet(id), 140);
-    },
-    [closeFan]
-  );
+  // ── long-press: clear all filters ────────────────────────────────────────
 
-  // ── derived animations ───────────────────────────────────────────────────
+  const handleLongPress = useCallback(() => {
+    clearAll();
+    if (isOpen) closeFan();
+    // Bounce the FAB to give tactile feedback
+    Animated.sequence([
+      Animated.timing(fabScale, { toValue: 0.82, duration: 70, useNativeDriver: true }),
+      Animated.spring(fabScale, { toValue: 1, damping: 8, stiffness: 280, useNativeDriver: true }),
+    ]).start();
+  }, [clearAll, isOpen, closeFan, fabScale]);
 
-  const trendingScale = fabFlip.interpolate({
-    inputRange: [0, 1],
-    outputRange: [1, 0],
-  });
-  const closeScale = fabFlip.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, 1],
-  });
+  // ── derived ───────────────────────────────────────────────────────────────
 
-  // ── per-item active counts ───────────────────────────────────────────────
-
-  const itemActiveCount = (id: FanId): number => {
-    if (id === 'categories') return selectedCategories.length;
-    if (id === 'region') return region ? 1 : 0;
-    return 0;
-  };
+  const trendingScale = fabFlip.interpolate({ inputRange: [0, 1], outputRange: [1, 0] });
+  const closeIconScale = fabFlip.interpolate({ inputRange: [0, 1], outputRange: [0, 1] });
 
   // ── styles ───────────────────────────────────────────────────────────────
 
@@ -213,71 +215,51 @@ function FilterFAB(_props: BottomTabBarProps) {
       fontSize: 10,
       lineHeight: 12,
     },
-    fanPill: {
+    pill: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: spacing.xs,
-      paddingHorizontal: spacing.md,
-      paddingVertical: 10,
+      paddingHorizontal: 16,
+      paddingVertical: 9,
       borderRadius: radii.pill,
       backgroundColor: colors.surface,
       borderWidth: 1,
       borderColor: colors.border,
       ...shadows.card,
     },
-    fanPillActive: {
-      borderColor: colors.primary,
+    pillActive: {
       backgroundColor: colors.primarySoft,
+      borderColor: colors.primary,
     },
-    fanPillLabel: {
+    pillLabel: {
       ...typography.labelLarge,
       color: colors.text,
     },
-    fanPillLabelActive: {
+    pillLabelActive: {
       color: colors.primary,
     },
-    fanBadge: {
-      minWidth: 18,
-      height: 18,
-      borderRadius: 9,
-      backgroundColor: colors.primary,
-      alignItems: 'center',
-      justifyContent: 'center',
-      paddingHorizontal: 4,
-    },
-    fanBadgeText: {
-      ...typography.labelSmall,
-      color: colors.surface,
-      fontSize: 10,
-      lineHeight: 12,
-    },
-    chipGrid: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: spacing.sm,
-      paddingBottom: spacing.md,
-    },
-    sheetClearRow: {
-      flexDirection: 'row',
-      justifyContent: 'flex-end',
-      marginBottom: spacing.md,
-    },
-    sheetClearText: {
-      ...typography.labelSmall,
-      color: colors.primary,
-    },
-    loadingText: {
-      ...typography.bodySmall,
-      color: colors.muted,
-      paddingVertical: spacing.sm,
+    // Thin divider row rendered between the two groups
+    divider: {
+      position: 'absolute',
+      left: '30%',
+      right: '30%',
+      height: 1,
+      backgroundColor: colors.border,
+      opacity: 0.6,
     },
   });
 
-  // ── render ───────────────────────────────────────────────────────────────
+  // ── render ────────────────────────────────────────────────────────────────
+
+  const catCount = availableCategories.length;
+  // Divider sits between the last category pill and the first region pill
+  const dividerBottom =
+    catCount > 0
+      ? FAN_FIRST_OFFSET + (catCount - 1) * FAN_GAP + FAN_GAP * 0.5 + GROUP_BONUS * 0.5
+      : -999;
 
   return (
     <View pointerEvents="box-none" style={s.container}>
-      {/* ── Backdrop ─────────────────────────────────────────────────── */}
+      {/* ── Backdrop ──────────────────────────────────────────────────── */}
       <Animated.View
         pointerEvents={isOpen ? 'auto' : 'none'}
         style={[s.backdrop, { opacity: backdropAnim }]}
@@ -285,22 +267,26 @@ function FilterFAB(_props: BottomTabBarProps) {
         <Pressable style={StyleSheet.absoluteFill} onPress={closeFan} />
       </Animated.View>
 
-      {/* ── FAB cluster ──────────────────────────────────────────────── */}
+      {/* ── FAB cluster ───────────────────────────────────────────────── */}
       <View pointerEvents="box-none" style={s.cluster}>
-        {/* Fan items positioned above FAB using absolute bottom offsets */}
-        {FAN_ITEMS.map((item, index) => {
-          const anim = fanAnims[index];
-          const count = itemActiveCount(item.id);
-          const isActive = count > 0;
-          const bottomOffset = FAN_FIRST_OFFSET + index * FAN_GAP;
+        {/* Thin divider between category and region groups */}
+        {catCount > 0 && isOpen ? (
+          <Animated.View
+            pointerEvents="none"
+            style={[s.divider, { bottom: dividerBottom, opacity: backdropAnim }]}
+          />
+        ) : null}
 
+        {/* Individual filter pills */}
+        {fanItems.map((item, index) => {
+          const anim = fanAnims[index];
           return (
             <Animated.View
-              key={item.id}
+              key={item.key}
               pointerEvents={isOpen ? 'auto' : 'none'}
               style={{
                 position: 'absolute',
-                bottom: bottomOffset,
+                bottom: bottomFor(index),
                 left: 0,
                 right: 0,
                 alignItems: 'center',
@@ -309,39 +295,29 @@ function FilterFAB(_props: BottomTabBarProps) {
                   {
                     translateY: anim.interpolate({
                       inputRange: [0, 1],
-                      outputRange: [16, 0],
+                      outputRange: [14, 0],
                     }),
                   },
                   {
                     scale: anim.interpolate({
                       inputRange: [0, 1],
-                      outputRange: [0.82, 1],
+                      outputRange: [0.8, 1],
                     }),
                   },
                 ],
               }}
             >
               <Pressable
-                onPress={() => handleFanItemPress(item.id)}
+                onPress={item.onToggle}
                 style={({ pressed }) => [
-                  s.fanPill,
-                  isActive && s.fanPillActive,
-                  pressed && { opacity: 0.8 },
+                  s.pill,
+                  item.active && s.pillActive,
+                  pressed && { opacity: 0.75 },
                 ]}
               >
-                <Iconify
-                  icon={item.icon}
-                  size={18}
-                  color={isActive ? colors.primary : colors.muted}
-                />
-                <Text style={[s.fanPillLabel, isActive && s.fanPillLabelActive]}>
+                <Text style={[s.pillLabel, item.active && s.pillLabelActive]}>
                   {item.label}
                 </Text>
-                {count > 0 ? (
-                  <View style={s.fanBadge}>
-                    <Text style={s.fanBadgeText}>{count}</Text>
-                  </View>
-                ) : null}
               </Pressable>
             </Animated.View>
           );
@@ -349,98 +325,33 @@ function FilterFAB(_props: BottomTabBarProps) {
 
         {/* Main FAB */}
         <View style={s.fabWrap}>
-          <Pressable
-            onPress={toggleFan}
-            accessibilityRole="button"
-            accessibilityLabel={isOpen ? 'Close filters' : 'Open filters'}
-            style={s.fab}
-          >
-            {/* Trending icon (visible when fan is closed) */}
-            <Animated.View style={[s.fabIconWrap, { transform: [{ scale: trendingScale }] }]}>
-              <Iconify
-                icon="streamline-plump:trending-content"
-                size={28}
-                color={colors.surface}
-              />
-            </Animated.View>
-            {/* Close icon (visible when fan is open) */}
-            <Animated.View style={[s.fabIconWrap, { transform: [{ scale: closeScale }] }]}>
-              <Iconify
-                icon="material-symbols:close-rounded"
-                size={28}
-                color={colors.surface}
-              />
-            </Animated.View>
-            {/* Active filter count badge — inside the circle, upper-right */}
-            {activeFilterCount > 0 && !isOpen ? (
-              <View style={s.badge} pointerEvents="none">
-                <Text style={s.badgeText}>{activeFilterCount}</Text>
-              </View>
-            ) : null}
-          </Pressable>
+          <Animated.View style={{ transform: [{ scale: fabScale }] }}>
+            <Pressable
+              onPress={toggleFan}
+              onLongPress={handleLongPress}
+              delayLongPress={400}
+              accessibilityRole="button"
+              accessibilityLabel={isOpen ? 'Close filters' : 'Open filters'}
+              style={s.fab}
+            >
+              {/* Trending icon */}
+              <Animated.View style={[s.fabIconWrap, { transform: [{ scale: trendingScale }] }]}>
+                <Iconify icon="streamline-plump:trending-content" size={28} color={colors.surface} />
+              </Animated.View>
+              {/* Close icon */}
+              <Animated.View style={[s.fabIconWrap, { transform: [{ scale: closeIconScale }] }]}>
+                <Iconify icon="material-symbols:close-rounded" size={28} color={colors.surface} />
+              </Animated.View>
+              {/* Filter count badge */}
+              {activeFilterCount > 0 && !isOpen ? (
+                <View style={s.badge} pointerEvents="none">
+                  <Text style={s.badgeText}>{activeFilterCount}</Text>
+                </View>
+              ) : null}
+            </Pressable>
+          </Animated.View>
         </View>
       </View>
-
-      {/* ── Category sheet ───────────────────────────────────────────── */}
-      <SheetModal
-        visible={activeSheet === 'categories'}
-        title="Categories"
-        subtitle="Select one or more to filter the feed"
-        onClose={() => setActiveSheet(null)}
-      >
-        {selectedCategories.length > 0 ? (
-          <View style={s.sheetClearRow}>
-            <Pressable
-              onPress={() => {
-                // toggle off each active category
-                [...selectedCategories].forEach((c) => toggleCategory(c));
-              }}
-            >
-              <Text style={s.sheetClearText}>Clear</Text>
-            </Pressable>
-          </View>
-        ) : null}
-        {isLoadingCategories ? (
-          <Text style={s.loadingText}>Loading categories…</Text>
-        ) : (
-          <View style={s.chipGrid}>
-            {availableCategories.map((opt) => (
-              <FilterChip
-                key={opt.value}
-                label={opt.label}
-                active={selectedCategories.includes(opt.value)}
-                onPress={() => toggleCategory(opt.value)}
-              />
-            ))}
-          </View>
-        )}
-      </SheetModal>
-
-      {/* ── Region sheet ─────────────────────────────────────────────── */}
-      <SheetModal
-        visible={activeSheet === 'region'}
-        title="Region"
-        subtitle="Filter trends by market"
-        onClose={() => setActiveSheet(null)}
-      >
-        {region ? (
-          <View style={s.sheetClearRow}>
-            <Pressable onPress={() => setRegion(null)}>
-              <Text style={s.sheetClearText}>Clear</Text>
-            </Pressable>
-          </View>
-        ) : null}
-        <View style={s.chipGrid}>
-          {REGION_OPTIONS.map((opt) => (
-            <FilterChip
-              key={opt.value}
-              label={`${opt.flag}  ${opt.label}`}
-              active={region === opt.value}
-              onPress={() => setRegion(region === opt.value ? null : opt.value)}
-            />
-          ))}
-        </View>
-      </SheetModal>
     </View>
   );
 }
