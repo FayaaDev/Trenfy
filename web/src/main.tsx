@@ -7,7 +7,11 @@ import { AdminGuard } from './components/auth/AdminGuard';
 import { AdminLayout } from './components/layout/AdminLayout';
 import { LoginPage } from './pages/admin/LoginPage';
 import { AdminPage } from './pages/admin/AdminPage';
+import { TrendsPage } from './pages/admin/TrendsPage';
+import { SourcesPage } from './pages/admin/SourcesPage';
+import { CategoriesPage } from './pages/admin/CategoriesPage';
 import { DemoPage } from './pages/demo/DemoPage';
+import { Toaster } from './components/ui/sonner';
 
 import './index.css';
 
@@ -37,9 +41,9 @@ const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <AdminPage /> },
-      { path: 'trends', element: <AdminPage /> },
-      { path: 'sources', element: <AdminPage /> },
-      { path: 'categories', element: <AdminPage /> },
+      { path: 'trends', element: <TrendsPage /> },
+      { path: 'sources', element: <SourcesPage /> },
+      { path: 'categories', element: <CategoriesPage /> },
     ],
   },
 
@@ -51,6 +55,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
+      <Toaster />
     </QueryClientProvider>
   </React.StrictMode>
 );
