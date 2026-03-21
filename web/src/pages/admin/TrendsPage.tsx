@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
-import { getTrends } from '@/api/trends';
+import { toast } from 'sonner';
+import { getTrends, patchTrend, deleteTrend } from '@/api/trends';
+import type { PaginatedTrends, PatchTrendPayload, Trend } from '@/api/types';
 import {
   Table,
   TableBody,
@@ -19,6 +21,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { DeleteConfirmDialog } from '@/components/admin/DeleteConfirmDialog';
+import { TrendEditModal } from '@/components/admin/TrendEditModal';
 
 type FilterState = {
   status?: 'pending' | 'approved' | 'rejected';
@@ -30,14 +34,19 @@ type FilterState = {
 type SortField = 'published_date' | 'metric_value';
 
 export function TrendsPage() {
+  const queryClient = useQueryClient();
   const [filters, setFilters] = useState<FilterState>({});
   const [cursor, setCursor] = useState<string | undefined>(undefined);
   const [cursorStack, setCursorStack] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<SortField | undefined>(undefined);
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
+  const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
+  const [editTarget, setEditTarget] = useState<Trend | null>(null);
+
+  const queryKey = ['trends', filters, cursor, sortBy, sortDir] as const;
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['trends', filters, cursor, sortBy, sortDir],
+    queryKey,
     queryFn: ({ signal }) =>
       getTrends({
         ...filters,
@@ -46,6 +55,63 @@ export function TrendsPage() {
         sort_by: sortBy ? `${sortBy}:${sortDir}` : undefined,
         signal,
       }),
+  });
+
+  const patchMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: PatchTrendPayload }) =>
+      patchTrend(id, data),
+    onMutate: async ({ id, data: patchData }) => {
+      await queryClient.cancelQueries({ queryKey: ['trends'] });
+      const previousData = queryClient.getQueryData<PaginatedTrends>(queryKey);
+      queryClient.setQueryData<PaginatedTrends>(queryKey, (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          items: old.items.map((t) =>
+            t.Id === id ? { ...t, ...patchData } : t
+          ),
+        };
+      });
+      return { previousData };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previousData) {
+        queryClient.setQueryData(queryKey, context.previousData);
+      }
+      toast.error('Action failed');
+    },
+    onSuccess: (_data, { data: patchData }) => {
+      toast.success(
+        patchData.status === 'approved'
+          ? 'Approved'
+          : patchData.status === 'rejected'
+            ? 'Rejected'
+            : 'Updated'
+      );
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => deleteTrend(id),
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: ['trends'] });
+      const previousData = queryClient.getQueryData<PaginatedTrends>(queryKey);
+      queryClient.setQueryData<PaginatedTrends>(queryKey, (old) => {
+        if (!old) return old;
+        return { ...old, items: old.items.filter((t) => t.Id !== id) };
+      });
+      return { previousData };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previousData) {
+        queryClient.setQueryData(queryKey, context.previousData);
+      }
+      toast.error('Delete failed');
+    },
+    onSuccess: () => {
+      toast.success('Deleted');
+      setDeleteTarget(null);
+    },
   });
 
   function setFilter<K extends keyof FilterState>(key: K, value: string) {
@@ -86,7 +152,8 @@ export function TrendsPage() {
 
   function statusBadge(status: string | null) {
     if (status === 'approved') return <Badge variant="default">Approved</Badge>;
-    if (status === 'rejected') return <Badge variant="destructive">Rejected</Badge>;
+    if (status === 'rejected')
+      return <Badge variant="destructive">Rejected</Badge>;
     return <Badge variant="secondary">{status ?? 'Pending'}</Badge>;
   }
 
@@ -214,7 +281,55 @@ export function TrendsPage() {
                 {format(new Date(trend.published_date), 'MMM d, yyyy')}
               </TableCell>
               <TableCell>{trend.metric_value.toLocaleString()}</TableCell>
-              <TableCell>{/* actions: 09-02 */}</TableCell>
+              <TableCell>
+                <div className="flex gap-1">
+                  <Button
+                    size="xs"
+                    variant="outline"
+                    disabled={
+                      trend.status === 'approved' || patchMutation.isPending
+                    }
+                    onClick={() =>
+                      patchMutation.mutate({
+                        id: trend.Id,
+                        data: { status: 'approved' },
+                      })
+                    }
+                  >
+                    Approve
+                  </Button>
+                  <Button
+                    size="xs"
+                    variant="outline"
+                    disabled={
+                      trend.status === 'rejected' || patchMutation.isPending
+                    }
+                    onClick={() =>
+                      patchMutation.mutate({
+                        id: trend.Id,
+                        data: { status: 'rejected' },
+                      })
+                    }
+                  >
+                    Reject
+                  </Button>
+                  <Button
+                    size="xs"
+                    variant="outline"
+                    onClick={() => setEditTarget(trend)}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    size="xs"
+                    variant="destructive"
+                    disabled={deleteMutation.isPending}
+                    onClick={() => setDeleteTarget(trend.Id)}
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -239,6 +354,22 @@ export function TrendsPage() {
           Next →
         </Button>
       </div>
+
+      {/* Modals */}
+      <DeleteConfirmDialog
+        open={deleteTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null);
+        }}
+        onConfirm={() => {
+          if (deleteTarget !== null) deleteMutation.mutate(deleteTarget);
+        }}
+        isPending={deleteMutation.isPending}
+      />
+      <TrendEditModal
+        trend={editTarget}
+        onClose={() => setEditTarget(null)}
+      />
     </div>
   );
 }
