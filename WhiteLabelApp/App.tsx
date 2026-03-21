@@ -5,15 +5,17 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import AppNavigator from './src/navigation/AppNavigator';
-import { colors } from './src/theme/tokens';
+import { ThemeProvider } from './src/theme/ThemeContext';
 
 export default function App() {
   return (
     <GestureHandlerRootView style={styles.root}>
-      <SafeAreaProvider>
-        <StatusBar style="light" />
-        <AppNavigator />
-      </SafeAreaProvider>
+      <ThemeProvider>
+        <SafeAreaProvider>
+          <StatusBar style="auto" />
+          <AppNavigator />
+        </SafeAreaProvider>
+      </ThemeProvider>
     </GestureHandlerRootView>
   );
 }
@@ -21,6 +23,5 @@ export default function App() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.background,
   },
 });

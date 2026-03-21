@@ -86,3 +86,31 @@ export const typography = {
   // Arabic text — wider lineHeight for Arabic script readability
   arabicBody: { fontSize: 14, fontWeight: '400' as const, lineHeight: 26 },
 };
+
+// Dark palette alias (explicit name for ThemeContext)
+export const darkColors = colors;
+
+// Light palette — used when device color scheme is 'light'
+export const lightColors = {
+  background: '#F8FAFC',
+  surface: '#FFFFFF',
+  surfaceMuted: '#F1F5F9',
+  surfaceStrong: '#E2E8F0',
+  primary: '#0D9488',
+  primaryDark: '#0F766E',
+  primarySoft: 'rgba(13,148,136,0.12)',
+  accent: '#D97706',
+  accentSoft: 'rgba(217,119,6,0.12)',
+  text: '#0F172A',
+  textSecondary: '#1E293B',
+  muted: '#64748B',
+  border: '#E2E8F0',
+  success: '#059669',
+  warning: '#D97706',
+  error: '#DC2626',
+  info: '#2563EB',
+  overlay: 'rgba(0, 0, 0, 0.40)',
+  overlayLight: 'rgba(248, 250, 252, 0.90)',
+};
+
+export type ThemeColors = typeof darkColors;
