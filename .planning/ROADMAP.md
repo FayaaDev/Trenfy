@@ -5,14 +5,14 @@
 - ✅ `v1.0 MVP` - Phases 1-5 (shipped 2015-03-20) - `.planning/milestones/v1.0-ROADMAP.md`
 - ✅ `v1.1 Verification and Mobile Delivery` - Phase 6 (shipped 2015-03-20) - `.planning/milestones/v1.1-ROADMAP.md`
 - ✅ `v1.2 Web Admin + Demo Feed` - Phases 7-10 (shipped 2015-03-21) - `.planning/milestones/v1.2-ROADMAP.md`
-- 🚧 `v1.3 React Native Mobile App` - Phases 11-17 (active)
+- 🚧 `v1.3 React Native Mobile App` - Phases 11-15 (active)
 
 ---
 
 # Roadmap: Trenfy v1.3 React Native Mobile App
 
 **Milestone:** v1.3
-**Phases:** 11–17
+**Phases:** 11–15
 **Requirements:** 44
 **Coverage:** 100%
 
@@ -21,8 +21,7 @@
 - [x] **Phase 11: Foundation** — Rename scaffold to Trenfy, install packages, wire API client, purge mock data (completed 2015-03-21)
 - [x] **Phase 12: Navigation Shell** — 3-tab bottom nav, nested stacks, safe area insets (completed 2015-03-21)
 - [x] **Phase 13: Trending Feed + Cards** — FlashList feed, TrendCard component, pull-to-refresh, infinite scroll, search, skeletons, error/empty states (completed 2015-03-21)
-- [x] **Phase 14: Filters** — Platform/category/region chips, collapsible animated header, active filter indicators, clear-all, persisted prefs (completed 2015-03-21; category completeness across unloaded pages deferred to Phase 15)
-- [ ] **Phase 15: Bookmarks + Profile** — Local bookmark saves, Profile tab with saved list, default preferences
+- [x] **Phase 14: Filters** — Platform/category/region chips, collapsible animated header, active filter indicators, clear-all, persisted prefs (completed 2015-03-21)
 - [ ] **Phase 15: Theming & Accessibility** — Dark mode, theme context, RTL Arabic text handling
 
 ## Phase Summary
@@ -33,8 +32,7 @@
 | 12 | Navigation Shell | 3-tab nav with typed route params and safe area handling | NAV-01..03 | TBD |
 | 13 | Trending Feed + Cards | Live FlashList feed with complete TrendCard and full feed lifecycle | FEED-01..07, CARD-01..07 | TBD |
 | 14 | Filters | Platform/category/region filter chips with collapsible animated header and persistence | FLTR-01..07 | 3 plans (2015-03-21) |
-| 16 | Bookmarks + Profile | Local bookmark saves, Profile tab saved list, default filter preferences | BKMK-01..04, PROF-01..04 | TBD |
-| 17 | Theming & Accessibility | Dark mode on all screens, theme token context, RTL Arabic text in cards | THME-01..04 | TBD |
+| 15 | Theming & Accessibility | Dark mode on all screens, theme token context, RTL Arabic text in cards | THME-01..04 | TBD |
 
 ## Phase Details
 
@@ -105,20 +103,6 @@ Plans:
 - [x] 14-02-PLAN.md — `FilterChip` + `FilterHeader` reusable UI primitives and icon registry verification
 - [x] 14-03-PLAN.md — `TrendingNowScreen` integration, collapsible header wiring, and verification closure with one deferred category-completeness gap
 
-**Deferred follow-up:** Multi-category filtering currently narrows the loaded feed client-side, which can miss matches outside fetched pages. Preserve Phase 14 behavior for now and solve the complete category result flow in Phase 15 when category drill-down/feed ownership is added.
-
-### Phase 15: Bookmarks + Profile
-**Goal:** User can save trends locally, view them in the Profile tab, set default feed preferences, and all saved state survives app restarts without requiring a login.
-**Depends on:** Phase 13
-**Requirements:** BKMK-01, BKMK-02, BKMK-03, BKMK-04, PROF-01, PROF-02, PROF-03, PROF-04
-**Success Criteria** (what must be TRUE):
-  1. Tapping the bookmark icon on any trend card saves it instantly — the icon updates to filled state with no loading delay
-  2. Profile tab shows a list of all bookmarked trends — tapping any item opens its source URL in the native browser
-  3. Closing and re-opening the app: all bookmarked trends are still present in the Profile tab (persisted via expo-sqlite kv-store)
-  4. Tapping the remove/unbookmark action on the Profile saved list removes the trend immediately with no confirmation dialog
-  5. Profile tab has controls to set a default region and default platform — on next cold launch, those filter chips are pre-selected on the Trending Now feed
-**Plans:** TBD
-
 ### Phase 15: Theming & Accessibility
 **Goal:** The app renders correctly in dark mode on every screen and Arabic text displays with proper RTL direction without breaking the LTR card layout.
 **Depends on:** Phase 13
@@ -139,10 +123,9 @@ Plans:
 | 11. Foundation | 4/4 | ✅ Complete | 2015-03-21 |
 | 12. Navigation Shell | 2/2 | ✅ Complete | 2015-03-21 |
 | 13. Trending Feed + Cards | 3/3 | ✅ Complete | 2015-03-21 |
-| 14. Filters | 3/3 | ✅ Complete (1 deferred follow-up) | 2015-03-21 |
-| 15. Bookmarks + Profile | 0/? | Not started | — |
+| 14. Filters | 3/3 | ✅ Complete | 2015-03-21 |
 | 15. Theming & Accessibility | 0/? | Not started | — |
 
 ---
 *Roadmap created: 2015-03-21*
-*Last updated: 2015-03-21 — Phase 14 verified complete; unloaded-page category completeness deferred to Phase 15*
+*Last updated: 2015-03-21 — Phase 14 verified complete; Phase 15 (Bookmarks + Profile) removed*

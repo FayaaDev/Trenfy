@@ -4,10 +4,10 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 14
 status: verifying
-last_updated: "2026-03-21T19:32:35.301Z"
+last_updated: "2026-03-21T19:44:16.291Z"
 last_activity: 2026-03-21
 progress:
-  total_phases: 5
+  total_phases: 4
   completed_phases: 4
   total_plans: 12
   completed_plans: 12
@@ -20,13 +20,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Users can open the app and immediately see what's trending right now across gaming, music, and entertainment - filtered to what they care about, tappable to the source.
-**Current focus:** Phase 15 readiness — categories tab planning/execution
+**Current focus:** Phase 15 readiness — theming & accessibility
 
 ## Position
 
 **Milestone:** v1.3 React Native Mobile App
 **Current phase:** 14
-**Status:** Phase 14 verified complete — Phase 15 next
+**Status:** Phase 14 verified complete — Phase 15 (Theming & Accessibility) next
 Last activity: 2026-03-21
 
 ## Session Log
@@ -64,4 +64,4 @@ Last activity: 2026-03-21
   - Apple Sign-In: persist `fullName`/`email` immediately on first callback — Apple only delivers credentials once
 - **API field names to verify in Phase 11:** `url` vs `source_url`, `ar_translation` vs `ar_title`, `metric_value` vs `view_count`, `region_code` query param name
 - **API client established:** All mobile reads go through `apiFetch<T>` in `src/api/client.ts` via `EXPO_PUBLIC_API_URL` — no NocoDB direct calls. `fetchTrends` always enforces `status=approved`.
-- **Deferred Phase 14 follow-up:** Multi-category filtering is intentionally incomplete across unloaded pages because Phase 14 filters loaded feed items client-side; Phase 15 should own the complete category-driven feed/drill-down solution instead of patching Phase 14 in place.
+- **Deferred Phase 14 note:** Multi-category filtering narrows the loaded feed client-side only; cross-page completeness was deferred and is now unplanned (Phase 15 Bookmarks+Profile removed).
