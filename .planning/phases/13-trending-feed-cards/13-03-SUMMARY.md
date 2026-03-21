@@ -21,10 +21,10 @@ decisions:
   - renderItem/keyExtractor memoized with useCallback to avoid unnecessary re-renders
   - FoundationScreen kept (not deleted) with ARCHIVED comment per plan spec
 metrics:
-  duration: "~10 minutes"
+  duration: "~12 minutes"
   completed: "2026-03-21"
-  tasks_completed: 2
-  files_changed: 2
+  tasks_completed: 3
+  files_changed: 4
 ---
 
 # Phase 13 Plan 03: TrendingNowScreen Feed Assembly Summary
@@ -51,6 +51,7 @@ metrics:
 | Task | Commit  | Description                                              |
 |------|---------|----------------------------------------------------------|
 | 1+2  | 911dfe8 | feat(13-03): rewrite TrendingNowScreen with FlashList feed; archive FoundationScreen |
+| ext  | 56abf38 | fix(deps): downgrade react-native-reanimated to ~3.17.4 (Expo SDK 53 compatible) — committed externally after visual verification |
 
 ## Deviations from Plan
 
@@ -63,17 +64,24 @@ metrics:
 - **Files modified:** `WhiteLabelApp/src/screens/TrendingNowScreen.tsx`
 - **Commit:** 911dfe8 (included in task commit)
 
-## Checkpoint: Awaiting Human Verification
+**2. [External Fix] react-native-reanimated version mismatch with Expo SDK 53**
+- **Found during:** Visual checkpoint verification (device/simulator run)
+- **Issue:** Reanimated v3.19.x caused runtime crash; Expo SDK 53 is compatible with ~3.17.x
+- **Fix:** Downgraded to `~3.17.4` in package.json — committed externally (56abf38)
+- **Files modified:** `WhiteLabelApp/package.json`, `WhiteLabelApp/package-lock.json`
+- **Commit:** 56abf38
 
-**Status:** Tasks 1 & 2 complete. Awaiting visual verification at checkpoint Task 3.
+## Checkpoint: APPROVED ✅
 
-The screen is built and compiles cleanly. Human verification needed to confirm:
-- Skeleton shimmer appears on load
-- Real trend cards render with correct data
-- Pull-to-refresh works
-- Infinite scroll triggers at 30% from bottom
-- Search filters feed in real-time
-- Tap opens URL in browser
+**Status:** All 3 tasks complete. Visual verification passed by user (2026-03-21).
+
+Verified working:
+- Skeleton shimmer (4 SkeletonCards) on initial load
+- Real approved trend cards with full card anatomy
+- Pull-to-refresh updates the feed
+- Infinite scroll at 30% from bottom
+- Debounced search filters feed; X button clears query
+- Tapping card opens URL in native browser
 
 ## Known Stubs
 

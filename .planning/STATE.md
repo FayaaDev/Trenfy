@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 13
+current_phase: 14
 status: ready
-last_updated: "2026-03-21T12:30:00.000Z"
+last_updated: "2026-03-21T13:05:00.000Z"
 last_activity: 2026-03-21
 progress:
   total_phases: 7
-  completed_phases: 1
-  total_plans: 4
-  completed_plans: 4
+  completed_phases: 3
+  total_plans: 9
+  completed_plans: 9
 ---
 
 # Session State
@@ -20,13 +20,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Users can open the app and immediately see what's trending right now across gaming, music, and entertainment - filtered to what they care about, tappable to the source.
-**Current focus:** Phase 13 — trending-feed-cards
+**Current focus:** Phase 14 — filters
 
 ## Position
 
 **Milestone:** v1.3 React Native Mobile App
-**Current phase:** 13
-**Status:** Ready to plan
+**Current phase:** 14
+**Status:** Ready for Phase 14
 Last activity: 2026-03-21
 
 ## Session Log
@@ -42,6 +42,7 @@ Last activity: 2026-03-21
 - 2026-03-21: Completed 12-01 — react-native-svg + react-native-iconify installed; navigation/types.ts (RootTabParamList, CategoryStackParamList); 4 stub screens (TrendingNow, CategoryList, CategoryFeed, ProfileStub)
 - 2026-03-21: Completed 12-02 — AppNavigator rewritten (3-tab + category nested stack, Iconify icons, brand tokens); App.tsx renders AppNavigator; visual verification approved; Phase 12 complete
 - 2026-03-21: Phase 13 in progress — 13-01 (TrendCard+SkeletonCard) ✓, 13-02 (useTrendFeed hook) ✓, 13-03 at checkpoint:human-verify (TrendingNowScreen FlashList feed built, awaiting visual approval)
+- 2026-03-21: Completed Phase 13 — TrendingNowScreen live feed approved; reanimated downgraded to ~3.17.4 (Expo SDK 53 compat); Phase 14 ready
 
 ## Accumulated Context
 
@@ -50,8 +51,8 @@ Last activity: 2026-03-21
 - Build approach: evolve WhiteLabelApp in-place (rename, restructure, wire to API) rather than scaffold fresh.
 - The existing Trenfy backend (FastAPI + NocoDB) exposes `/api/trends`, `/api/sources`, `/api/categories` — the mobile app will consume these directly.
 - **Critical pitfalls logged:**
-  - Reanimated must stay v3 (~3.19.5) — v4 requires RN 0.80+; this project is on RN 0.79.6
-  - FlashList: never add `key` prop inside `renderItem` — use only `keyExtractor` on the `<FlashList>` element
+  - Reanimated: pinned to ~3.17.4 — Expo SDK 53 compatible; v3.19.x crashes at runtime
+  - FlashList v2 (`@shopify/flash-list@2.3.0`, New Architecture): `estimatedItemSize` removed — use automatic measurement; never add `key` prop inside `renderItem`, use only `keyExtractor` on the `<FlashList>` element
   - Collapsible header: animate `translateY` + `opacity` only, never `height` — height animation causes FlashList layout recalculations
   - Mock data: purge `mockData.ts` and `starterCopy.ts` imports completely before any API wiring begins
   - Apple Sign-In: persist `fullName`/`email` immediately on first callback — Apple only delivers credentials once
