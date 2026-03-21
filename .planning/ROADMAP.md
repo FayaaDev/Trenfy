@@ -19,7 +19,7 @@
 ## Phases
 
 - [x] **Phase 11: Foundation** — Rename scaffold to Trenfy, install packages, wire API client, purge mock data (completed 2026-03-21)
-- [ ] **Phase 12: Navigation Shell** — 3-tab bottom nav, nested stacks, safe area insets
+- [x] **Phase 12: Navigation Shell** — 3-tab bottom nav, nested stacks, safe area insets (completed 2026-03-21)
 - [ ] **Phase 13: Trending Feed + Cards** — FlashList feed, TrendCard component, pull-to-refresh, infinite scroll, search, skeletons, error/empty states
 - [ ] **Phase 14: Filters** — Platform/category/region chips, collapsible animated header, active filter indicators, clear-all, persisted prefs
 - [ ] **Phase 15: Categories Tab** — Rich category grid with drill-down to filtered feed
@@ -68,8 +68,8 @@ Plans:
   4. TypeScript compilation fails with a type error if any `navigate()` call uses an unregistered route name
 **Plans:** 2 plans
 Plans:
-- [ ] 12-01-PLAN.md — Install Iconify packages + navigator types + stub screens
-- [ ] 12-02-PLAN.md — Rewrite AppNavigator (3-tab + category stack) + wire App.tsx
+- [x] 12-01-PLAN.md — Install Iconify packages + navigator types + stub screens
+- [x] 12-02-PLAN.md — Rewrite AppNavigator (3-tab + category stack) + wire App.tsx
 
 ### Phase 13: Trending Feed + Cards
 **Goal:** User can open the app and immediately see a live, scrollable feed of approved trends with complete card information and correct feed lifecycle handling.
@@ -138,8 +138,8 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 11. Foundation | 4/4 | Not started | — |
-| 12. Navigation Shell | 0/? | Not started | — |
+| 11. Foundation | 4/4 | ✅ Complete | 2026-03-21 |
+| 12. Navigation Shell | 2/2 | ✅ Complete | 2026-03-21 |
 | 13. Trending Feed + Cards | 0/? | Not started | — |
 | 14. Filters | 0/? | Not started | — |
 | 15. Categories Tab | 0/? | Not started | — |

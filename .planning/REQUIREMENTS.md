@@ -17,9 +17,9 @@ Requirements for this milestone. Each maps to a roadmap phase.
 
 ### Navigation (NAV)
 
-- [ ] **NAV-01**: App has 3-tab bottom navigation: Trending Now, Categories, Profile
-- [ ] **NAV-02**: Categories tab supports drill-down: tapping a category card navigates to a category-filtered feed (nested stack)
-- [ ] **NAV-03**: All screens handle safe area insets correctly on iOS and Android
+- [x] **NAV-01**: App has 3-tab bottom navigation: Trending Now, Categories, Profile
+- [x] **NAV-02**: Categories tab supports drill-down: tapping a category card navigates to a category-filtered feed (nested stack)
+- [x] **NAV-03**: All screens handle safe area insets correctly on iOS and Android
 
 ### Trending Feed (FEED)
 
@@ -115,9 +115,9 @@ Which phases cover which requirements. Populated during roadmap creation.
 | MOBL-03 | Phase 11 | Complete |
 | MOBL-04 | Phase 11 | Complete |
 | MOBL-05 | Phase 11 | Complete |
-| NAV-01 | Phase 12 | Pending |
-| NAV-02 | Phase 12 | Pending |
-| NAV-03 | Phase 12 | Pending |
+| NAV-01 | Phase 12 | ✅ Complete |
+| NAV-02 | Phase 12 | ✅ Complete |
+| NAV-03 | Phase 12 | ✅ Complete |
 | FEED-01 | Phase 13 | Pending |
 | FEED-02 | Phase 13 | Pending |
 | FEED-03 | Phase 13 | Pending |
