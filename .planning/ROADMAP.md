@@ -69,7 +69,7 @@ Tasks:
 - Call NocoDB update on `trend_sources` table
 - Update CORS middleware: add `http://localhost:5173` and `CORS_ORIGINS` env var support (comma-separated)
 - Add `CORS_ORIGINS` to `.env.example`
-- Smoke test: `OPTIONS http://localhost:8000/api/trends` from Vite origin succeeds
+- Smoke test: `OPTIONS http://localhost:8080/api/trends` from Vite origin succeeds
 
 **Satisfies:** BAPI-06, BAPI-07
 
@@ -114,8 +114,8 @@ Tasks:
 - Create `web/src/api/trends.ts` — `getTrends(params)`, `getTrend(id)`, `patchTrend(id, data)`, `deleteTrend(id)`
 - Create `web/src/api/sources.ts` — `getSources()`, `patchSource(id, data)`
 - Create `web/src/api/types.ts` — TypeScript interfaces matching backend Pydantic models (Trend, Source, PaginatedTrends)
-- Configure `vite.config.ts` proxy: `/api` → `http://localhost:8000`
-- Add `VITE_API_URL` to `web/.env.example` and `web/.env.local.example`
+- Configure `vite.config.ts` proxy: `/api` → `http://localhost:8080`
+- Add `VITE_API_URL` to `web/.env.example` and `web/.env.local.example` for non-default backend URLs
 
 **Satisfies:** WEB-05, WEB-06, WEB-07, WEB-08
 

@@ -13,7 +13,7 @@ updated: 2026-03-21T12:37:00Z
 ## Tests
 
 ### 1. Cold Start Smoke Test
-expected: Kill any running dev server. Run `npm run dev --prefix web` from the project root. The dev server boots without errors, and opening http://localhost:5173 loads the app (you should be redirected to the login page).
+expected: Kill any running dev server. If you plan to exercise API-backed admin pages after this smoke test, start the backend on the repo default port (`http://localhost:8080`) or set `VITE_API_URL` in `web/.env.local` first. Then run `npm run dev --prefix web` from the project root. The dev server boots without errors, and opening http://localhost:5173 loads the app (you should be redirected to the login page).
 result: pass
 
 ### 2. Root Redirect to Login

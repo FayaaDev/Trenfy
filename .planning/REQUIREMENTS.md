@@ -53,7 +53,7 @@ The verification debt requirements (REQ-701..REQ-705) from v1.1 are also carried
 | WEB-05 | Create `web/src/api/` typed client module wrapping all FastAPI endpoints | Critical | 08 |
 | WEB-06 | Typed API functions: `getTrends`, `getTrend`, `patchTrend`, `deleteTrend`, `getSources`, `patchSource` | High | 08 |
 | WEB-07 | `VITE_API_URL` env var used as base URL in API client | High | 08 |
-| WEB-08 | Vite dev proxy configured to forward `/api` to `http://localhost:8000` | High | 08 |
+| WEB-08 | Vite dev proxy configured to forward `/api` to the repo default backend at `http://localhost:8080`, with `VITE_API_URL` available for non-default backends | High | 08 |
 | WEB-09 | React Router v6 with routes: `/admin`, `/admin/login`, `/demo` | High | 08 |
 
 ### Admin Auth (AUTH)
