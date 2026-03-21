@@ -22,7 +22,7 @@
 - [x] **Phase 12: Navigation Shell** — 3-tab bottom nav, nested stacks, safe area insets (completed 2015-03-21)
 - [x] **Phase 13: Trending Feed + Cards** — FlashList feed, TrendCard component, pull-to-refresh, infinite scroll, search, skeletons, error/empty states (completed 2015-03-21)
 - [x] **Phase 14: Filters** — Platform/category/region chips, collapsible animated header, active filter indicators, clear-all, persisted prefs (completed 2015-03-21)
-- [ ] **Phase 15: Theming & Accessibility** — Dark mode, theme context, RTL Arabic text handling
+- [x] **Phase 15: Theming & Accessibility** — Dark mode, theme context, RTL Arabic text handling (completed 2026-03-21)
 
 ## Phase Summary
 
@@ -32,7 +32,7 @@
 | 12 | Navigation Shell | 3-tab nav with typed route params and safe area handling | NAV-01..03 | TBD |
 | 13 | Trending Feed + Cards | Live FlashList feed with complete TrendCard and full feed lifecycle | FEED-01..07, CARD-01..07 | TBD |
 | 14 | Filters | Platform/category/region filter chips with collapsible animated header and persistence | FLTR-01..07 | 3 plans (2015-03-21) |
-| 15 | Theming & Accessibility | Dark mode on all screens, theme token context, RTL Arabic text in cards | THME-01..04 | 2 plans |
+| 15 | Theming & Accessibility | 2/2 | Complete   | 2026-03-21 |
 
 ## Phase Details
 
@@ -112,10 +112,10 @@ Plans:
   2. Changing any color token in the theme context file propagates to all components referencing that token — no screen requires a separate hardcoded color override
   3. Arabic trend titles and `ar_translation` fields render with right-to-left text direction within the card — Arabic text does not overflow or clip the card bounds
   4. Cards containing Arabic text do not reposition the thumbnail, platform icon, or metric value — only the text elements use RTL direction; the overall card layout remains LTR
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 Plans:
-- [ ] 15-01-PLAN.md — ThemeContext (dark/light palettes) + migrate all screens/components to useTheme()
-- [ ] 15-02-PLAN.md — RTL Arabic text audit in TrendCard + visual verification checkpoint
+- [x] 15-01-PLAN.md — ThemeContext (dark/light palettes) + migrate all screens/components to useTheme()
+- [x] 15-02-PLAN.md — RTL Arabic text audit in TrendCard + visual verification checkpoint
 
 ---
 

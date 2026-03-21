@@ -73,10 +73,10 @@ Requirements for this milestone. Each maps to a roadmap phase.
 
 ### Theming & Accessibility (THME)
 
-- [ ] **THME-01**: App follows the system dark/light mode setting (`useColorScheme`) — all screens render correctly in both modes
-- [ ] **THME-02**: A theme context provides typed color tokens for all components; no hardcoded color values remain in UI code
-- [ ] **THME-03**: Arabic trend titles and translations render with correct RTL text direction within cards
-- [ ] **THME-04**: Arabic RTL text content does not break the LTR card layout (mixed-direction handled correctly per-element, not app-level flip)
+- [x] **THME-01**: App follows the system dark/light mode setting (`useColorScheme`) — all screens render correctly in both modes
+- [x] **THME-02**: A theme context provides typed color tokens for all components; no hardcoded color values remain in UI code
+- [x] **THME-03**: Arabic trend titles and translations render with correct RTL text direction within cards
+- [x] **THME-04**: Arabic RTL text content does not break the LTR card layout (mixed-direction handled correctly per-element, not app-level flip)
 
 ## Future Requirements (v1.4+)
 
@@ -150,10 +150,10 @@ Which phases cover which requirements. Populated during roadmap creation.
 | PROF-02 | Phase 16 | Pending |
 | PROF-03 | Phase 16 | Pending |
 | PROF-04 | Phase 16 | Pending |
-| THME-01 | Phase 17 | Pending |
-| THME-02 | Phase 17 | Pending |
-| THME-03 | Phase 17 | Pending |
-| THME-04 | Phase 17 | Pending |
+| THME-01 | Phase 17 | Complete |
+| THME-02 | Phase 17 | Complete |
+| THME-03 | Phase 17 | Complete |
+| THME-04 | Phase 17 | Complete |
 
 **Coverage:**
 - v1 requirements: 44 total
