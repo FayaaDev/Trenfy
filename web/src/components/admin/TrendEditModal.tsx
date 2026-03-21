@@ -21,6 +21,7 @@ const editSchema = z.object({
   title: z.string().min(1, 'Title is required').max(300, 'Title too long'),
   category: z.string().min(1, 'Category is required'),
   description: z.string().max(2000, 'Description too long'),
+  ar_translation: z.string().max(2000, 'Arabic translation too long'),
   status: z.enum(['pending', 'approved', 'rejected']),
 });
 
@@ -46,6 +47,7 @@ export function TrendEditModal({ trend, onClose }: TrendEditModalProps) {
       title: '',
       category: '',
       description: '',
+      ar_translation: '',
       status: 'pending',
     },
   });
@@ -55,6 +57,7 @@ export function TrendEditModal({ trend, onClose }: TrendEditModalProps) {
       title: trend?.title ?? '',
       category: trend?.category ?? '',
       description: trend?.description ?? '',
+      ar_translation: trend?.ar_translation ?? '',
       status: trend?.status ?? 'pending',
     });
   }, [trend, reset]);
@@ -69,7 +72,12 @@ export function TrendEditModal({ trend, onClose }: TrendEditModalProps) {
     onError: () => toast.error('Failed to update trend'),
   });
 
-  const onSubmit = (values: EditFormValues) => mutation.mutate(values);
+  const onSubmit = (values: EditFormValues) => {
+    mutation.mutate({
+      ...values,
+      ar_translation: values.ar_translation.trim(),
+    });
+  };
 
   return (
     <Dialog open={trend !== null} onOpenChange={(open) => { if (!open) onClose(); }}>
@@ -116,6 +124,22 @@ export function TrendEditModal({ trend, onClose }: TrendEditModalProps) {
             {errors.description && (
               <p className="text-xs text-destructive">
                 {errors.description.message}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-slate-700">
+              Arabic Translation
+            </label>
+            <textarea
+              {...register('ar_translation')}
+              className="flex min-h-[80px] w-full rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50 resize-none"
+              placeholder="Arabic translation"
+            />
+            {errors.ar_translation && (
+              <p className="text-xs text-destructive">
+                {errors.ar_translation.message}
               </p>
             )}
           </div>
