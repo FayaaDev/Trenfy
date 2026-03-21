@@ -4,7 +4,7 @@
 
 **Phase numbering:** Continues from v1.1 Phase 6. v1.2 starts at Phase 7.
 
-**Stack:** Vite + React 18 + TypeScript + shadcn/ui + TanStack Query v5 + Tailwind v3
+**Stack:** Vite + React 18 + TypeScript + shadcn/ui + TanStack Query v5 + Tailwind v4
 
 ---
 
@@ -81,12 +81,12 @@ Tasks:
 
 **Requirements covered:** WEB-01 through WEB-09, AUTH-01 through AUTH-04
 
-**Plans:** 3 plans
+**Plans:** 3 plans (all complete)
 
 Plans:
-- [ ] 08-01-PLAN.md — Vite + React + TS scaffold, Tailwind v3, shadcn/ui, runtime deps
-- [ ] 08-02-PLAN.md — Typed API client layer (types.ts, client.ts, trends.ts, sources.ts, Vite proxy)
-- [ ] 08-03-PLAN.md — React Router v6 routes, AdminGuard, LoginPage, AdminLayout, stub pages
+- [x] 08-01-PLAN.md — Vite + React + TS scaffold, Tailwind v4, shadcn/ui, runtime deps
+- [x] 08-02-PLAN.md — Typed API client layer (types.ts, client.ts, trends.ts, sources.ts, Vite proxy)
+- [x] 08-03-PLAN.md — React Router v6 routes, AdminGuard, LoginPage, AdminLayout, stub pages
 
 ### 08-01: Vite + React Scaffold
 
@@ -144,7 +144,15 @@ Tasks:
 
 **Requirements covered:** ADMIN-01 through ADMIN-12, SRC-01 through SRC-04, CAT-01 through CAT-03
 
-**Plans:**
+**Plans:** 6 plans
+
+Plans:
+- [ ] 09-01-PLAN.md — Trends table with filters, pagination, sort (TrendsPage + route wiring)
+- [ ] 09-02-PLAN.md — Trend actions: Approve/Reject/Delete with optimistic updates + toasts
+- [ ] 09-03-PLAN.md — Trend edit modal (TrendEditModal, RHF + Zod validation)
+- [ ] 09-04-PLAN.md — Bulk actions: checkbox multi-select + parallel Approve/Reject
+- [ ] 09-05-PLAN.md — Sources panel: toggle enable/disable with optimistic patchSource
+- [ ] 09-06-PLAN.md — Categories panel: distinct categories + counts from live data
 
 ### 09-01: Trends Table + Filters
 
@@ -282,13 +290,13 @@ Tasks:
 
 ## Phase Summary
 
-| Phase | Goal | Requirements | Est. Plans |
-|-------|------|-------------|-----------|
-| 07 | 2/4 | Complete    | 2026-03-20 |
-| 08 | Web scaffold, API client, auth gate | WEB-01..09, AUTH-01..04 | 3 |
-| 09 | Admin panel (trends, sources, categories) | ADMIN-01..12, SRC-01..04, CAT-01..03 | 6 |
-| 10 | Demo feed page | DEMO-01..08 | 2 |
-| **Total** | | **49 requirements** | **15 plans** |
+| Phase | Goal | Requirements | Status |
+|-------|------|-------------|--------|
+| 07 | Backend readiness — CORS, status field, PATCH/DELETE endpoints | DB-01..02, BAPI-01..07 | complete |
+| 08 | Web scaffold, API client, auth gate | WEB-01..09, AUTH-01..04 | complete |
+| 09 | Admin panel (trends, sources, categories) | ADMIN-01..12, SRC-01..04, CAT-01..03 | pending |
+| 10 | Demo feed page | DEMO-01..08 | pending |
+| **Total** | | **49 requirements** | **8/10 phases done** |
 
 ---
 
