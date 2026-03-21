@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Pressable,
@@ -10,26 +10,20 @@ import { FlashList } from '@shopify/flash-list';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { fetchCategories } from '../api/trends';
-import FilterHeader, { FILTER_HEADER_HEIGHT } from '../components/FilterHeader';
 import SearchInput from '../components/SearchInput';
 import SkeletonCard from '../components/SkeletonCard';
 import TrendCard from '../components/TrendCard';
-import useFilterPrefs from '../hooks/useFilterPrefs';
+import { useFilters } from '../context/FilterContext';
 import useTrendFeed from '../hooks/useTrendFeed';
 import { TrendingNowTabProps } from '../navigation/types';
-import { CategoryOption, Trend } from '../types';
+import { Trend } from '../types';
 import { useTheme } from '../theme/ThemeContext';
 
 export default function TrendingNowScreen(_: TrendingNowTabProps) {
   const { colors, radii, spacing, typography } = useTheme();
   const insets = useSafeAreaInsets();
-  const { platform, region, setRegion, clearPersistedFilters } = useFilterPrefs();
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [availableCategories, setAvailableCategories] = useState<CategoryOption[]>([]);
-  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
+  const { selectedCategories, region } = useFilters();
   const [headerContentHeight, setHeaderContentHeight] = useState(0);
-  const [filterHeaderHeight, setFilterHeaderHeight] = useState(FILTER_HEADER_HEIGHT);
 
   const {
     items,
@@ -42,60 +36,20 @@ export default function TrendingNowScreen(_: TrendingNowTabProps) {
     refresh,
     loadMore,
   } = useTrendFeed({
-    platform,
+    platform: null,
     selectedCategories,
     regionCode: region,
   });
 
-  useEffect(() => {
-    let isActive = true;
-    setIsLoadingCategories(true);
-
-    fetchCategories()
-      .then((result) => {
-        if (isActive) {
-          setAvailableCategories(result);
-        }
-      })
-      .catch(() => {
-        if (isActive) {
-          setAvailableCategories([]);
-        }
-      })
-      .finally(() => {
-        if (isActive) {
-          setIsLoadingCategories(false);
-        }
-      });
-
-    return () => {
-      isActive = false;
-    };
-  }, []);
-
-  const toggleCategory = useCallback((category: string) => {
-    setSelectedCategories((prev) =>
-      prev.includes(category)
-        ? prev.filter((value) => value !== category)
-        : [...prev, category]
-    );
-  }, []);
-
   const activeFilterCount = selectedCategories.length + (region ? 1 : 0);
 
-  const handleClearAll = useCallback(() => {
-    setSelectedCategories([]);
-    clearPersistedFilters();
-  }, [clearPersistedFilters]);
-
   const topInsetOffset = insets.top + spacing.sm;
-  const contentTopPadding = topInsetOffset + headerContentHeight + filterHeaderHeight + spacing.lg;
+  const contentTopPadding = topInsetOffset + headerContentHeight + spacing.lg;
 
   const emptySubtitle = useMemo(() => {
     if (activeFilterCount > 0 || searchQuery.length > 0) {
       return 'Try different search terms or filters';
     }
-
     return 'No trends available right now';
   }, [activeFilterCount, searchQuery.length]);
 
@@ -133,13 +87,6 @@ export default function TrendingNowScreen(_: TrendingNowTabProps) {
     },
     clearButton: {
       padding: spacing.xs,
-    },
-    filterHeaderWrap: {
-      position: 'absolute' as const,
-      left: 0,
-      right: 0,
-      paddingHorizontal: spacing.lg,
-      backgroundColor: colors.background,
     },
     skeletonList: {
       flex: 1,
@@ -232,20 +179,6 @@ export default function TrendingNowScreen(_: TrendingNowTabProps) {
               </Pressable>
             ) : null}
           </View>
-        </View>
-
-        <View style={[styles.filterHeaderWrap, { top: topInsetOffset + headerContentHeight }]}>
-          <FilterHeader
-            activeFilterCount={activeFilterCount}
-            onExpandedHeightChange={setFilterHeaderHeight}
-            categories={availableCategories}
-            isLoadingCategories={isLoadingCategories}
-            selectedCategories={selectedCategories}
-            onToggleCategory={toggleCategory}
-            selectedRegion={region}
-            onSelectRegion={setRegion}
-            onClearAll={handleClearAll}
-          />
         </View>
       </View>
 
