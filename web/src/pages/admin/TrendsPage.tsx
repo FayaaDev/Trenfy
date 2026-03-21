@@ -453,6 +453,7 @@ export function TrendsPage() {
         isPending={deleteMutation.isPending}
       />
       <TrendEditModal
+        key={editTarget?.Id ?? 'trend-edit-modal'}
         trend={editTarget}
         onClose={() => setEditTarget(null)}
       />

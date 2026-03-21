@@ -51,14 +51,12 @@ export function TrendEditModal({ trend, onClose }: TrendEditModalProps) {
   });
 
   useEffect(() => {
-    if (trend) {
-      reset({
-        title: trend.title,
-        category: trend.category,
-        description: trend.description ?? '',
-        status: trend.status ?? 'pending',
-      });
-    }
+    reset({
+      title: trend?.title ?? '',
+      category: trend?.category ?? '',
+      description: trend?.description ?? '',
+      status: trend?.status ?? 'pending',
+    });
   }, [trend, reset]);
 
   const mutation = useMutation({
