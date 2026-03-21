@@ -20,6 +20,7 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Users can open the app and immediately see what's trending right now across gaming, music, and entertainment — filtered to what they care about, tappable to the source.
 **Current focus:** Phase 10 — demo-feed
+Last activity: 2026-03-21 - Completed quick task 260321-bw2: Phase 09 admin UI fixes: populate title and include ar_translation
 
 ## Position
 
@@ -51,6 +52,12 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 
 - Last completed: `09-07-PLAN.md`
 - Next suggested focus: `10-01-PLAN.md`
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260321-bw2 | Phase 09 admin UI fixes: populate title and include ar_translation | 2026-03-21 | 02b8094 | [260321-bw2-phase-09-admin-ui-fixes-populate-title-a](./quick/260321-bw2-phase-09-admin-ui-fixes-populate-title-a/) |
 
 ## Session Log
 
