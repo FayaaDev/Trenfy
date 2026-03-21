@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 
-// Stubbed — WhiteLabel component replaced in Phase 11
+// Stub — full implementation in Phase 13
 export default function BrandPreviewCard() {
   return <View />;
 }
