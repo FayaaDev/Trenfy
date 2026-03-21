@@ -16,6 +16,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
+  ADMIN_PAGE_SELECT_CONTENT_CLASS,
+  ADMIN_PAGE_SELECT_TRIGGER_CLASS,
+} from '@/components/admin/adminDialogStyles';
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -214,10 +218,10 @@ export function TrendsPage() {
           value={filters.status ?? ''}
           onValueChange={(v) => setFilter('status', v ?? '')}
         >
-          <SelectTrigger className="w-32">
+          <SelectTrigger className={`w-32 ${ADMIN_PAGE_SELECT_TRIGGER_CLASS}`}>
             <SelectValue placeholder="Status" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className={ADMIN_PAGE_SELECT_CONTENT_CLASS}>
             <SelectItem value="">All Statuses</SelectItem>
             <SelectItem value="pending">Pending</SelectItem>
             <SelectItem value="approved">Approved</SelectItem>
@@ -229,10 +233,10 @@ export function TrendsPage() {
           value={filters.platform ?? ''}
           onValueChange={(v) => setFilter('platform', v ?? '')}
         >
-          <SelectTrigger className="w-32">
+          <SelectTrigger className={`w-32 ${ADMIN_PAGE_SELECT_TRIGGER_CLASS}`}>
             <SelectValue placeholder="Platform" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className={ADMIN_PAGE_SELECT_CONTENT_CLASS}>
             <SelectItem value="">All Platforms</SelectItem>
             <SelectItem value="youtube">YouTube</SelectItem>
             <SelectItem value="x">X</SelectItem>
@@ -243,10 +247,10 @@ export function TrendsPage() {
           value={filters.category ?? ''}
           onValueChange={(v) => setFilter('category', v ?? '')}
         >
-          <SelectTrigger className="w-36">
+          <SelectTrigger className={`w-36 ${ADMIN_PAGE_SELECT_TRIGGER_CLASS}`}>
             <SelectValue placeholder="Category" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className={ADMIN_PAGE_SELECT_CONTENT_CLASS}>
             <SelectItem value="">All Categories</SelectItem>
             <SelectItem value="gaming">Gaming</SelectItem>
             <SelectItem value="music">Music</SelectItem>
@@ -258,10 +262,10 @@ export function TrendsPage() {
           value={filters.region_code ?? ''}
           onValueChange={(v) => setFilter('region_code', v ?? '')}
         >
-          <SelectTrigger className="w-28">
+          <SelectTrigger className={`w-28 ${ADMIN_PAGE_SELECT_TRIGGER_CLASS}`}>
             <SelectValue placeholder="Region" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className={ADMIN_PAGE_SELECT_CONTENT_CLASS}>
             <SelectItem value="">All Regions</SelectItem>
             <SelectItem value="US">US</SelectItem>
             <SelectItem value="SA">SA</SelectItem>

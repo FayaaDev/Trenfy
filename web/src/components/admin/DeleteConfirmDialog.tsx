@@ -1,5 +1,10 @@
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import {
+  ADMIN_DIALOG_CONTENT_CLASS,
+  ADMIN_DIALOG_OUTLINE_BUTTON_CLASS,
+  ADMIN_DIALOG_OVERLAY_CLASS,
+} from '@/components/admin/adminDialogStyles';
 
 interface DeleteConfirmDialogProps {
   open: boolean;
@@ -18,11 +23,15 @@ export function DeleteConfirmDialog({
 }: DeleteConfirmDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent showCloseButton={false} className="max-w-sm">
+      <DialogContent
+        showCloseButton={false}
+        className={`${ADMIN_DIALOG_CONTENT_CLASS} max-w-sm`}
+        overlayClassName={ADMIN_DIALOG_OVERLAY_CLASS}
+      >
         <div className="space-y-4">
           <div>
-            <h3 className="text-base font-semibold text-slate-900">{title}</h3>
-            <p className="mt-1 text-sm text-slate-500">
+            <h3 className="text-base font-semibold text-foreground">{title}</h3>
+            <p className="mt-1 text-sm text-slate-400">
               This action cannot be undone. The trend will be permanently
               deleted.
             </p>
@@ -31,6 +40,7 @@ export function DeleteConfirmDialog({
             <Button
               variant="outline"
               size="sm"
+              className={ADMIN_DIALOG_OUTLINE_BUTTON_CLASS}
               onClick={() => onOpenChange(false)}
               disabled={isPending}
             >

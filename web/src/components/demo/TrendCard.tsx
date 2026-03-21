@@ -24,7 +24,7 @@ function openSource(url: string) {
   window.open(url, '_blank', 'noopener,noreferrer');
 }
 
-export function TrendCard({ trend }: TrendCardProps): JSX.Element {
+export function TrendCard({ trend }: TrendCardProps) {
   const hasThumbnail = Boolean(trend.thumbnail_url);
   const thumbnailAlt = trend.title
     ? `${trend.title} thumbnail`

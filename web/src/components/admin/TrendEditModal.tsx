@@ -9,6 +9,13 @@ import type { Trend, PatchTrendPayload } from '@/api/types';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import {
+  ADMIN_DIALOG_CONTENT_CLASS,
+  ADMIN_DIALOG_FIELD_CLASS,
+  ADMIN_DIALOG_OUTLINE_BUTTON_CLASS,
+  ADMIN_DIALOG_OVERLAY_CLASS,
+  ADMIN_DIALOG_SELECT_CONTENT_CLASS,
+} from '@/components/admin/adminDialogStyles';
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -83,15 +90,22 @@ export function TrendEditModal({ trend, onClose }: TrendEditModalProps) {
 
   return (
     <Dialog open={trend !== null} onOpenChange={(open) => { if (!open) onClose(); }}>
-      <DialogContent className="max-w-md">
-        <h3 className="text-base font-semibold text-slate-900 mb-4">
+      <DialogContent
+        className={`${ADMIN_DIALOG_CONTENT_CLASS} max-w-md`}
+        overlayClassName={ADMIN_DIALOG_OVERLAY_CLASS}
+      >
+        <h3 className="mb-4 text-base font-semibold text-foreground">
           Edit Trend
         </h3>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Title */}
           <div className="space-y-1">
-            <label className="text-sm font-medium text-slate-700">Title</label>
-            <Input {...register('title')} placeholder="Title" />
+            <label className="text-sm font-medium text-slate-200">Title</label>
+            <Input
+              {...register('title')}
+              className={ADMIN_DIALOG_FIELD_CLASS}
+              placeholder="Title"
+            />
             {errors.title && (
               <p className="text-xs text-destructive">{errors.title.message}</p>
             )}
@@ -99,11 +113,12 @@ export function TrendEditModal({ trend, onClose }: TrendEditModalProps) {
 
           {/* Category */}
           <div className="space-y-1">
-            <label className="text-sm font-medium text-slate-700">
+            <label className="text-sm font-medium text-slate-200">
               Category
             </label>
             <Input
               {...register('category')}
+              className={ADMIN_DIALOG_FIELD_CLASS}
               placeholder="e.g. gaming, music"
             />
             {errors.category && (
@@ -115,12 +130,12 @@ export function TrendEditModal({ trend, onClose }: TrendEditModalProps) {
 
           {/* Description */}
           <div className="space-y-1">
-            <label className="text-sm font-medium text-slate-700">
+            <label className="text-sm font-medium text-slate-200">
               Description
             </label>
             <textarea
               {...register('description')}
-              className="flex min-h-[80px] w-full rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50 resize-none"
+              className={`flex min-h-[80px] w-full resize-none rounded-lg px-2.5 py-2 text-sm focus-visible:outline-none ${ADMIN_DIALOG_FIELD_CLASS}`}
               placeholder="Description"
             />
             {errors.description && (
@@ -131,12 +146,12 @@ export function TrendEditModal({ trend, onClose }: TrendEditModalProps) {
           </div>
 
           <div className="space-y-1">
-            <label className="text-sm font-medium text-slate-700">
+            <label className="text-sm font-medium text-slate-200">
               Arabic Translation
             </label>
             <textarea
               {...register('ar_translation')}
-              className="flex min-h-[80px] w-full rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50 resize-none"
+              className={`flex min-h-[80px] w-full resize-none rounded-lg px-2.5 py-2 text-sm focus-visible:outline-none ${ADMIN_DIALOG_FIELD_CLASS}`}
               placeholder="Arabic translation"
             />
             {errors.ar_translation && (
@@ -148,7 +163,7 @@ export function TrendEditModal({ trend, onClose }: TrendEditModalProps) {
 
           {/* Status */}
           <div className="space-y-1">
-            <label className="text-sm font-medium text-slate-700">Status</label>
+            <label className="text-sm font-medium text-slate-200">Status</label>
             <Controller
               name="status"
               control={control}
@@ -157,10 +172,10 @@ export function TrendEditModal({ trend, onClose }: TrendEditModalProps) {
                   value={field.value}
                   onValueChange={(v) => { if (v) field.onChange(v); }}
                 >
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className={`w-full ${ADMIN_DIALOG_FIELD_CLASS}`}>
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className={ADMIN_DIALOG_SELECT_CONTENT_CLASS}>
                     <SelectItem value="pending">Pending</SelectItem>
                     <SelectItem value="approved">Approved</SelectItem>
                     <SelectItem value="rejected">Rejected</SelectItem>
@@ -181,6 +196,7 @@ export function TrendEditModal({ trend, onClose }: TrendEditModalProps) {
               type="button"
               variant="outline"
               size="sm"
+              className={ADMIN_DIALOG_OUTLINE_BUTTON_CLASS}
               onClick={onClose}
               disabled={mutation.isPending}
             >

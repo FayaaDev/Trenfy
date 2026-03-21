@@ -1,0 +1,17 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "nocodb-base-Trenfy": {
+      "type": "local",
+      "command": [
+        "npx",
+        "mcp-remote",
+        "http://nocodb.fayaa92.sa/mcp/nck7ayunahlpzcct",
+        "--allow-http",
+        "--header",
+        "xc-mcp-token: UrgxTRE24hGafSoLl5UQTqVWT6tGpWiY"
+      ],
+      "enabled": true
+    }
+  }
+}

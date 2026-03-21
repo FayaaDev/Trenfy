@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Loader2, SearchX } from 'lucide-react';
 import { getTrends } from '@/api/trends';
-import type { Trend } from '@/api/types';
+import type { PaginatedTrends, Trend } from '@/api/types';
 import { TrendCard } from '@/components/demo/TrendCard';
 import { Button } from '@/components/ui/button';
 import {
@@ -38,7 +38,7 @@ const REGION_OPTIONS = [
 
 const DEFAULT_FILTERS: FilterState = {};
 
-export function DemoPage(): JSX.Element {
+export function DemoPage() {
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
   const [allTrends, setAllTrends] = useState<Trend[]>([]);
   const [cursorStack, setCursorStack] = useState<string[]>([]);
@@ -46,7 +46,7 @@ export function DemoPage(): JSX.Element {
 
   const queryKey = ['demo-trends', filters, cursor] as const;
 
-  const { data, isLoading, isError, isFetching, refetch } = useQuery({
+  const { data, isLoading, isError, isFetching, refetch } = useQuery<PaginatedTrends>({
     queryKey,
     queryFn: ({ signal }) =>
       getTrends({
@@ -56,20 +56,22 @@ export function DemoPage(): JSX.Element {
         limit: 20,
         signal,
       }),
-    onSuccess: (newData) => {
-      // Append new items to existing list (load-more pattern)
-      setAllTrends((prev) => {
-        // If cursor changed (new filter), replace instead of append
-        if (cursor === undefined && cursorStack.length === 0) {
-          return newData.items;
-        }
-        // Load more: append
-        const existingIds = new Set(prev.map((t) => t.Id));
-        const newItems = newData.items.filter((t) => !existingIds.has(t.Id));
-        return [...prev, ...newItems];
-      });
-    },
   });
+
+  // onSuccess was removed in TanStack Query v5; sync data into allTrends via useEffect.
+  useEffect(() => {
+    if (!data) return;
+    setAllTrends((prev) => {
+      // If cursor is at start (new filter or initial load), replace instead of append
+      if (cursor === undefined && cursorStack.length === 0) {
+        return data.items;
+      }
+      // Load more: append, deduplicating by Id
+      const existingIds = new Set(prev.map((t) => t.Id));
+      const newItems = data.items.filter((t) => !existingIds.has(t.Id));
+      return [...prev, ...newItems];
+    });
+  }, [data, cursor, cursorStack.length]);
 
   function handleFilterChange(key: keyof FilterState, value: string) {
     const newFilters = value
