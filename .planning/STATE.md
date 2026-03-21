@@ -1,11 +1,11 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: milestone
-current_phase: 15
-status: complete
-last_updated: "2026-03-21T20:19:42.755Z"
-last_activity: 2026-03-21
+milestone: v1.3
+milestone_name: React Native Mobile App
+current_phase: null
+status: planning_next_milestone
+last_updated: "2026-03-21T21:26:58.813345+00:00"
+last_activity: 2026-03-22
 progress:
   total_phases: 5
   completed_phases: 5
@@ -17,17 +17,17 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-21)
+See: .planning/PROJECT.md (updated 2026-03-22)
 
-**Core value:** Users can open the app and immediately see what's trending right now across gaming, music, and entertainment - filtered to what they care about, tappable to the source.
-**Current focus:** Phase 15 complete — all THME requirements met; Phase 16 (next) ready
+**Core value:** Users can open Trenfy and immediately see what's trending right now across gaming, music, and entertainment - filtered to what they care about and tappable back to the source.
+**Current focus:** Planning the next milestone after archiving v1.3
 
 ## Position
 
-**Milestone:** v1.3 React Native Mobile App
-**Current phase:** 15
-**Status:** Phase 15 verified complete — THME-01/02/03/04 all met; Phase 16 next
-Last activity: 2026-03-21
+**Last shipped milestone:** v1.3 React Native Mobile App
+**Completed phases:** 11-15
+**Status:** Milestone archived; awaiting fresh requirements and roadmap
+Last activity: 2026-03-22
 
 ## Session Log
 
@@ -47,17 +47,18 @@ Last activity: 2026-03-21
 - 2026-03-21: Executed 14-01 — added shared filter types, normalized `/api/categories`, sync kv-store filter prefs, and filter-aware `useTrendFeed`
 - 2026-03-21: Executed 14-02 — built `FilterChip` and animated `FilterHeader`; existing icon registry already covered used icons
 - 2026-03-21: Executed 14-03 implementation — `TrendingNowScreen` now composes persisted filters and collapsible filter header; category loading/header spacing fixes applied and metric/date formatting polished
-- 2026-03-21: Verified Phase 14 complete — `npm run typecheck` and `.venv/bin/pytest tests/test_api_trends_read.py` passed; deferred one accepted gap: category chips only narrow currently loaded feed, with full unloaded-page correctness moved to Phase 15
+- 2026-03-21: Verified Phase 14 complete — `npm run typecheck` and `.venv/bin/pytest tests/test_api_trends_read.py` passed; category filtering was later finalized as backend-backed multi-category queries before milestone archive
 - 2026-03-21: Executed 15-01 — ThemeContext with dual dark/light palettes; all 9 screens + 9 components + AppNavigator migrated to useTheme(); StyleSheet.create inside component body; THME-01/02 complete
 - 2026-03-21: Executed 15-02 task 1 — TrendCard Arabic RTL verified correct (writingDirection: 'rtl' per-element, no I18nManager.forceRTL, LTR card layout preserved); at checkpoint:human-verify for dark/light mode visual approval
 - 2026-03-21: Completed Phase 15 — dark/light mode + Arabic RTL visually approved; THME-01/02/03/04 complete; ThemeContext system fully shipped
+- 2026-03-22: Archived milestone v1.3 — roadmap and requirements moved to `.planning/milestones/`; project/state docs refreshed for next milestone planning
 
 ## Accumulated Context
 
 - Previous milestone (v1.2): Shipped React web admin + public demo feed; 4 phases (07-10), 16 plans, 97 tasks.
-- WhiteLabelApp/ is the starting point — Expo SDK 53, React Native 0.79.6, React Navigation 7, pure StyleSheet styling. Zero backend integration currently.
+- WhiteLabelApp/ was the starting point — Expo SDK 53, React Native 0.79.6, React Navigation 7, pure StyleSheet styling. v1.3 transformed it into the shipped Trenfy mobile app.
 - Build approach: evolve WhiteLabelApp in-place (rename, restructure, wire to API) rather than scaffold fresh.
-- The existing Trenfy backend (FastAPI + NocoDB) exposes `/api/trends`, `/api/sources`, `/api/categories` — the mobile app will consume these directly.
+- The existing Trenfy backend (FastAPI + NocoDB) exposes `/api/trends`, `/api/sources`, `/api/categories` — the mobile app now consumes these through the typed FastAPI client.
 - **Critical pitfalls logged:**
   - Reanimated: pin to EXACT Expo SDK 53 compatible version (~3.17.4) — ~3.19.5 installs a newer JS package than the native runtime has, throwing a fatal ReanimatedError at startup. Always run `npx expo install --check react-native-reanimated` before committing.
   - react-native-iconify babel registry: EVERY icon string used in any component must be explicitly listed in `babel.config.js` under `react-native-iconify/babel` → `icons`. Icons missing from that list compile silently but render blank at runtime. Planners must add babel.config.js icon additions as explicit tasks when new icons are introduced.
@@ -65,6 +66,5 @@ Last activity: 2026-03-21
   - Collapsible header: animate `translateY` + `opacity` only, never `height` — height animation causes FlashList layout recalculations
   - Mock data: purge `mockData.ts` and `starterCopy.ts` imports completely before any API wiring begins
   - Apple Sign-In: persist `fullName`/`email` immediately on first callback — Apple only delivers credentials once
-- **API field names to verify in Phase 11:** `url` vs `source_url`, `ar_translation` vs `ar_title`, `metric_value` vs `view_count`, `region_code` query param name
 - **API client established:** All mobile reads go through `apiFetch<T>` in `src/api/client.ts` via `EXPO_PUBLIC_API_URL` — no NocoDB direct calls. `fetchTrends` always enforces `status=approved`.
-- **Deferred Phase 14 note:** Multi-category filtering narrows the loaded feed client-side only; cross-page completeness was deferred and is now unplanned (Phase 15 Bookmarks+Profile removed).
+- **Shipped v1.3 scope:** Trenfy branding, mobile feed, persisted filters, dark/light theming, and Arabic RTL-safe cards are live; richer Categories/Profile work should be re-scoped deliberately in the next milestone.

@@ -58,3 +58,19 @@
 - [x] Move category chips from client-side narrowing to server-backed filtering for full result correctness.
 - [x] Add regression coverage for category filter propagation and multi-category query behavior.
 - [x] Run targeted verification and record the outcome.
+
+## Milestone Completion (v1.3 inferred)
+
+- [x] Load completion workflow and archive template.
+- [x] Inspect `.planning/ROADMAP.md`, `.planning/REQUIREMENTS.md`, `.planning/PROJECT.md`, `.planning/STATE.md`, and milestone history.
+- [x] Run pre-flight checks: audit presence, roadmap readiness, requirements completion, and milestone scope validation.
+- [x] Gather milestone stats and accomplishments for confirmation.
+- [x] After approval, archive milestone roadmap and requirements artifacts.
+- [x] After approval, update `.planning/ROADMAP.md`, `.planning/PROJECT.md`, `.planning/STATE.md`, and `.planning/MILESTONES.md`.
+- [x] After approval, commit milestone completion and create git tag `v1.3`.
+
+## Milestone Completion Review
+
+- Archived `.planning/milestones/v1.3-ROADMAP.md` and `.planning/milestones/v1.3-REQUIREMENTS.md`.
+- Collapsed `.planning/ROADMAP.md`, evolved `.planning/PROJECT.md`, refreshed `.planning/STATE.md`, and added milestone notes to `.planning/MILESTONES.md` + `.planning/RETROSPECTIVE.md`.
+- Deleted the live `.planning/REQUIREMENTS.md`; next milestone should start with `/gsd-new-milestone`.

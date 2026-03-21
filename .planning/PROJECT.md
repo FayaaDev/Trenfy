@@ -2,33 +2,25 @@
 
 ## What This Is
 
-Trenfy is a trend-catching platform for gaming, music, and entertainment. The shipped product now includes the FastAPI + NocoDB ingestion backend, a React web admin for moderation and source control, and a public demo feed for approved trends.
+Trenfy is a multi-surface trend-catching product for gaming, music, and entertainment. The shipped system now includes the FastAPI + NocoDB ingestion backend, a React web admin and public demo feed, and a React Native mobile app for browsing live approved trends.
 
 ## Core Value
 
-Users can open the app and immediately see what's trending right now across gaming, music, and entertainment - filtered to what they care about, tappable to the source.
-
-## Current Milestone: v1.3 React Native Mobile App
-
-**Goal:** Rebuild the WhiteLabelApp as the Trenfy mobile consumer app — restructure navigation and wire it to the live Trenfy API.
-
-**Target features:**
-- 3-tab navigation: Trending Now, Categories, Profile
-- Trending Now: FlashList feed with collapsible filter header (platform chips, category chips, region), search, pull-to-refresh, infinite scroll, tap-to-source URL
-- Trend cards: title, Arabic translation, thumbnail, platform icon, metric, category badge
-- Categories: rich category grid (name, trend count, top trend preview) → filtered feed drill-down
-- Profile: optional social sign-in (Google/Apple), saved/bookmarked trends, persisted preferences
-- Dark mode (follows system setting)
-- RTL support for Arabic content
+Users can open Trenfy and immediately see what's trending right now across gaming, music, and entertainment - filtered to what they care about and tappable back to the source.
 
 ## Current State
 
-- `v1.2` shipped on 2026-03-21.
-- Backend moderation support is live: trend `status`, status-filtered reads, trend PATCH/DELETE, source enable/disable updates, and explicit CORS allowlisting.
-- React web surface is live under `web/`: admin auth gate, trends moderation table, sources toggles, categories view, and the public approved-only `/demo` feed.
-- Historical milestone artifacts live in `.planning/milestones/v1.2-ROADMAP.md` and `.planning/milestones/v1.2-REQUIREMENTS.md`.
-- v1.3 milestone started 2026-03-21. Building the React Native mobile consumer app on top of the existing WhiteLabelApp/ scaffold.
-- **Phase 11 complete (2026-03-21)** — WhiteLabelApp rebranded to Trenfy, 8 deps installed, mock data purged, brand tokens retuned to midnight/teal/amber, typed API client wired to FastAPI, FoundationScreen rendering live trend data with Arabic RTL support.
+- `v1.3 React Native Mobile App` shipped on 2026-03-22.
+- The mobile app under `WhiteLabelApp/` is now Trenfy-branded and wired to the FastAPI backend with approved-only reads, typed navigation, live feed loading, persisted filters, system theming, and Arabic-safe cards.
+- Backend moderation contracts plus the `web/` admin/demo surfaces shipped in `v1.2` remain the operational backbone behind the mobile experience.
+- Historical milestone artifacts live under `.planning/milestones/`, including `.planning/milestones/v1.3-ROADMAP.md` and `.planning/milestones/v1.3-REQUIREMENTS.md`.
+- Categories and Profile remain intentionally lightweight mobile shells after v1.3 scope reduction; the next milestone should re-scope them explicitly instead of treating them as implicit carry-over.
+
+## Next Milestone Goals
+
+- Define the next mobile milestone with a fresh `.planning/REQUIREMENTS.md` and roadmap via `/gsd-new-milestone`.
+- Decide whether the next consumer slice focuses on richer Categories/Profile surfaces, saved trends, or auth-backed personalization.
+- Keep delivery scoped to deliberate product slices rather than carrying removed phase ideas forward implicitly.
 
 ## Requirements Snapshot
 
@@ -36,30 +28,29 @@ Users can open the app and immediately see what's trending right now across gami
 
 - [x] v1.0 backend ingestion pipeline, platform clients, public APIs, and filtering/enrichment capabilities.
 - [x] v1.1 requirements traceability repair and baseline reconciliation.
-- [x] v1.2 backend moderation endpoints and explicit CORS contract.
-- [x] v1.2 React web admin panel for trends, sources, and categories.
-- [x] v1.2 public demo feed for approved trends.
-- [x] v1.3 Phase 11 — Trenfy branding, brand tokens, API client, FoundationScreen with live trend data (Validated in Phase 11: Foundation)
+- [x] v1.2 backend moderation endpoints, explicit CORS contract, React web admin, and public demo feed.
+- [x] v1.3 mobile foundation: Trenfy branding, FastAPI-only client wiring, approved-trends feed, platform/category/region filtering, system theming, and Arabic RTL-safe presentation.
 
 ### Active
 
-- [ ] React Native mobile app: 3-tab consumer feed for Trenfy (v1.3) — navigation shell, feed, categories, profile
+- [ ] Re-scope the Categories and Profile tabs from lightweight shells into explicit next-milestone product work.
+- [ ] Decide the saved-trends and personalization strategy before writing the next mobile requirements set.
 
 ### Deferred
 
 - [ ] Verification debt closure for earlier milestone evidence (`01/03/04-VERIFICATION.md`, `REQ-701..REQ-705`).
 - [ ] Human confirmation for `INFRA-03` NocoDB table/schema existence.
-- [ ] Auth backend for synced saves/preferences (social sign-in local-first in v1.3; backend sync deferred).
+- [ ] Auth backend for synced saves/preferences.
 
 ## Context
 
-- The codebase is roughly 8.1k LOC across Python and TypeScript, with the backend still carrying most of the runtime complexity.
-- The React web app now provides operational control and a public review surface, reducing the need to inspect raw NocoDB data directly.
-- The main process risk is milestone-close discipline: v1.2 shipped without a milestone audit, and the active requirements file was only reconciled at archive time.
+- The codebase is roughly 11.6k LOC across Python, TypeScript, and JavaScript, with the backend still carrying most of the runtime complexity and the mobile app now providing the primary consumer surface.
+- Trenfy now spans three shipped product surfaces: backend ingestion/API, web admin/demo, and a React Native feed app.
+- The next milestone should start from fresh requirements rather than old carry-over lists; v1.3 proved that removed mobile scope needs to be re-scoped explicitly.
 
 ## Constraints
 
-- **Tech stack**: FastAPI backend, NocoDB data store, React web admin/demo now shipped; React Native remains the expected mobile client for the next milestone.
+- **Tech stack**: FastAPI backend, NocoDB data store, React web admin/demo, and React Native mobile client.
 - **X API**: Access limits vary by account tier and endpoint availability - affects polling strategy and retry behavior.
 - **YouTube quota**: 10,000 units/day; trending calls cost about 2 units - schedule conservatively.
 - **Public product surface**: Demo feed is public; admin access remains token-gated only.
@@ -74,7 +65,7 @@ Users can open the app and immediately see what's trending right now across gami
 | X via official API (tier-aware) | Keep v1 stable with explicit rate-limit handling and graceful degradation | ✓ Implemented v1.0 |
 | No auth in v1 | Simplifies public product architecture; trends stay public data | ✓ Kept in v1.0 |
 | Docker only (no Caddy) | Reduce infra complexity for v1 | ✓ Kept in v1.0 |
-| React Native for mobile | User-specified cross-platform client | ⚠ Deferred to v1.3 |
+| React Native for mobile | User-specified cross-platform client | ✓ Validated v1.3 |
 | Upsert by source id on startup | JSON is additive source of truth; preserves `last_fetched_at` | ✓ Validated Phase 2 |
 | `lifespan` context manager | Modern FastAPI pattern over `@app.on_event` | ✓ Validated Phase 2 |
 | Ship v1.0 with accepted audit gaps | Preserve release cadence while tracking debt explicitly | ✓ Reconciled in v1.1 |
@@ -83,6 +74,28 @@ Users can open the app and immediately see what's trending right now across gami
 | Use shared `status` moderation state across backend, admin, and demo feed | One approval contract keeps operator actions and public visibility aligned | ✓ Validated v1.2 |
 | Keep frontend on relative `/api` requests by default | Vite proxy handles local dev; `VITE_API_URL` stays an explicit override | ✓ Validated v1.2 |
 | Use Tailwind v4 with current shadcn tooling | Current shadcn setup no longer cleanly supports the older Tailwind v3 pin | ✓ Validated v1.2 |
+| Evolve the existing WhiteLabelApp scaffold in place | Faster path to mobile delivery than re-scaffolding a new Expo app | ✓ Validated v1.3 |
+| Route all mobile reads through FastAPI only | Keeps mobile decoupled from NocoDB schema and enforces approved-only consumer data | ✓ Validated v1.3 |
+| Prioritize feed and filtering before deeper profile features | The live trend feed is the core consumer value; richer secondary tabs can be scoped later | ✓ Validated v1.3 |
+| Use ThemeContext plus system color scheme | One token-driven theming model keeps dark/light support consistent | ✓ Validated v1.3 |
+| Apply RTL per text element, not app-wide | Arabic copy needs correct direction without flipping the LTR card layout | ✓ Validated v1.3 |
+
+<details>
+<summary>Archived v1.3 planning context</summary>
+
+### Milestone Goal
+
+- Rebuild the WhiteLabelApp as the Trenfy mobile consumer app and wire it to the live Trenfy API.
+
+### Planned Feature Themes
+
+- 3-tab navigation: Trending Now, Categories, Profile
+- Live approved-trends feed with FlashList, search, refresh, infinite scroll, and source links
+- Platform/category/region filters with persisted preferences
+- System dark mode and Arabic RTL support
+- Optional future extensions around category discovery, saved trends, and social sign-in
+
+</details>
 
 <details>
 <summary>Archived pre-v1.2 planning context</summary>
@@ -123,4 +136,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-21 after v1.3 milestone start*
+*Last updated: 2026-03-22 after v1.3 milestone completion*

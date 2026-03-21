@@ -74,6 +74,43 @@
 
 ---
 
+## Milestone: v1.3 - React Native Mobile App
+
+**Shipped:** 2026-03-22
+**Phases:** 5 | **Plans:** 14 | **Sessions:** 2
+
+### What Was Built
+- Rebranded and rewired the inherited WhiteLabelApp scaffold into the Trenfy mobile app with typed FastAPI data access and approved-only trend reads.
+- Shipped a 3-tab navigation shell, live Trending Now feed, full trend cards, pull-to-refresh, infinite scroll, debounced search, and native source deep links.
+- Added platform/category/region filtering with persisted preferences, collapsible filter chrome, and active-filter affordances.
+- Rolled out ThemeContext-driven dark/light theming and verified Arabic RTL rendering without breaking the LTR card layout.
+
+### What Worked
+- Reusing the existing Expo scaffold and focusing on the core feed first kept the milestone moving quickly.
+- Typed API wrappers plus per-plan summaries made backend/mobile integration easy to reason about and close out.
+- Centralizing theme logic in ThemeContext made late-stage visual polish a contained, low-risk phase.
+
+### What Was Inefficient
+- Roadmap and requirements drifted after phase removals, which made milestone close do extra reconciliation work.
+- Categories/Profile surfaces stayed visible as stubs after their richer delivery moved out of scope, which blurred the final milestone boundary.
+- Expo dependency compatibility and icon registry issues caused avoidable toolchain churn during execution.
+
+### Patterns Established
+- Ship the consumer core feed before optional discovery or profile surfaces.
+- Keep mobile data access behind typed FastAPI helpers and approved-only contracts.
+- Use per-element RTL and token-driven theming instead of app-wide layout flips or scattered color constants.
+
+### Key Lessons
+1. **When scope changes, update live planning docs immediately.** Removing phases late is fine, but stale requirements create needless archive reconciliation.
+2. **Validate Expo package compatibility at install time.** `expo install --check` is cheaper than runtime crash debugging.
+3. **Treat stubbed tabs as explicit future work, not silent carry-over.** If a surface ships as a shell, make the next milestone choose whether to expand or remove it.
+
+### Cost Observations
+- Sessions: 2
+- Notable: The milestone shipped a full mobile consumer feed in roughly two calendar days, with most closeout cost coming from reconciling scope changes rather than code delivery.
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -83,17 +120,19 @@
 | v1.0 | 5 | 17 | Initial build - backend pipeline, clients, filtering |
 | v1.1 | 1 | 2 | Process repair - requirements traceability reconciliation |
 | v1.2 | 4 | 16 | Product expansion - moderation backend, web admin, public demo feed |
+| v1.3 | 5 | 14 | Mobile product expansion - native feed, filters, theming, RTL support |
 
 ### Requirements Closure Quality
 
-| Milestone | Validated | Adjusted | Satisfied-Evidence-Pending | Deferred |
-|-----------|-----------|----------|----------------------------|----------|
-| v1.0 | 11 | 0 | 36 | 12 |
-| v1.1 | 23 | 0 | 24 | 12 |
-| v1.2 | 47 | 2 | 0 | 0 |
+| Milestone | Validated | Adjusted | Dropped | Satisfied-Evidence-Pending | Deferred |
+|-----------|-----------|----------|---------|----------------------------|----------|
+| v1.0 | 11 | 0 | 0 | 36 | 12 |
+| v1.1 | 23 | 0 | 0 | 24 | 12 |
+| v1.2 | 47 | 2 | 0 | 0 | 0 |
+| v1.3 | 31 | 2 | 11 | 0 | 0 |
 
 ### Top Lessons (Verified Across Milestones)
 
 1. **Archive quality determines the next milestone's startup cost.** Both v1.0 and v1.1 demonstrated that sloppy archive state (wrong requirement statuses, missing VERIFICATION.md) becomes immediate work in the next milestone.
-2. **Plan scope aggressively, remove what you won't do.** Phases 7 and 8 were roadmapped and then removed twice - front-load the scoping decision before creating the phases.
-3. **Keep live planning docs honest while implementation is moving.** v1.2 showed that shipping code faster than traceability updates creates avoidable closeout debt even when the implementation succeeds.
+2. **Keep live planning docs honest while implementation or scope is moving.** v1.2 and v1.3 both showed that stale traceability turns milestone close into reconciliation work.
+3. **Plan scope aggressively, then update docs as soon as you cut work.** Removed phases are fine; silent carry-over is what creates confusion.

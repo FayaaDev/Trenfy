@@ -1,5 +1,22 @@
 # Milestones
 
+## v1.3 React Native Mobile App (Shipped: 2026-03-22)
+
+**Phases completed:** 5 phases (11-15), 14 plans, 31 tasks
+**Git range:** `d14a2e2` -> `66cfb7d`
+**Timeline:** 2026-03-21 to 2026-03-22
+
+**Key accomplishments:**
+
+- Rebranded the inherited WhiteLabelApp scaffold into Trenfy and routed mobile reads through typed FastAPI helpers only.
+- Shipped a 3-tab navigation shell with safe-area handling, TypeScript-enforced routes, and lightweight Categories/Profile surfaces.
+- Delivered a live approved-trends mobile feed with FlashList, skeleton loading, pull-to-refresh, infinite scroll, debounced search, and source deep links.
+- Added platform, category, and region filtering with persisted preferences, clear-all controls, active-filter UI, and collapsible header behavior.
+- Rolled out system dark/light theming plus per-element Arabic RTL support without flipping the overall card layout.
+- Archives: `.planning/milestones/v1.3-ROADMAP.md`, `.planning/milestones/v1.3-REQUIREMENTS.md`.
+
+---
+
 ## v1.2 Web Admin + Demo Feed (Shipped: 2026-03-21)
 
 **Phases completed:** 4 phases (7-10), 16 plans, 97 tasks
