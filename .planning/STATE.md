@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: milestone
-current_phase: 10
+current_phase: 09
 status: ready
-last_updated: "2026-03-21T05:30:00.000Z"
+last_updated: "2026-03-21T05:28:36Z"
 progress:
   total_phases: 9
   completed_phases: 9
-  total_plans: 32
-  completed_plans: 32
+  total_plans: 33
+  completed_plans: 33
 ---
 
 # Session State
@@ -19,13 +19,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Users can open the app and immediately see what's trending right now across gaming, music, and entertainment — filtered to what they care about, tappable to the source.
-**Current focus:** Phase 10 — demo-feed (next)
+**Current focus:** Phase 10 — demo-feed
 
 ## Position
 
 **Milestone:** v1.2 Web Admin + Demo Feed
-**Current phase:** 10 (ready to start)
-**Status:** Phase 09 complete; Phase 10 next
+**Current phase:** 09
+**Status:** Ready for Phase 10
 
 ## Phase Plan
 
@@ -33,8 +33,24 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 |-------|------|-------|--------|
 | 07 | Backend Readiness | 4 | complete |
 | 08 | Web Scaffold + Auth | 3 | complete |
-| 09 | Admin Panel | 6 | complete |
+| 09 | Admin Panel | 7 | complete |
 | 10 | Demo Feed | 2 | pending |
+
+## Decisions
+
+- 2026-03-21 (Phase 09): Treat `localhost:8080` as the authoritative local backend target for the Vite `/api` proxy.
+- 2026-03-21 (Phase 09): Keep the frontend on relative `/api` requests and use `VITE_API_URL` only for explicit non-default backend overrides.
+
+## Performance Metrics
+
+| Phase | Plan | Duration | Tasks | Files | Recorded |
+|-------|------|----------|-------|-------|----------|
+| 09 | 07 | 1 min | 3 | 7 | 2026-03-21 |
+
+## Session Continuity
+
+- Last completed: `09-07-PLAN.md`
+- Next suggested focus: `10-01-PLAN.md`
 
 ## Session Log
 
@@ -50,5 +66,5 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 - 2026-03-21: Phase 8 context gathered — web scaffold + auth decisions captured for planning
 - 2026-03-21: Phase 8 planned — plans 08-01 through 08-03 written
 - 2026-03-21: Phase 8 complete — UAT passed (9/9), Vite scaffold + typed API client + auth gate shipped
-- 2026-03-21: Phase 9 planned — 6 plans across 3 waves for admin panel
-- 2026-03-21: Phase 9 complete — 20/20 requirements verified (ADMIN-01..12, SRC-01..04, CAT-01..03); TrendsPage, SourcesPage, CategoriesPage, TrendEditModal, DeleteConfirmDialog, SourceToggle all shipped
+- 2026-03-21: Phase 9 planned — 7 plans across 3 waves for admin panel, including the 09-07 dev-contract gap closure
+- 2026-03-21: Phase 9 complete — 20/20 requirements verified (ADMIN-01..12, SRC-01..04, CAT-01..03); TrendsPage, SourcesPage, CategoriesPage, TrendEditModal, DeleteConfirmDialog, SourceToggle, and the corrected local proxy contract all shipped
