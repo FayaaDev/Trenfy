@@ -66,7 +66,10 @@ Plans:
   2. Tapping a category card from the Categories tab pushes a CategoryFeed screen onto the stack — the back button returns to the grid without losing scroll position
   3. No content is obscured by the device notch, status bar, or home indicator on iPhone and Android — tab bar sits above the home indicator
   4. TypeScript compilation fails with a type error if any `navigate()` call uses an unregistered route name
-**Plans:** TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 12-01-PLAN.md — Install Iconify packages + navigator types + stub screens
+- [ ] 12-02-PLAN.md — Rewrite AppNavigator (3-tab + category stack) + wire App.tsx
 
 ### Phase 13: Trending Feed + Cards
 **Goal:** User can open the app and immediately see a live, scrollable feed of approved trends with complete card information and correct feed lifecycle handling.
