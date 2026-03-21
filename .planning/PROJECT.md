@@ -8,19 +8,26 @@ Trenfy is a trend-catching platform for gaming, music, and entertainment. The sh
 
 Users can open the app and immediately see what's trending right now across gaming, music, and entertainment - filtered to what they care about, tappable to the source.
 
+## Current Milestone: v1.3 React Native Mobile App
+
+**Goal:** Rebuild the WhiteLabelApp as the Trenfy mobile consumer app — restructure navigation and wire it to the live Trenfy API.
+
+**Target features:**
+- 3-tab navigation: Trending Now, Categories, Profile
+- Trending Now: FlashList feed with collapsible filter header (platform chips, category chips, region), search, pull-to-refresh, infinite scroll, tap-to-source URL
+- Trend cards: title, Arabic translation, thumbnail, platform icon, metric, category badge
+- Categories: rich category grid (name, trend count, top trend preview) → filtered feed drill-down
+- Profile: optional social sign-in (Google/Apple), saved/bookmarked trends, persisted preferences
+- Dark mode (follows system setting)
+- RTL support for Arabic content
+
 ## Current State
 
 - `v1.2` shipped on 2026-03-21.
 - Backend moderation support is live: trend `status`, status-filtered reads, trend PATCH/DELETE, source enable/disable updates, and explicit CORS allowlisting.
 - React web surface is live under `web/`: admin auth gate, trends moderation table, sources toggles, categories view, and the public approved-only `/demo` feed.
 - Historical milestone artifacts live in `.planning/milestones/v1.2-ROADMAP.md` and `.planning/milestones/v1.2-REQUIREMENTS.md`.
-- No next milestone is active yet; start with `/gsd-new-milestone` and a fresh `.planning/REQUIREMENTS.md`.
-
-## Next Milestone Goals
-
-- Deliver the React Native mobile app scope previously deferred as `APP-01..APP-12`.
-- Close the remaining verification debt from earlier milestones (`01/03/04-VERIFICATION.md`, `REQ-701..REQ-705`, `INFRA-03` human confirmation, and a proper milestone audit pass).
-- Decide whether the web admin/demo surface needs incremental feature work or should stay in maintenance mode while mobile becomes primary.
+- v1.3 milestone started 2026-03-21. Building the React Native mobile consumer app on top of the existing WhiteLabelApp/ scaffold.
 
 ## Requirements Snapshot
 
@@ -34,13 +41,13 @@ Users can open the app and immediately see what's trending right now across gami
 
 ### Active
 
-- [ ] No active milestone requirements yet - define the next scope with `/gsd-new-milestone`.
+- [ ] React Native mobile app: 3-tab consumer feed for Trenfy (v1.3)
 
 ### Deferred
 
-- [ ] React Native mobile app delivery (`APP-01..APP-12`).
 - [ ] Verification debt closure for earlier milestone evidence (`01/03/04-VERIFICATION.md`, `REQ-701..REQ-705`).
 - [ ] Human confirmation for `INFRA-03` NocoDB table/schema existence.
+- [ ] Auth backend for synced saves/preferences (social sign-in local-first in v1.3; backend sync deferred).
 
 ## Context
 
@@ -96,5 +103,22 @@ Users can open the app and immediately see what's trending right now across gami
 
 </details>
 
+## Evolution
+
+This document evolves at phase transitions and milestone boundaries.
+
+**After each phase transition** (via `/gsd-transition`):
+1. Requirements invalidated? → Move to Out of Scope with reason
+2. Requirements validated? → Move to Validated with phase reference
+3. New requirements emerged? → Add to Active
+4. Decisions to log? → Add to Key Decisions
+5. "What This Is" still accurate? → Update if drifted
+
+**After each milestone** (via `/gsd-complete-milestone`):
+1. Full review of all sections
+2. Core Value check — still the right priority?
+3. Audit Out of Scope — reasons still valid?
+4. Update Context with current state
+
 ---
-*Last updated: 2026-03-21 after v1.2 milestone archive*
+*Last updated: 2026-03-21 after v1.3 milestone start*
