@@ -79,10 +79,10 @@ export default function TrendCard({ trend, onPress }: TrendCardProps) {
   const { colors, radii, shadows, spacing, typography } = useTheme();
   const isRTL = useIsRTL();
 
-  // Locale-aware content selection with fallbacks
-  const displayTitle = (isRTL && trend.title_ar) ? trend.title_ar : trend.title;
-  const displayBody  = (isRTL && trend.ar_translation) ? trend.ar_translation : trend.description;
-  const bodyIsArabic = isRTL && !!trend.ar_translation;
+  // Always use Arabic fields with fallback to English
+  const displayTitle = trend.title_ar ?? trend.title;
+  const displayBody = trend.ar_translation ?? trend.description;
+  const bodyIsArabic = !!trend.ar_translation;
 
   const styles = StyleSheet.create({
     shadow: {
@@ -240,8 +240,8 @@ export default function TrendCard({ trend, onPress }: TrendCardProps) {
             ) : null}
           </View>
 
-          {/* Title */}
-          <Text style={styles.title} numberOfLines={2} ellipsizeMode="tail">
+          {/* Title: Arabic with fallback to English */}
+          <Text style={trend.title_ar ? styles.arabicText : styles.title} numberOfLines={2} ellipsizeMode="tail">
             {displayTitle}
           </Text>
 
