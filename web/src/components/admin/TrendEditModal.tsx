@@ -135,10 +135,26 @@ export function TrendEditModal({ trend, onClose }: TrendEditModalProps) {
             <label className="text-sm font-medium text-slate-200">
               Category
             </label>
-            <Input
-              {...register('category')}
-              className={ADMIN_DIALOG_FIELD_CLASS}
-              placeholder="e.g. gaming, music"
+            <Controller
+              name="category"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  value={field.value}
+                  onValueChange={(v) => { if (v) field.onChange(v); }}
+                >
+                  <SelectTrigger className={`w-full ${ADMIN_DIALOG_FIELD_CLASS}`}>
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent className={ADMIN_DIALOG_SELECT_CONTENT_CLASS}>
+                    <SelectItem value="Gaming">Gaming</SelectItem>
+                    <SelectItem value="Music">Music</SelectItem>
+                    <SelectItem value="Sports">Sports</SelectItem>
+                    <SelectItem value="Movies">Movies</SelectItem>
+                    <SelectItem value="News">News</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
             />
             {errors.category && (
               <p className="text-xs text-destructive">

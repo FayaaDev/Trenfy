@@ -61,7 +61,17 @@ export function FilterProvider({ children }: { children: React.ReactNode }) {
 
     fetchCategories()
       .then((result) => {
-        if (active) setAvailableCategories(result.length > 0 ? result : FALLBACK_CATEGORIES);
+        if (!active) return;
+        // Always show all fallback categories so every filter pill is visible
+        // even when no trends exist for that category. API categories that are
+        // not in the fallback list are appended after.
+        const merged = [...FALLBACK_CATEGORIES];
+        for (const cat of result) {
+          if (!merged.some((c) => c.value === cat.value)) {
+            merged.push(cat);
+          }
+        }
+        setAvailableCategories(merged);
       })
       .catch(() => {
         if (active) setAvailableCategories(FALLBACK_CATEGORIES);

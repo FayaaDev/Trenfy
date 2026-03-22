@@ -36,6 +36,8 @@ const REGION_OPTIONS = [
   { value: 'US', label: 'US' },
   { value: 'SA', label: 'SA' },
   { value: 'JP', label: 'JP' },
+  { value: 'KR', label: 'KR' },
+  { value: 'GLOBAL', label: 'GLOBAL' },
 ];
 
 const DEFAULT_FILTERS: FilterState = {};

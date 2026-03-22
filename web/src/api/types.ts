@@ -12,7 +12,7 @@ export interface Trend {
   published_date: string;                              // "YYYY-MM-DD"
   metric_type: string;                                 // "views" | "streams" | "players"
   metric_value: number;
-  region_code: string;                                 // "US" | "SA" | "JP"
+  region_code: string;                                 // "US" | "SA" | "JP" | "KR" | "Global"
   metadata: Record<string, unknown>;
   content_hash: string;
   ar_translation: string | null;

@@ -44,7 +44,7 @@ const REGION_OPTIONS: Array<{ value: TrendRegion; flag: string; short: string }>
   { value: 'SA', flag: '🇸🇦', short: 'SA' },
   { value: 'JP', flag: '🇯🇵', short: 'JP' },
   { value: 'KR', flag: '🇰🇷', short: 'KR' },
-  { value: 'GB', flag: '🇬🇧', short: 'UK' },
+  { value: 'GLOBAL', flag: '🌐', short: 'GLOBAL' },
 ];
 
 // ---------------------------------------------------------------------------

@@ -272,6 +272,8 @@ export function TrendsPage() {
             <SelectItem value="US">US</SelectItem>
             <SelectItem value="SA">SA</SelectItem>
             <SelectItem value="JP">JP</SelectItem>
+            <SelectItem value="KR">KR</SelectItem>
+            <SelectItem value="GLOBAL">Global</SelectItem>
           </SelectContent>
         </Select>
       </div>

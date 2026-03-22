@@ -19,8 +19,18 @@ function readPlatform(): TrendPlatform | null {
 function readRegion(): TrendRegion | null {
   const value = Storage.getItemSync(REGION_KEY);
 
-  if (value === 'US' || value === 'SA' || value === 'JP') {
+  if (
+    value === 'US'
+    || value === 'SA'
+    || value === 'JP'
+    || value === 'KR'
+    || value === 'GLOBAL'
+  ) {
     return value;
+  }
+
+  if (value === 'Global') {
+    return 'GLOBAL';
   }
 
   return null;

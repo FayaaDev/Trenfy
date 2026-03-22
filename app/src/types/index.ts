@@ -28,7 +28,7 @@ export interface TrendsListResponse {
 }
 
 export type TrendPlatform = 'youtube' | 'x';
-export type TrendRegion = 'US' | 'SA' | 'JP' | 'KR' | 'GB';
+export type TrendRegion = 'US' | 'SA' | 'JP' | 'KR' | 'GLOBAL';
 
 export interface CategoryOption {
   value: string;
