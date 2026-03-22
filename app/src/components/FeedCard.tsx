@@ -68,10 +68,10 @@ export default function FeedCard({ trend, onPress }: FeedCardProps) {
   const { colors, radii, shadows, spacing, typography } = useTheme();
   const isRTL = useIsRTL();
 
-  // Locale-aware content selection with fallbacks
-  const displayTitle = (isRTL && trend.title_ar) ? trend.title_ar : trend.title;
-  const displayBody  = (isRTL && trend.ar_translation) ? trend.ar_translation : trend.description;
-  const bodyIsArabic = isRTL && !!trend.ar_translation;
+  // Always use Arabic fields with fallback to English
+  const displayTitle = trend.title_ar ?? trend.title;
+  const displayBody = trend.ar_translation ?? trend.description;
+  const bodyIsArabic = !!trend.ar_translation;
 
   const styles = StyleSheet.create({
     shadow: {
@@ -215,16 +215,16 @@ export default function FeedCard({ trend, onPress }: FeedCardProps) {
         {/* Content */}
         <View style={styles.content}>
           <View style={styles.titleBlock}>
-            {/* Title: Arabic or English depending on locale */}
+            {/* Title: Arabic with fallback to English */}
             <Text
-              style={isRTL ? styles.titleAr : styles.title}
+              style={trend.title_ar ? styles.titleAr : styles.title}
               numberOfLines={2}
               ellipsizeMode="tail"
             >
               {displayTitle}
             </Text>
 
-            {/* Body: ar_translation (RTL) or description (LTR), with fallbacks */}
+            {/* Body: ar_translation with fallback to description */}
             {displayBody ? (
               <Text
                 style={bodyIsArabic ? styles.arTranslation : styles.bodyText}
