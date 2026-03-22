@@ -6,9 +6,9 @@ export const colors = {
   surfaceStrong: '#374151',      // Stronger surface for borders/dividers
 
   // Brand
-  primary: '#14B8A6',            // Trenfy electric teal — CTAs, active states
-  primaryDark: '#0D9488',        // Darker teal for pressed states
-  primarySoft: 'rgba(20,184,166,0.15)', // Teal wash for chip backgrounds
+  primary: '#ED6C11',            // Trenfy orange — CTAs, active states
+  primaryDark: '#C85A0A',       // Darker orange for pressed states
+  primarySoft: 'rgba(237,108,17,0.15)', // Orange wash for chip backgrounds
 
   // Accent
   accent: '#F59E0B',             // Warm amber — trending badge, metric highlight
@@ -32,9 +32,9 @@ export const colors = {
 };
 
 export const gradients = {
-  hero: ['#14B8A6', '#0891B2'] as const,     // Teal → deep cyan — hero panels
+  hero: ['#ED6C11', '#C85A0A'] as const,     // Orange → deep orange — hero panels
   accent: ['#F59E0B', '#EF4444'] as const,    // Amber → red — trending fire gradient
-  profile: ['#0D9488', '#14B8A6'] as const,  // Dark teal → teal — profile header
+  profile: ['#C85A0A', '#ED6C11'] as const,  // Dark orange → orange — profile header
   dark: ['#0A0F1E', '#111827'] as const,     // Midnight → dark navy — footer/overlay gradients
 };
 
@@ -63,7 +63,7 @@ export const shadows = {
     elevation: 5,
   },
   floating: {
-    shadowColor: '#14B8A6',
+    shadowColor: '#ED6C11',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.28,
     shadowRadius: 20,
@@ -96,9 +96,9 @@ export const lightColors = {
   surface: '#FFFFFF',
   surfaceMuted: '#F1F5F9',
   surfaceStrong: '#E2E8F0',
-  primary: '#0D9488',
-  primaryDark: '#0F766E',
-  primarySoft: 'rgba(13,148,136,0.12)',
+  primary: '#ED6C11',
+  primaryDark: '#C85A0A',
+  primarySoft: 'rgba(237,108,17,0.12)',
   accent: '#D97706',
   accentSoft: 'rgba(217,119,6,0.12)',
   text: '#0F172A',
