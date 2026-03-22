@@ -15,13 +15,18 @@ logger = logging.getLogger(__name__)
 SEPARATOR = "\n---ITEM---\n"
 
 
+def _has_arabic_script(text: str) -> bool:
+    """Return True if text contains Arabic script characters (U+0600–U+06FF)."""
+    return any("\u0600" <= ch <= "\u06ff" for ch in (text or ""))
+
+
 def is_arabic(item: TrendItem) -> bool:
     """Return True if this item's content is already in Arabic."""
     # Priority 1: X items with explicit lang metadata
     if item.metadata.get("lang") == "ar":
         return True
-    # Priority 2: YouTube SA region heuristic
-    if item.region_code == "SA":
+    # Priority 2: Title contains Arabic script characters
+    if _has_arabic_script(item.title or ""):
         return True
     return False
 

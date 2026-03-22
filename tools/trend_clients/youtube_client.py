@@ -10,8 +10,32 @@ from tools.trend_clients.common import compute_content_hash
 YOUTUBE_VIDEOS_ENDPOINT = "https://www.googleapis.com/youtube/v3/videos"
 
 _CATEGORY_BY_ID = {
-    "10": "music",
-    "20": "gaming",
+    # Music
+    "10": "Music",
+    # Gaming
+    "20": "Gaming",
+    # Sports
+    "17": "Sports",
+    # Movies / Film
+    "1": "Movies",  # Film & Animation
+    "18": "Movies",  # Short Movies
+    "30": "Movies",  # Movies
+    "31": "Movies",  # Anime/Animation
+    "32": "Movies",  # Action/Adventure
+    "33": "Movies",  # Classics
+    "34": "Movies",  # Comedy (film)
+    "35": "Movies",  # Documentary
+    "36": "Movies",  # Drama
+    "37": "Movies",  # Family
+    "38": "Movies",  # Foreign
+    "39": "Movies",  # Horror
+    "40": "Movies",  # Sci-Fi/Fantasy
+    "41": "Movies",  # Thriller
+    "42": "Movies",  # Shorts
+    "43": "Movies",  # Shows
+    "44": "Movies",  # Trailers
+    # News
+    "25": "News",  # News & Politics
 }
 
 
@@ -76,7 +100,7 @@ class YouTubeTrendClient(BaseTrendClient):
             return None
 
         category_id = str(snippet.get("categoryId") or "")
-        category = _CATEGORY_BY_ID.get(category_id, "entertainment")
+        category = _CATEGORY_BY_ID.get(category_id, "News")
 
         trend = TrendItem(
             platform=self.platform,

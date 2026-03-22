@@ -26,8 +26,10 @@ const PLATFORM_OPTIONS = [
 
 const CATEGORY_OPTIONS = [
   { value: 'gaming', label: 'Gaming' },
-  { value: 'music', label: 'Music' },
-  { value: 'entertainment', label: 'Entertainment' },
+  { value: 'music',  label: 'Music' },
+  { value: 'sports', label: 'Sports' },
+  { value: 'movies', label: 'Movies' },
+  { value: 'news',   label: 'News' },
 ];
 
 const REGION_OPTIONS = [

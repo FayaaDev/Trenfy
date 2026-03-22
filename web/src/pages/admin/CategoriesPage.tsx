@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getTrends } from '@/api/trends';
 
-const FALLBACK_CATEGORIES = ['gaming', 'music', 'entertainment'];
+const FALLBACK_CATEGORIES = ['gaming', 'music', 'sports', 'movies', 'news'];
 
 export function CategoriesPage() {
   const { data, isLoading, isError } = useQuery({

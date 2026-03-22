@@ -25,16 +25,44 @@ import type { TrendRegion } from '../types';
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
 const CIRCLE_SIZE = 56;
-const FAN_GAP = 52;       // px between each pill centre
-const FAN_FIRST_OFFSET = CIRCLE_SIZE + 12; // bottom of first pill from cluster base
-const GROUP_BONUS = 14;   // extra gap between category group and region group
-const MAX_FAN = 10;       // pre-allocated animation values (≥ max expected items)
+const MAX_FAN = 12; // pre-allocated animation values (≥ max expected items)
+
+// Straight V shape: P1 is the midpoint of P0→P2, which collapses the bezier
+// to a straight diagonal line with perfectly even spacing between all 5 pills.
+// P0 x = ±43 so the innermost pair (Gaming / US) just touch edge-to-edge.
+const CAT_P0: [number, number] = [  -43,  -70]; // innermost — just touches sibling
+const CAT_P1: [number, number] = [  -82, -175]; // midpoint of P0→P2 (straight line)
+const CAT_P2: [number, number] = [ -120, -280]; // outermost
+
+// Regions are the exact mirror of categories (same ty, negated tx)
+const REG_P0: [number, number] = [   43,  -70];
+const REG_P1: [number, number] = [   82, -175];
+const REG_P2: [number, number] = [  120, -280];
 
 const REGION_OPTIONS: Array<{ value: TrendRegion; flag: string; short: string }> = [
   { value: 'US', flag: '🇺🇸', short: 'US' },
   { value: 'SA', flag: '🇸🇦', short: 'SA' },
   { value: 'JP', flag: '🇯🇵', short: 'JP' },
+  { value: 'KR', flag: '🇰🇷', short: 'KR' },
+  { value: 'GB', flag: '🇬🇧', short: 'UK' },
 ];
+
+// ---------------------------------------------------------------------------
+// Bezier helper
+// ---------------------------------------------------------------------------
+
+function bezierPoint(
+  p0: [number, number],
+  p1: [number, number],
+  p2: [number, number],
+  t: number,
+): [number, number] {
+  const u = 1 - t;
+  return [
+    u * u * p0[0] + 2 * u * t * p1[0] + t * t * p2[0],
+    u * u * p0[1] + 2 * u * t * p1[1] + t * t * p2[1],
+  ];
+}
 
 // ---------------------------------------------------------------------------
 // FilterFAB
@@ -46,6 +74,8 @@ type FanItem = {
   active: boolean;
   group: 'category' | 'region';
   onToggle: () => void;
+  tx: number;
+  ty: number;
 };
 
 function FilterFAB(_props: BottomTabBarProps) {
@@ -71,43 +101,53 @@ function FilterFAB(_props: BottomTabBarProps) {
   const fabFlip = useRef(new Animated.Value(0)).current;  // 0=trending, 1=close
   const fabScale = useRef(new Animated.Value(1)).current; // for long-press bounce
 
-  // ── fan items (categories below, regions above) ──────────────────────────
+  // ── fan items (categories fan left, regions fan right) ───────────────────
   //
-  // Index 0 is the CLOSEST pill to the FAB (visually lowest).
-  // Categories are closest, regions fan out above them.
+  // Items are interleaved (cat[0], reg[0], cat[1], reg[1]…) so both arms
+  // open simultaneously from the FAB centre outward.
 
-  const fanItems = useMemo<FanItem[]>(
-    () => [
-      // ── categories (indices 0 … n-1, just above FAB) ──────────────────
-      ...availableCategories.map((cat) => ({
+  const fanItems = useMemo<FanItem[]>(() => {
+    const catCount = availableCategories.length;
+    const regCount = REGION_OPTIONS.length;
+
+    const cats: FanItem[] = availableCategories.map((cat, i) => {
+      const t = catCount > 1 ? i / (catCount - 1) : 0;
+      const [tx, ty] = bezierPoint(CAT_P0, CAT_P1, CAT_P2, t);
+      return {
         key: `cat:${cat.value}`,
         label: cat.label,
         active: selectedCategories.includes(cat.value),
         group: 'category' as const,
         onToggle: () => toggleCategory(cat.value),
-      })),
-      // ── regions (indices n … n+2, highest in the fan) ─────────────────
-      ...REGION_OPTIONS.map((r) => ({
+        tx,
+        ty,
+      };
+    });
+
+    const regs: FanItem[] = REGION_OPTIONS.map((r, i) => {
+      const t = regCount > 1 ? i / (regCount - 1) : 0;
+      const [tx, ty] = bezierPoint(REG_P0, REG_P1, REG_P2, t);
+      return {
         key: `region:${r.value}`,
         label: `${r.flag}  ${r.short}`,
         active: region === r.value,
         group: 'region' as const,
         onToggle: () => setRegion(region === r.value ? null : r.value),
-      })),
-    ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [availableCategories, selectedCategories, region]
-  );
+        tx,
+        ty,
+      };
+    });
 
-  // bottom offset for each pill (adds a gap between the two groups)
-  const bottomFor = useCallback(
-    (index: number) => {
-      const catCount = availableCategories.length;
-      const bonus = index >= catCount ? GROUP_BONUS : 0;
-      return FAN_FIRST_OFFSET + index * FAN_GAP + bonus;
-    },
-    [availableCategories.length]
-  );
+    // Interleave so both arms open from centre out simultaneously
+    const out: FanItem[] = [];
+    const len = Math.max(cats.length, regs.length);
+    for (let i = 0; i < len; i++) {
+      if (i < cats.length) out.push(cats[i]);
+      if (i < regs.length) out.push(regs[i]);
+    }
+    return out;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [availableCategories, selectedCategories, region]);
 
   // ── open / close ──────────────────────────────────────────────────────────
 
@@ -117,7 +157,7 @@ function FilterFAB(_props: BottomTabBarProps) {
       Animated.timing(backdropAnim, { toValue: 1, duration: 180, useNativeDriver: true }),
       Animated.timing(fabFlip, { toValue: 1, duration: 160, useNativeDriver: true }),
       Animated.stagger(
-        45,
+        30,
         fanItems.map((_, i) =>
           Animated.spring(fanAnims[i], {
             toValue: 1,
@@ -237,25 +277,10 @@ function FilterFAB(_props: BottomTabBarProps) {
     pillLabelActive: {
       color: colors.primary,
     },
-    // Thin divider row rendered between the two groups
-    divider: {
-      position: 'absolute',
-      left: '30%',
-      right: '30%',
-      height: 1,
-      backgroundColor: colors.border,
-      opacity: 0.6,
-    },
+    // (divider style removed — two-arm fork layout uses tx/ty offsets instead)
   });
 
   // ── render ────────────────────────────────────────────────────────────────
-
-  const catCount = availableCategories.length;
-  // Divider sits between the last category pill and the first region pill
-  const dividerBottom =
-    catCount > 0
-      ? FAN_FIRST_OFFSET + (catCount - 1) * FAN_GAP + FAN_GAP * 0.5 + GROUP_BONUS * 0.5
-      : -999;
 
   return (
     <View pointerEvents="box-none" style={s.container}>
@@ -269,15 +294,7 @@ function FilterFAB(_props: BottomTabBarProps) {
 
       {/* ── FAB cluster ───────────────────────────────────────────────── */}
       <View pointerEvents="box-none" style={s.cluster}>
-        {/* Thin divider between category and region groups */}
-        {catCount > 0 && isOpen ? (
-          <Animated.View
-            pointerEvents="none"
-            style={[s.divider, { bottom: dividerBottom, opacity: backdropAnim }]}
-          />
-        ) : null}
-
-        {/* Individual filter pills */}
+        {/* Individual filter pills — two-arm bezier fork */}
         {fanItems.map((item, index) => {
           const anim = fanAnims[index];
           return (
@@ -286,24 +303,15 @@ function FilterFAB(_props: BottomTabBarProps) {
               pointerEvents={isOpen ? 'auto' : 'none'}
               style={{
                 position: 'absolute',
-                bottom: bottomFor(index),
+                bottom: CIRCLE_SIZE / 2,
                 left: 0,
                 right: 0,
                 alignItems: 'center',
                 opacity: anim,
                 transform: [
-                  {
-                    translateY: anim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [14, 0],
-                    }),
-                  },
-                  {
-                    scale: anim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [0.8, 1],
-                    }),
-                  },
+                  { translateX: anim.interpolate({ inputRange: [0, 1], outputRange: [0, item.tx] }) },
+                  { translateY: anim.interpolate({ inputRange: [0, 1], outputRange: [0, item.ty] }) },
+                  { scale:      anim.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1] }) },
                 ],
               }}
             >

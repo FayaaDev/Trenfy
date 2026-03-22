@@ -254,7 +254,9 @@ export function TrendsPage() {
             <SelectItem value="">All Categories</SelectItem>
             <SelectItem value="gaming">Gaming</SelectItem>
             <SelectItem value="music">Music</SelectItem>
-            <SelectItem value="entertainment">Entertainment</SelectItem>
+            <SelectItem value="sports">Sports</SelectItem>
+            <SelectItem value="movies">Movies</SelectItem>
+            <SelectItem value="news">News</SelectItem>
           </SelectContent>
         </Select>
 

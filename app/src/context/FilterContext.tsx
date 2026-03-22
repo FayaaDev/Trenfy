@@ -11,6 +11,14 @@ import { fetchCategories } from '../api/trends';
 import useFilterPrefs from '../hooks/useFilterPrefs';
 import type { CategoryOption, TrendRegion } from '../types';
 
+const FALLBACK_CATEGORIES: CategoryOption[] = [
+  { value: 'Gaming', label: 'Gaming' },
+  { value: 'Music',  label: 'Music' },
+  { value: 'Sports', label: 'Sports' },
+  { value: 'Movies', label: 'Movies' },
+  { value: 'News',   label: 'News' },
+];
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -53,10 +61,10 @@ export function FilterProvider({ children }: { children: React.ReactNode }) {
 
     fetchCategories()
       .then((result) => {
-        if (active) setAvailableCategories(result);
+        if (active) setAvailableCategories(result.length > 0 ? result : FALLBACK_CATEGORIES);
       })
       .catch(() => {
-        if (active) setAvailableCategories([]);
+        if (active) setAvailableCategories(FALLBACK_CATEGORIES);
       })
       .finally(() => {
         if (active) setIsLoadingCategories(false);
