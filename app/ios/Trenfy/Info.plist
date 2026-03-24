@@ -46,6 +46,16 @@
       <false/>
       <key>NSAllowsLocalNetworking</key>
       <true/>
+      <key>NSExceptionDomains</key>
+      <dict>
+        <key>174.138.183.153</key>
+        <dict>
+          <key>NSExceptionAllowsInsecureHTTPLoads</key>
+          <true/>
+          <key>NSIncludesSubdomains</key>
+          <false/>
+        </dict>
+      </dict>
     </dict>
     <key>RCTNewArchEnabled</key>
     <true/>

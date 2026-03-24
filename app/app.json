@@ -3,7 +3,7 @@
     "name": "Trenfy",
     "slug": "trenfy",
     "scheme": "trenfy",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -15,7 +15,9 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "app.trenfy"
+      "icon": "./assets/icon.png",
+      "bundleIdentifier": "app.trenfy",
+      "buildNumber": "2"
     },
     "android": {
       "package": "app.trenfy",
@@ -33,6 +35,11 @@
       "expo-sqlite",
       "expo-web-browser",
       "@react-native-google-signin/google-signin"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "a59b8321-b0fb-47b7-a34f-25ad37d7f4a7"
+      }
+    }
   }
 }
