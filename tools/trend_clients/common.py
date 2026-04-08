@@ -7,25 +7,20 @@ from trend_agents.shared.models import TrendItem, generate_trend_hash
 T = TypeVar("T")
 
 _CATEGORY_MAP = {
-    # Gaming
-    "game": "Gaming",
-    "games": "Gaming",
-    "gaming": "Gaming",
-    # Music
-    "music": "Music",
-    # Sports
-    "sport": "Sports",
-    "sports": "Sports",
-    # Movies
-    "movie": "Movies",
-    "movies": "Movies",
-    "film": "Movies",
-    "films": "Movies",
-    "cinema": "Movies",
-    # News
-    "news": "News",
-    "politics": "News",
-    "breaking": "News",
+    "game": "gaming",
+    "games": "gaming",
+    "gaming": "gaming",
+    "music": "music",
+    "sport": "sports",
+    "sports": "sports",
+    "movie": "movies",
+    "movies": "movies",
+    "film": "entertainment",
+    "films": "entertainment",
+    "cinema": "entertainment",
+    "news": "news",
+    "politics": "news",
+    "breaking": "news",
 }
 
 
@@ -33,7 +28,7 @@ def normalize_category(raw: str) -> str:
     key = (raw or "").strip().lower()
     if key in _CATEGORY_MAP:
         return _CATEGORY_MAP[key]
-    return "News"
+    return "news"
 
 
 def compute_content_hash(item: TrendItem) -> str:

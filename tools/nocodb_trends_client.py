@@ -680,3 +680,59 @@ def _chunk(lst: List[str], size: int) -> List[List[str]]:
 
 
 nocodb_trends = NocoDBTrendsClient()
+
+
+async def migrate_categories_to_lowercase():
+    """One-time migration to fix category values to lowercase.
+    
+    The old buggy code stored Title Case values (Gaming, Music, etc.)
+    but the code now expects lowercase. Run this once to fix existing data.
+    """
+    # Maps Title Case -> lowercase
+    title_to_lowercase = {
+        "Gaming": "gaming",
+        "Music": "music",
+        "Sports": "sports",
+        "Movies": "movies",
+        "News": "news",
+    }
+    
+    client = NocoDBTrendsClient()
+    updated = 0
+    offset = 0
+    batch_size = 100
+    
+    while True:
+        rows = await client.query_trends(limit=batch_size, offset=offset)
+        if not rows:
+            break
+            
+        to_update = []
+        for row in rows:
+            cat = str(row.get("category") or "")
+            if cat in title_to_lowercase:
+                row_id = row.get("Id") or row.get("id")
+                if row_id:
+                    to_update.append({
+                        "Id": row_id,
+                        "category": title_to_lowercase[cat]
+                    })
+        
+        if to_update:
+            try:
+                await client._request(
+                    "PATCH",
+                    f"/api/v2/tables/{client.trends_table_id}/records",
+                    json_body=to_update,
+                )
+                updated += len(to_update)
+                print(f"[Migration] Updated {len(to_update)} rows (total: {updated})")
+            except Exception as e:
+                print(f"[Migration] Error: {e}")
+        
+        if len(rows) < batch_size:
+            break
+        offset += batch_size
+    
+    print(f"[Migration] Complete. Total rows updated: {updated}")
+    return updated
