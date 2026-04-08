@@ -7,15 +7,23 @@ import {
   View,
 } from 'react-native';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+import type { LinkingOptions } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Iconify } from 'react-native-iconify';
+import * as ExpoLinking from 'expo-linking';
 
 import TrendingNowScreen from '../screens/TrendingNowScreen';
+import BookmarksScreen from '../screens/BookmarksScreen';
+import TrendDetailScreen from '../screens/TrendDetailScreen';
+import OnboardingScreen, { ONBOARDING_KEY, getKv } from '../screens/OnboardingScreen';
+import { BookmarkProvider } from '../context/BookmarkContext';
 import { useTheme } from '../theme/ThemeContext';
 import { FilterProvider, useFilters } from '../context/FilterContext';
-import type { RootTabParamList } from './types';
+import { useOTAUpdate } from '../utils/updates';
+import type { RootStackParamList, RootTabParamList } from './types';
 import type { TrendRegion } from '../types';
 
 // ---------------------------------------------------------------------------
@@ -23,6 +31,7 @@ import type { TrendRegion } from '../types';
 // ---------------------------------------------------------------------------
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const CIRCLE_SIZE = 56;
 const MAX_FAN = 12; // pre-allocated animation values (≥ max expected items)
@@ -44,7 +53,7 @@ const REGION_OPTIONS: Array<{ value: TrendRegion; flag: string; short: string }>
   { value: 'SA', flag: '🇸🇦', short: 'SA' },
   { value: 'JP', flag: '🇯🇵', short: 'JP' },
   { value: 'KR', flag: '🇰🇷', short: 'KR' },
-  { value: 'GLOBAL', flag: '🌐', short: 'GLOBAL' },
+  { value: 'GLOBAL', flag: '🌐', short: 'GL' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -79,7 +88,7 @@ type FanItem = {
 };
 
 function FilterFAB(_props: BottomTabBarProps) {
-  const { colors, radii, spacing, typography, shadows } = useTheme();
+  const { colors, radii, typography, shadows } = useTheme();
   const insets = useSafeAreaInsets();
   const {
     availableCategories,
@@ -289,7 +298,7 @@ function FilterFAB(_props: BottomTabBarProps) {
         pointerEvents={isOpen ? 'auto' : 'none'}
         style={[s.backdrop, { opacity: backdropAnim }]}
       >
-        <Pressable style={StyleSheet.absoluteFill} onPress={closeFan} />
+        <Pressable style={StyleSheet.absoluteFill} onPress={closeFan} accessibilityRole="button" accessibilityLabel="Close filters" accessibilityHint="Double tap to close the filter menu" />
       </Animated.View>
 
       {/* ── FAB cluster ───────────────────────────────────────────────── */}
@@ -322,6 +331,9 @@ function FilterFAB(_props: BottomTabBarProps) {
                   item.active && s.pillActive,
                   pressed && { opacity: 0.75 },
                 ]}
+                accessibilityRole="button"
+                accessibilityLabel={item.active ? `Remove ${item.label} filter` : `Filter by ${item.label}`}
+                accessibilityHint={item.active ? 'Double tap to deactivate this filter' : 'Double tap to activate this filter'}
               >
                 <Text style={[s.pillLabel, item.active && s.pillLabelActive]}>
                   {item.label}
@@ -340,6 +352,7 @@ function FilterFAB(_props: BottomTabBarProps) {
               delayLongPress={400}
               accessibilityRole="button"
               accessibilityLabel={isOpen ? 'Close filters' : 'Open filters'}
+              accessibilityHint={isOpen ? 'Double tap to close filter menu' : 'Double tap to open filter menu. Long press to clear all filters'}
               style={s.fab}
             >
               {/* Trending icon */}
@@ -365,11 +378,50 @@ function FilterFAB(_props: BottomTabBarProps) {
 }
 
 // ---------------------------------------------------------------------------
+// MainTabs — the bottom tab navigator
+// ---------------------------------------------------------------------------
+
+function MainTabs() {
+  return (
+    <Tab.Navigator
+      tabBar={(props) => <FilterFAB {...props} />}
+      screenOptions={{ headerShown: false }}
+    >
+      <Tab.Screen name="TrendingNow" component={TrendingNowScreen} />
+      <Tab.Screen name="Bookmarks" component={BookmarksScreen} />
+    </Tab.Navigator>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Deep linking config
+// ---------------------------------------------------------------------------
+
+const linking: LinkingOptions<RootStackParamList> = {
+  prefixes: [ExpoLinking.createURL('/'), 'trenfy://'],
+  config: {
+    screens: {
+      MainTabs: {
+        screens: {
+          TrendingNow: 'trending',
+          Bookmarks: 'bookmarks',
+        },
+      },
+      // Stack screens not reachable via deep link are omitted intentionally
+    },
+  },
+};
+
+// ---------------------------------------------------------------------------
 // AppNavigator
 // ---------------------------------------------------------------------------
 
 export default function AppNavigator() {
+  useOTAUpdate();
   const { colors } = useTheme();
+
+  // Check synchronously whether onboarding has been completed
+  const onboardingCompleted = getKv(ONBOARDING_KEY) === 'true';
 
   const navTheme = {
     ...DefaultTheme,
@@ -384,15 +436,23 @@ export default function AppNavigator() {
   };
 
   return (
-    <FilterProvider>
-      <NavigationContainer theme={navTheme}>
-        <Tab.Navigator
-          tabBar={(props) => <FilterFAB {...props} />}
-          screenOptions={{ headerShown: false }}
-        >
-          <Tab.Screen name="TrendingNow" component={TrendingNowScreen} />
-        </Tab.Navigator>
-      </NavigationContainer>
-    </FilterProvider>
+    <BookmarkProvider>
+      <FilterProvider>
+        <NavigationContainer theme={navTheme} linking={linking}>
+          <Stack.Navigator
+            initialRouteName={onboardingCompleted ? 'MainTabs' : 'Onboarding'}
+            screenOptions={{ headerShown: false }}
+          >
+            <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+            <Stack.Screen name="MainTabs" component={MainTabs} />
+            <Stack.Screen
+              name="TrendDetail"
+              component={TrendDetailScreen}
+              options={{ animation: 'slide_from_right' }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </FilterProvider>
+    </BookmarkProvider>
   );
 }

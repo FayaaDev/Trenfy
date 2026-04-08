@@ -1,0 +1,323 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`TrendCard matches snapshot 1`] = `
+<View
+  style={
+    {
+      "borderRadius": 8,
+    }
+  }
+>
+  <View
+    accessibilityHint="Double tap to view trend details"
+    accessibilityLabel="Trend: عنوان الاتجاه التجريبي"
+    accessibilityRole="button"
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      {
+        "backgroundColor": "#fff",
+        "borderRadius": 8,
+        "overflow": "hidden",
+      }
+    }
+  >
+    <View
+      style={
+        {
+          "height": 140,
+          "position": "relative",
+        }
+      }
+    >
+      <Image
+        contentFit="cover"
+        recyclingKey="trend-1"
+        source={
+          {
+            "uri": "https://example.com/thumb.jpg",
+          }
+        }
+        style={
+          {
+            "backgroundColor": "#6200ee",
+            "borderTopLeftRadius": 8,
+            "borderTopRightRadius": 8,
+            "height": 140,
+            "width": "100%",
+          }
+        }
+        transition={200}
+      />
+      <View
+        style={
+          {
+            "position": "absolute",
+            "right": 8,
+            "top": 8,
+          }
+        }
+      >
+        <View
+          style={
+            {
+              "backgroundColor": "rgba(0,0,0,0.5)",
+              "borderRadius": 4,
+              "padding": 4,
+            }
+          }
+        >
+          <Iconify
+            color="#FF0000"
+            icon="logos:youtube-icon"
+            size={20}
+          />
+        </View>
+      </View>
+    </View>
+    <View
+      style={
+        {
+          "backgroundColor": "#fff",
+          "borderBottomLeftRadius": 8,
+          "borderBottomRightRadius": 8,
+          "padding": 16,
+        }
+      }
+    >
+      <View
+        style={
+          {
+            "flexDirection": "row",
+            "flexWrap": "wrap",
+            "gap": 4,
+            "marginBottom": 8,
+          }
+        }
+      >
+        <View
+          style={
+            {
+              "backgroundColor": "#ede7f6",
+              "borderRadius": 100,
+              "paddingHorizontal": 10,
+              "paddingVertical": 3,
+            }
+          }
+        >
+          <Text
+            style={
+              {
+                "color": "#6200ee",
+                "fontSize": 11,
+              }
+            }
+          >
+            Gaming
+          </Text>
+        </View>
+        <View
+          style={
+            {
+              "backgroundColor": "#f0f0f0",
+              "borderRadius": 100,
+              "paddingHorizontal": 10,
+              "paddingVertical": 3,
+            }
+          }
+        >
+          <Text
+            style={
+              {
+                "color": "#999",
+                "fontSize": 11,
+              }
+            }
+          >
+            SA
+          </Text>
+        </View>
+      </View>
+      <Text
+        ellipsizeMode="tail"
+        numberOfLines={2}
+        style={
+          {
+            "color": "#555",
+            "fontSize": 14,
+            "marginBottom": 4,
+            "textAlign": "right",
+            "writingDirection": "rtl",
+          }
+        }
+      >
+        عنوان الاتجاه التجريبي
+      </Text>
+      <Text
+        ellipsizeMode="tail"
+        numberOfLines={2}
+        style={
+          {
+            "color": "#555",
+            "fontSize": 14,
+            "marginBottom": 4,
+            "textAlign": "right",
+            "writingDirection": "rtl",
+          }
+        }
+      >
+        وصف الاتجاه التجريبي
+      </Text>
+      <View
+        style={
+          {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "justifyContent": "space-between",
+            "marginTop": 4,
+          }
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "#03dac6",
+              "fontSize": 14,
+              "fontWeight": "600",
+            }
+          }
+        >
+          150K views
+        </Text>
+        <Text
+          style={
+            {
+              "color": "#999",
+              "fontSize": 13,
+            }
+          }
+        >
+          Jan 15, 2024
+        </Text>
+        <View
+          accessibilityHint="Opens share sheet to share this trend"
+          accessibilityLabel="Share عنوان الاتجاه التجريبي"
+          accessibilityRole="button"
+          accessibilityState={
+            {
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": undefined,
+              "expanded": undefined,
+              "selected": undefined,
+            }
+          }
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            {
+              "padding": 4,
+            }
+          }
+        >
+          <Iconify
+            color="#999"
+            icon="mdi:share-variant"
+            size={18}
+          />
+        </View>
+        <View
+          accessibilityHint="Double tap to save this trend to bookmarks"
+          accessibilityLabel="Add bookmark"
+          accessibilityRole="button"
+          accessibilityState={
+            {
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": undefined,
+              "expanded": undefined,
+              "selected": undefined,
+            }
+          }
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            {
+              "padding": 4,
+            }
+          }
+        >
+          <Iconify
+            color="#999"
+            icon="mdi:bookmark-outline"
+            size={18}
+          />
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;

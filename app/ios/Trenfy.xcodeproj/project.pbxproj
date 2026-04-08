@@ -7,27 +7,27 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0257372EE36D4E8B0AC43467 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B02A0264C3AB8533C9E0C846 /* PrivacyInfo.xcprivacy */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		1BDF72EAE481651D0A7EF7AF /* libPods-Trenfy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 613B0BDDE6DAD43FB4FF5B6B /* libPods-Trenfy.a */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
+		874B3EE1FF962D974EAEEBA1 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5034648F57A315D8FE9F5208 /* PrivacyInfo.xcprivacy */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		C44738A8CFB26F027DD83A04 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5A91B09F02A0268323A8C8 /* ExpoModulesProvider.swift */; };
-		D3830DAD974ABA2C676028E3 /* libPods-Trenfy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B02270276394EAE279E1047 /* libPods-Trenfy.a */; };
+		E1B9B9EB399DE93B07F76FB2 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EEFCCF6E6EA2E63E8288726 /* ExpoModulesProvider.swift */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0EEFCCF6E6EA2E63E8288726 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Trenfy/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Trenfy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Trenfy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Trenfy/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Trenfy/Info.plist; sourceTree = "<group>"; };
-		7B02270276394EAE279E1047 /* libPods-Trenfy.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Trenfy.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		87F320078A578C0778E605B7 /* Pods-Trenfy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Trenfy.debug.xcconfig"; path = "Target Support Files/Pods-Trenfy/Pods-Trenfy.debug.xcconfig"; sourceTree = "<group>"; };
+		5034648F57A315D8FE9F5208 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Trenfy/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		613B0BDDE6DAD43FB4FF5B6B /* libPods-Trenfy.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Trenfy.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		98A9D0B9B0FC57360DA173FF /* Pods-Trenfy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Trenfy.debug.xcconfig"; path = "Target Support Files/Pods-Trenfy/Pods-Trenfy.debug.xcconfig"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = Trenfy/SplashScreen.storyboard; sourceTree = "<group>"; };
-		B02A0264C3AB8533C9E0C846 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Trenfy/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		E0C16F4A71DD8E1702A72034 /* Pods-Trenfy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Trenfy.release.xcconfig"; path = "Target Support Files/Pods-Trenfy/Pods-Trenfy.release.xcconfig"; sourceTree = "<group>"; };
+		D2DCDA847E68534DE1863F72 /* Pods-Trenfy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Trenfy.release.xcconfig"; path = "Target Support Files/Pods-Trenfy/Pods-Trenfy.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		EF5A91B09F02A0268323A8C8 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Trenfy/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Trenfy/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* Trenfy-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Trenfy-Bridging-Header.h"; path = "Trenfy/Trenfy-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -37,23 +37,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D3830DAD974ABA2C676028E3 /* libPods-Trenfy.a in Frameworks */,
+				1BDF72EAE481651D0A7EF7AF /* libPods-Trenfy.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0A6561FF9937F2D52D7B6AC8 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				87F320078A578C0778E605B7 /* Pods-Trenfy.debug.xcconfig */,
-				E0C16F4A71DD8E1702A72034 /* Pods-Trenfy.release.xcconfig */,
-			);
-			name = Pods;
-			path = Pods;
-			sourceTree = "<group>";
-		};
 		13B07FAE1A68108700A75B9A /* Trenfy */ = {
 			isa = PBXGroup;
 			children = (
@@ -63,16 +53,26 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				B02A0264C3AB8533C9E0C846 /* PrivacyInfo.xcprivacy */,
+				5034648F57A315D8FE9F5208 /* PrivacyInfo.xcprivacy */,
 			);
 			name = Trenfy;
+			sourceTree = "<group>";
+		};
+		250B4C1D2A7A12AF33CFD40E /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				98A9D0B9B0FC57360DA173FF /* Pods-Trenfy.debug.xcconfig */,
+				D2DCDA847E68534DE1863F72 /* Pods-Trenfy.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				7B02270276394EAE279E1047 /* libPods-Trenfy.a */,
+				613B0BDDE6DAD43FB4FF5B6B /* libPods-Trenfy.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -91,8 +91,8 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				0A6561FF9937F2D52D7B6AC8 /* Pods */,
-				FDABC7C08F0982C6C9830581 /* ExpoModulesProviders */,
+				250B4C1D2A7A12AF33CFD40E /* Pods */,
+				983BF6D6E6DD765429BD3A82 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -107,12 +107,12 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		B55C03CE605213AD48D1A6EF /* Trenfy */ = {
+		983BF6D6E6DD765429BD3A82 /* ExpoModulesProviders */ = {
 			isa = PBXGroup;
 			children = (
-				EF5A91B09F02A0268323A8C8 /* ExpoModulesProvider.swift */,
+				FD04969ABD6AA6DDC7552344 /* Trenfy */,
 			);
-			name = Trenfy;
+			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
@@ -124,12 +124,12 @@
 			path = Trenfy/Supporting;
 			sourceTree = "<group>";
 		};
-		FDABC7C08F0982C6C9830581 /* ExpoModulesProviders */ = {
+		FD04969ABD6AA6DDC7552344 /* Trenfy */ = {
 			isa = PBXGroup;
 			children = (
-				B55C03CE605213AD48D1A6EF /* Trenfy */,
+				0EEFCCF6E6EA2E63E8288726 /* ExpoModulesProvider.swift */,
 			);
-			name = ExpoModulesProviders;
+			name = Trenfy;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -140,13 +140,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Trenfy" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				541E69E59989463BDCF43915 /* [Expo] Configure project */,
+				1529434FD16956EAC3A77FF5 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				4E69B72DA9763729694435D7 /* [CP] Embed Pods Frameworks */,
+				27FED87F7857BBDC5E6575D8 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -198,7 +198,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				0257372EE36D4E8B0AC43467 /* PrivacyInfo.xcprivacy in Resources */,
+				874B3EE1FF962D974EAEEBA1 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -244,29 +244,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		4E69B72DA9763729694435D7 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Trenfy/Pods-Trenfy-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactNativeDependencies.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Trenfy/Pods-Trenfy-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		541E69E59989463BDCF43915 /* [Expo] Configure project */ = {
+		1529434FD16956EAC3A77FF5 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -289,6 +267,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-Trenfy/expo-configure-project.sh\"\n";
+		};
+		27FED87F7857BBDC5E6575D8 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Trenfy/Pods-Trenfy-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactNativeDependencies.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Trenfy/Pods-Trenfy-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -340,7 +340,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				C44738A8CFB26F027DD83A04 /* ExpoModulesProvider.swift in Sources */,
+				E1B9B9EB399DE93B07F76FB2 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -349,7 +349,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 87F320078A578C0778E605B7 /* Pods-Trenfy.debug.xcconfig */;
+			baseConfigurationReference = 98A9D0B9B0FC57360DA173FF /* Pods-Trenfy.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -388,7 +388,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E0C16F4A71DD8E1702A72034 /* Pods-Trenfy.release.xcconfig */;
+			baseConfigurationReference = D2DCDA847E68534DE1863F72 /* Pods-Trenfy.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;

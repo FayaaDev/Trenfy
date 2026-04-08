@@ -1,6 +1,8 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  AppState,
+  AppStateStatus,
   Pressable,
   StyleSheet,
   Text,
@@ -10,17 +12,23 @@ import { FlashList } from '@shopify/flash-list';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 import SearchInput from '../components/SearchInput';
 import SkeletonCard from '../components/SkeletonCard';
 import TrendCard from '../components/TrendCard';
 import { useFilters } from '../context/FilterContext';
 import useTrendFeed from '../hooks/useTrendFeed';
-import { TrendingNowTabProps } from '../navigation/types';
+import { TrendingNowTabProps, RootStackParamList } from '../navigation/types';
 import { Trend } from '../types';
 import { useTheme } from '../theme/ThemeContext';
 
+type RootNavProp = NativeStackNavigationProp<RootStackParamList>;
+
 export default function TrendingNowScreen(_: TrendingNowTabProps) {
   const { colors, radii, spacing, typography } = useTheme();
+  const rootNavigation = useNavigation<RootNavProp>();
   const insets = useSafeAreaInsets();
   const { selectedCategories, region } = useFilters();
   const [headerContentHeight, setHeaderContentHeight] = useState(0);
@@ -35,6 +43,7 @@ export default function TrendingNowScreen(_: TrendingNowTabProps) {
     setSearchQuery,
     refresh,
     loadMore,
+    lastUpdatedAt,
   } = useTrendFeed({
     platform: null,
     selectedCategories,
@@ -42,6 +51,36 @@ export default function TrendingNowScreen(_: TrendingNowTabProps) {
   });
 
   const activeFilterCount = selectedCategories.length + (region ? 1 : 0);
+
+  // Returns a human-readable relative time string like "2 min ago"
+  const getRelativeTime = useCallback((date: Date | null): string | null => {
+    if (!date) return null;
+    const diffMs = Date.now() - date.getTime();
+    const diffSec = Math.floor(diffMs / 1000);
+    if (diffSec < 60) return 'Updated just now';
+    const diffMin = Math.floor(diffSec / 60);
+    if (diffMin < 60) return `Updated ${diffMin} min ago`;
+    const diffHr = Math.floor(diffMin / 60);
+    return `Updated ${diffHr}h ago`;
+  }, []);
+
+  const lastUpdatedAtRef = useRef(lastUpdatedAt);
+  lastUpdatedAtRef.current = lastUpdatedAt;
+  const refreshRef = useRef(refresh);
+  refreshRef.current = refresh;
+
+  useEffect(() => {
+    const handleAppStateChange = (nextState: AppStateStatus) => {
+      if (nextState !== 'active') return;
+      const last = lastUpdatedAtRef.current;
+      const twoMinutesMs = 2 * 60 * 1000;
+      if (!last || Date.now() - last.getTime() >= twoMinutesMs) {
+        refreshRef.current();
+      }
+    };
+    const subscription = AppState.addEventListener('change', handleAppStateChange);
+    return () => subscription.remove();
+  }, []);
 
   const topInsetOffset = insets.top + spacing.sm;
   const contentTopPadding = topInsetOffset + headerContentHeight + spacing.lg;
@@ -53,7 +92,8 @@ export default function TrendingNowScreen(_: TrendingNowTabProps) {
     return 'No trends available right now';
   }, [activeFilterCount, searchQuery.length]);
 
-  const styles = StyleSheet.create({
+  // StyleSheet depends on theme values from useTheme() so it is memoized per theme change
+  const styles = useMemo(() => StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: colors.background,
@@ -138,11 +178,21 @@ export default function TrendingNowScreen(_: TrendingNowTabProps) {
     footerLoader: {
       marginVertical: spacing.xl,
     },
-  });
+    updatedText: {
+      ...typography.bodySmall,
+      color: colors.muted,
+      marginTop: spacing.xs,
+    },
+  }), [colors, radii, spacing, typography]);
+
+  const handleTrendPress = useCallback(
+    (trend: Trend) => rootNavigation.navigate('TrendDetail', { trend }),
+    [rootNavigation]
+  );
 
   const renderItem = useCallback(
-    ({ item }: { item: Trend }) => <TrendCard trend={item} />,
-    []
+    ({ item }: { item: Trend }) => <TrendCard trend={item} onPress={handleTrendPress} />,
+    [handleTrendPress]
   );
 
   const keyExtractor = useCallback((item: Trend) => item.id, []);
@@ -165,6 +215,9 @@ export default function TrendingNowScreen(_: TrendingNowTabProps) {
           style={styles.headerContent}
         >
           <Text style={styles.headerTitle}>Trending Now</Text>
+          {getRelativeTime(lastUpdatedAt) ? (
+            <Text style={styles.updatedText}>{getRelativeTime(lastUpdatedAt)}</Text>
+          ) : null}
           <View style={styles.searchRow}>
             <View style={styles.searchInputWrap}>
               <SearchInput
@@ -174,7 +227,13 @@ export default function TrendingNowScreen(_: TrendingNowTabProps) {
               />
             </View>
             {searchQuery.length > 0 ? (
-              <Pressable onPress={() => setSearchQuery('')} style={styles.clearButton}>
+              <Pressable
+                onPress={() => setSearchQuery('')}
+                style={styles.clearButton}
+                accessibilityRole="button"
+                accessibilityLabel="Clear search"
+                accessibilityHint="Double tap to clear the current search query"
+              >
                 <Ionicons name="close-circle" size={22} color={colors.muted} />
               </Pressable>
             ) : null}
@@ -195,7 +254,7 @@ export default function TrendingNowScreen(_: TrendingNowTabProps) {
           <Ionicons name="cloud-offline-outline" size={48} color={colors.error} />
           <Text style={styles.errorTitle}>Couldn't load trends</Text>
           <Text style={styles.errorDetail}>{error}</Text>
-          <Pressable onPress={refresh} style={styles.retryButton}>
+          <Pressable onPress={refresh} style={styles.retryButton} accessibilityRole="button" accessibilityLabel="Retry loading trends" accessibilityHint="Double tap to reload the trends list">
             <Text style={styles.retryButtonText}>Retry</Text>
           </Pressable>
         </View>

@@ -1,11 +1,12 @@
-import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { useCallback, useMemo } from 'react';
+import { Pressable, Share, StyleSheet, Text, View } from 'react-native';
 import { Image } from 'expo-image';
 import * as Linking from 'expo-linking';
 import { Iconify } from 'react-native-iconify';
 
 import { Trend } from '../types';
 import { useTheme } from '../theme/ThemeContext';
+import { useBookmarkContext } from '../context/BookmarkContext';
 import { useIsRTL } from '../hooks/useIsRTL';
 
 export interface FeedCardProps {
@@ -64,7 +65,7 @@ function formatPublishedDate(value: string): string {
   }).format(date);
 }
 
-export default function FeedCard({ trend, onPress }: FeedCardProps) {
+function FeedCard({ trend, onPress }: FeedCardProps) {
   const { colors, radii, shadows, spacing, typography } = useTheme();
   const isRTL = useIsRTL();
 
@@ -73,7 +74,8 @@ export default function FeedCard({ trend, onPress }: FeedCardProps) {
   const displayBody = trend.ar_translation ?? trend.description;
   const bodyIsArabic = !!trend.ar_translation;
 
-  const styles = StyleSheet.create({
+  // StyleSheet depends on theme values from useTheme() so it is memoized per theme change
+  const styles = useMemo(() => StyleSheet.create({
     shadow: {
       ...shadows.card,
       borderRadius: radii.md,
@@ -174,7 +176,24 @@ export default function FeedCard({ trend, onPress }: FeedCardProps) {
       ...typography.bodySmall,
       color: colors.muted,
     },
-  });
+    shareButton: {
+      padding: 4,
+    },
+    bookmarkButton: {
+      padding: 4,
+    },
+  }), [colors, radii, shadows, spacing, typography]);
+
+  const { isBookmarked, toggleBookmark } = useBookmarkContext();
+  const bookmarked = isBookmarked(trend.id);
+
+  const handleShare = () => {
+    Share.share({ message: displayTitle, url: trend.url ?? '' });
+  };
+
+  const handleBookmark = useCallback(() => {
+    toggleBookmark(trend);
+  }, [toggleBookmark, trend]);
 
   const handlePress = () => {
     if (onPress) {
@@ -186,7 +205,13 @@ export default function FeedCard({ trend, onPress }: FeedCardProps) {
 
   return (
     <View style={styles.shadow}>
-      <Pressable onPress={handlePress} style={styles.card}>
+      <Pressable
+        onPress={handlePress}
+        style={styles.card}
+        accessibilityRole="button"
+        accessibilityLabel={`Trend: ${displayTitle}`}
+        accessibilityHint="Double tap to view trend details"
+      >
         {/* Thumbnail */}
         <View>
           {trend.thumbnail_url ? (
@@ -194,6 +219,8 @@ export default function FeedCard({ trend, onPress }: FeedCardProps) {
               source={{ uri: trend.thumbnail_url }}
               style={styles.thumbnail}
               contentFit="cover"
+              transition={200}
+              recyclingKey={trend.id}
             />
           ) : (
             <View style={styles.thumbnailPlaceholder} />
@@ -260,9 +287,33 @@ export default function FeedCard({ trend, onPress }: FeedCardProps) {
             {trend.published_date ? (
               <Text style={styles.date}>{formatPublishedDate(trend.published_date)}</Text>
             ) : null}
+            <Pressable
+              onPress={handleShare}
+              style={styles.shareButton}
+              accessibilityRole="button"
+              accessibilityLabel={`Share ${displayTitle}`}
+              accessibilityHint="Opens share sheet to share this trend"
+            >
+              <Iconify icon="mdi:share-variant" size={18} color={colors.muted} />
+            </Pressable>
+            <Pressable
+              onPress={handleBookmark}
+              style={styles.bookmarkButton}
+              accessibilityRole="button"
+              accessibilityLabel={bookmarked ? 'Remove bookmark' : 'Add bookmark'}
+              accessibilityHint={bookmarked ? 'Double tap to remove this trend from bookmarks' : 'Double tap to save this trend to bookmarks'}
+            >
+              <Iconify
+                icon={bookmarked ? 'mdi:bookmark' : 'mdi:bookmark-outline'}
+                size={18}
+                color={bookmarked ? colors.primary : colors.muted}
+              />
+            </Pressable>
           </View>
         </View>
       </Pressable>
     </View>
   );
 }
+
+export default React.memo(FeedCard, (prev, next) => prev.trend.id === next.trend.id);

@@ -111,7 +111,7 @@ class NocoDBTrendsClient:
             "notification_sent": False,
             "ar_translation": item.ar_translation,
             "title_ar": item.title_ar,
-            "status": item.status or "pending",
+            "status": item.status or "approved",
         }
 
     async def create_trend(self, item: TrendItem) -> Optional[Dict[str, Any]]:
