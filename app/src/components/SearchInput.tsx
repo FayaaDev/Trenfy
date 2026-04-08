@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -13,7 +13,8 @@ interface SearchInputProps {
 export default function SearchInput({ value, onChangeText, placeholder }: SearchInputProps) {
   const { colors, radii, spacing } = useTheme();
 
-  const styles = StyleSheet.create({
+  // StyleSheet depends on theme values from useTheme() so it is memoized per theme change
+  const styles = useMemo(() => StyleSheet.create({
     wrapper: {
       alignItems: 'center',
       backgroundColor: colors.surface,
@@ -31,17 +32,21 @@ export default function SearchInput({ value, onChangeText, placeholder }: Search
       fontSize: 15,
       padding: 0,
     },
-  });
+  }), [colors, radii, spacing]);
 
   return (
     <View style={styles.wrapper}>
       <Ionicons color={colors.muted} name="search-outline" size={18} />
       <TextInput
+        maxLength={200}
         placeholder={placeholder}
         placeholderTextColor={colors.muted}
         style={styles.input}
         value={value}
         onChangeText={onChangeText}
+        accessibilityLabel="Search trends"
+        accessibilityHint="Type to filter the trends list"
+        accessibilityRole="search"
       />
     </View>
   );

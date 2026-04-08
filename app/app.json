@@ -29,12 +29,19 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "updates": {
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/a59b8321-b0fb-47b7-a34f-25ad37d7f4a7"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
     "plugins": [
       "expo-asset",
       "expo-font",
       "expo-sqlite",
-      "expo-web-browser",
-      "@react-native-google-signin/google-signin"
+      "expo-updates",
+      "expo-web-browser"
     ],
     "extra": {
       "eas": {

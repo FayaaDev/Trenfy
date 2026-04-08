@@ -1,5 +1,6 @@
 import { apiFetch } from './client';
 import { CategoryOption, Trend, TrendFilters, TrendsListResponse } from '../types';
+import { withRetry } from '../utils/retry';
 
 type RawTrend = Omit<Trend, 'id'> & {
   id?: string | number;
@@ -46,7 +47,8 @@ function normalizeTrend(item: RawTrend): Trend {
  * Always enforces status=approved — consumers must never see pending/rejected.
  */
 export async function fetchTrends(
-  filters: TrendFilters = {}
+  filters: TrendFilters = {},
+  signal?: AbortSignal
 ): Promise<TrendsListResponse> {
   const params = new URLSearchParams();
 
@@ -60,7 +62,10 @@ export async function fetchTrends(
   if (filters.cursor) params.set('cursor', filters.cursor);
   params.set('limit', String(filters.limit ?? 20));
 
-  const result = await apiFetch<RawTrendsListResponse>(`/api/trends?${params.toString()}`);
+  const result = await withRetry(
+    () => apiFetch<RawTrendsListResponse>(`/api/trends?${params.toString()}`, { signal }),
+    { maxAttempts: 3, baseDelay: 1000 }
+  );
 
   return {
     ...result,

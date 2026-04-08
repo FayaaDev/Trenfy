@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -27,7 +27,8 @@ export default function SkeletonCard() {
 
   const animatedStyle = useAnimatedStyle(() => ({ opacity: opacity.value }));
 
-  const styles = StyleSheet.create({
+  // StyleSheet depends on theme values from useTheme() so it is memoized per theme change
+  const styles = useMemo(() => StyleSheet.create({
     wrapper: {
       ...shadows.card,
       borderRadius: radii.md,
@@ -68,10 +69,10 @@ export default function SkeletonCard() {
     footerSpacer: {
       height: 14,
     },
-  });
+  }), [colors, radii, shadows, spacing]);
 
   return (
-    <View style={styles.wrapper}>
+    <View style={styles.wrapper} accessibilityElementsHidden={true} importantForAccessibility="no-hide-descendants">
       {/* Thumbnail placeholder */}
       <Animated.View style={[styles.thumbnailBlock, animatedStyle]} />
 
