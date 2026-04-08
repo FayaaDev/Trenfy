@@ -199,7 +199,7 @@ class NocoDBTrendsClient:
                 where_parts.append(f"(platform,eq,{platform})")
         if category:
             category_values = [
-                value.strip() for value in category.split(",") if value.strip()
+                value.strip().lower() for value in category.split(",") if value.strip()
             ]
             if len(category_values) > 1:
                 where_parts.append(f"(category,anyof,{','.join(category_values)})")
