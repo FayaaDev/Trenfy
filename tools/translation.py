@@ -7,12 +7,17 @@ Translation is best-effort — failures leave ar_translation/title_ar=None.
 import logging
 import importlib
 import json
-from typing import List
+from typing import List, NamedTuple
 
 from trend_agents.shared.models import TrendItem
 
 logger = logging.getLogger(__name__)
 SEPARATOR = "\n---ITEM---\n"
+
+
+class _Translation(NamedTuple):
+    title_ar: str
+    text: str
 
 
 def _has_arabic_script(text: str) -> bool:
@@ -25,7 +30,10 @@ def is_arabic(item: TrendItem) -> bool:
     # Priority 1: X items with explicit lang metadata
     if item.metadata.get("lang") == "ar":
         return True
-    # Priority 2: Title contains Arabic script characters
+    # Priority 2: YouTube Saudi-region trends are treated as Arabic-localized.
+    if item.platform == "youtube" and item.region_code == "SA":
+        return True
+    # Priority 3: Title contains Arabic script characters
     if _has_arabic_script(item.title or ""):
         return True
     return False
@@ -94,7 +102,7 @@ async def translate_items(items: List[TrendItem]) -> List[TrendItem]:
             ],
         )
         result_text = response.choices[0].message.content or ""
-        translations = _parse_translations(result_text)
+        translations = _parse_translation_entries(result_text)
 
         for i, item in enumerate(to_translate):
             if i < len(translations):
@@ -114,17 +122,17 @@ async def translate_items(items: List[TrendItem]) -> List[TrendItem]:
     return items
 
 
-def _parse_translations(result_text: str) -> List[tuple]:
-    """Parse the LLM response into a list of (title_ar, text) tuples, ordered by index."""
+def _parse_translation_entries(result_text: str) -> List[_Translation]:
+    """Parse the LLM response into translation entries, ordered by index."""
     try:
         payload = json.loads(result_text)
     except json.JSONDecodeError:
         # Fallback: separator-split plain text — no title_ar available, use text for both
         chunks = [chunk.strip() for chunk in result_text.split(SEPARATOR.strip())]
-        return [(chunk, chunk) for chunk in chunks]
+        return [_Translation(chunk, chunk) for chunk in chunks]
 
     rows = payload.get("translations") or []
-    indexed: dict[int, tuple] = {}
+    indexed: dict[int, _Translation] = {}
     for row in rows:
         if not isinstance(row, dict):
             continue
@@ -137,9 +145,14 @@ def _parse_translations(result_text: str) -> List[tuple]:
             continue
         title_ar = str(row.get("title_ar") or "").strip()
         text = str(row.get("text") or "").strip()
-        indexed[index] = (title_ar, text)
+        indexed[index] = _Translation(title_ar, text)
 
     if not indexed:
         return []
 
     return [indexed[index] for index in sorted(indexed)]
+
+
+def _parse_translations(result_text: str) -> List[str]:
+    """Parse the LLM response into translated text strings, ordered by index."""
+    return [entry.text for entry in _parse_translation_entries(result_text)]

@@ -5,7 +5,7 @@ import httpx
 
 from trend_agents.shared.models import TrendItem, TrendSource
 from tools.trend_clients.base import BaseTrendClient
-from tools.trend_clients.common import compute_content_hash
+from tools.trend_clients.common import compute_content_hash, normalize_category
 
 YOUTUBE_VIDEOS_ENDPOINT = "https://www.googleapis.com/youtube/v3/videos"
 
@@ -100,7 +100,7 @@ class YouTubeTrendClient(BaseTrendClient):
             return None
 
         category_id = str(snippet.get("categoryId") or "")
-        category = _CATEGORY_BY_ID.get(category_id, "News")
+        category = normalize_category(_CATEGORY_BY_ID.get(category_id, ""))
 
         trend = TrendItem(
             platform=self.platform,

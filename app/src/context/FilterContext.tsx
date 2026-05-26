@@ -12,11 +12,11 @@ import useFilterPrefs from '../hooks/useFilterPrefs';
 import type { CategoryOption, TrendRegion } from '../types';
 
 const FALLBACK_CATEGORIES: CategoryOption[] = [
-  { value: 'gaming', label: 'Gaming' },
-  { value: 'music',  label: 'Music' },
-  { value: 'sports', label: 'Sports' },
-  { value: 'movies', label: 'Movies' },
-  { value: 'news',   label: 'News' },
+  { value: 'Gaming', label: 'Gaming' },
+  { value: 'Music',  label: 'Music' },
+  { value: 'Sports', label: 'Sports' },
+  { value: 'Movies', label: 'Movies' },
+  { value: 'News',   label: 'News' },
 ];
 
 // ---------------------------------------------------------------------------

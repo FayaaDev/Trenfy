@@ -18,7 +18,7 @@ _CATEGORY_MAP = {
     "film": "entertainment",
     "films": "entertainment",
     "cinema": "entertainment",
-    "news": "news",
+    "news": "entertainment",
     "politics": "news",
     "breaking": "news",
 }
@@ -28,7 +28,7 @@ def normalize_category(raw: str) -> str:
     key = (raw or "").strip().lower()
     if key in _CATEGORY_MAP:
         return _CATEGORY_MAP[key]
-    return "news"
+    return "entertainment"
 
 
 def compute_content_hash(item: TrendItem) -> str:
