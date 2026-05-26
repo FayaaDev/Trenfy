@@ -1,7 +1,7 @@
 {
   "database": "dolt",
   "backend": "dolt",
-  "dolt_mode": "server",
+  "dolt_mode": "embedded",
   "dolt_database": "Trenfy",
   "project_id": "142a5068-28b1-459f-9a64-70bd1e29720c"
 }
