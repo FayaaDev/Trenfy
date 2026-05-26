@@ -32,5 +32,5 @@
     "LOG_LEVEL": "info"
   }
   // Required Worker secrets, set with `wrangler secret put` and never commit values:
-  // NOCODB_API_TOKEN, YOUTUBE_API_KEY, X_BEARER_TOKEN
+  // NOCODB_API_TOKEN, YOUTUBE_API_KEY, X_BEARER_TOKEN (or X_API_KEY fallback), REFRESH_TOKEN
 }
