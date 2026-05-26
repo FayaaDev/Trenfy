@@ -1,0 +1,39 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "trenfy",
+  "main": "worker.py",
+  "compatibility_date": "2026-05-26",
+  "compatibility_flags": ["python_workers", "disable_python_external_sdk"],
+  "assets": {
+    "directory": "app/dist-web",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*", "/health*"]
+  },
+  "observability": {
+    "enabled": true
+  },
+  "triggers": {
+    "crons": ["*/5 * * * *"]
+  },
+  "routes": [
+    {
+      // Custom domain expectation: serve Trenfy from https://trenfy.fayaa92.sa.
+      "pattern": "trenfy.fayaa92.sa",
+      "custom_domain": true
+    }
+  ],
+  "vars": {
+    "NOCODB_API_URL": "https://nocodb.fayaa92.sa",
+    "NOCODB_BASE_ID": "",
+    "NOCODB_TRENDS_TABLE_ID": "",
+    "NOCODB_SOURCES_TABLE_ID": "",
+    "TRENDS_ENABLED": "false",
+    "SOURCE_SYNC_ON_STARTUP": "false",
+    "CRON_SCAN_BATCH_SIZE": "5",
+    "CORS_ORIGINS": "https://trenfy.fayaa92.sa",
+    "LOG_LEVEL": "info"
+  }
+  // Required Worker secrets, set with `wrangler secret put` and never commit values:
+  // NOCODB_API_TOKEN, YOUTUBE_API_KEY, X_BEARER_TOKEN
+}

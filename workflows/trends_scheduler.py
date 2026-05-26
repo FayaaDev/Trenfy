@@ -5,8 +5,8 @@ Each source runs in an isolated asyncio.create_task() for failure isolation.
 
 import asyncio
 import logging
-from datetime import datetime, timedelta
-from typing import Dict, Optional
+from datetime import datetime, timedelta, timezone
+from typing import Any, Dict, Optional
 
 from trend_agents.shared import source_registry
 from trend_agents.shared.models import TrendSource
@@ -29,19 +29,22 @@ class TrendsScheduler:
     def is_running(self) -> bool:
         return self._running and self._task is not None and not self._task.done()
 
-    def _is_due(self, source: TrendSource) -> bool:
-        """Return True if source is due to run (interval has elapsed since last run)."""
-        last = self._last_run.get(source.id)
+    def _is_due_from(self, source: TrendSource, last: Optional[datetime]) -> bool:
+        """Return True if source is due to run after a known last run time."""
         if last is None:
             return True  # Never run — due immediately
-        return datetime.utcnow() >= last + timedelta(
+        return _utcnow() >= last + timedelta(
             minutes=source.check_interval_minutes
         )
+
+    def _is_due(self, source: TrendSource) -> bool:
+        """Return True if source is due to run in the in-process scheduler."""
+        return self._is_due_from(source, self._last_run.get(source.id))
 
     async def _run_source(self, source: TrendSource) -> None:
         """Run a single source scan with error isolation."""
         try:
-            self._last_run[source.id] = datetime.utcnow()
+            self._last_run[source.id] = _utcnow()
             result = await workflow.scan_source(source)
             logger.info(
                 "[Scheduler] %s complete: fetched=%d stored=%d duplicates=%d",
@@ -57,6 +60,57 @@ class TrendsScheduler:
                 await nocodb_trends.update_source_status(source.id, status="error")
             except Exception:
                 pass
+
+    async def run_due_sources(self, batch_size: int = 5) -> Dict[str, Any]:
+        """Run a bounded batch of due enabled sources for cron-triggered Workers.
+
+        This method is intentionally one-shot: Cloudflare Cron Triggers should not
+        start the long-running scheduler loop used by local/VPS runtimes.
+        """
+        batch_size = max(1, batch_size)
+        configured_sources = source_registry.list_enabled()
+        source_rows = await nocodb_trends.query_sources(enabled_only=False)
+        row_by_id = {str(row.get("id") or ""): row for row in source_rows}
+
+        due_sources: list[TrendSource] = []
+        skipped_disabled = 0
+        skipped_not_due = 0
+
+        for source in configured_sources:
+            row = row_by_id.get(source.id)
+            if row is not None and not bool(row.get("enabled", False)):
+                skipped_disabled += 1
+                continue
+
+            last_fetched_at = (
+                _parse_timestamp(row.get("last_fetched_at")) if row else None
+            )
+            if self._is_due_from(source, last_fetched_at):
+                due_sources.append(source)
+            else:
+                skipped_not_due += 1
+
+        selected_sources = due_sources[:batch_size]
+        total: Dict[str, Any] = {
+            "fetched": 0,
+            "stored": 0,
+            "duplicates": 0,
+            "sources_due": len(due_sources),
+            "sources_run": 0,
+            "skipped_disabled": skipped_disabled,
+            "skipped_not_due": skipped_not_due,
+            "results": [],
+        }
+
+        for source in selected_sources:
+            result = await workflow.scan_source(source)
+            total["fetched"] += int(result.get("fetched", 0))
+            total["stored"] += int(result.get("stored", 0))
+            total["duplicates"] += int(result.get("duplicates", 0))
+            total["sources_run"] += 1
+            total["results"].append(result)
+
+        return total
 
     async def _loop(self) -> None:
         """Main scheduler loop — checks due sources every 60 seconds."""
@@ -104,3 +158,26 @@ class TrendsScheduler:
 
 # Module-level singleton
 scheduler = TrendsScheduler()
+
+
+def _parse_timestamp(value: Any) -> Optional[datetime]:
+    if not value:
+        return None
+
+    raw = str(value).strip()
+    if not raw:
+        return None
+
+    try:
+        parsed = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+
+    if parsed.tzinfo is not None:
+        return parsed.astimezone(timezone.utc).replace(tzinfo=None)
+
+    return parsed
+
+
+def _utcnow() -> datetime:
+    return datetime.now(timezone.utc).replace(tzinfo=None)
