@@ -11,6 +11,8 @@ jest.mock('../api/trends', () => ({
   fetchCategories: jest.fn().mockResolvedValue([
     { value: 'Tech', label: 'Tech' },
     { value: 'Sports', label: 'Sports' },
+    { value: 'news', label: 'News' },
+    { value: 'gaming', label: 'Gaming' },
   ]),
 }));
 
@@ -122,5 +124,17 @@ describe('FilterContext', () => {
     const labels = result.current.availableCategories.map((c) => c.value);
     expect(labels).toContain('Gaming'); // fallback category
     expect(labels).toContain('Tech');   // from mocked API
+  });
+
+  it('dedupes API categories that only differ from fallbacks by casing', async () => {
+    const { result } = renderHook(() => useFilters(), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.isLoadingCategories).toBe(false);
+    });
+
+    const values = result.current.availableCategories.map((c) => c.value.toLowerCase());
+    expect(values.filter((value) => value === 'gaming')).toHaveLength(1);
+    expect(values.filter((value) => value === 'news')).toHaveLength(1);
   });
 });

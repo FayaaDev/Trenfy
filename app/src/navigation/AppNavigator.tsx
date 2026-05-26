@@ -159,6 +159,10 @@ function FilterFAB(_props: BottomTabBarProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [availableCategories, selectedCategories, region]);
 
+  while (fanAnims.length < fanItems.length) {
+    fanAnims.push(new Animated.Value(0));
+  }
+
   // ── open / close ──────────────────────────────────────────────────────────
 
   const openFan = useCallback(() => {

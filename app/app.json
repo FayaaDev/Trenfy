@@ -34,9 +34,7 @@
       "fallbackToCacheTimeout": 0,
       "url": "https://u.expo.dev/a59b8321-b0fb-47b7-a34f-25ad37d7f4a7"
     },
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
+    "runtimeVersion": "1.0.1",
     "plugins": [
       "expo-asset",
       "expo-font",

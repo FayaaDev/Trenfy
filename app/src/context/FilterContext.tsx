@@ -66,9 +66,14 @@ export function FilterProvider({ children }: { children: React.ReactNode }) {
         // even when no trends exist for that category. API categories that are
         // not in the fallback list are appended after.
         const merged = [...FALLBACK_CATEGORIES];
+        const seenValues = new Set(
+          merged.map((cat) => cat.value.trim().toLowerCase())
+        );
         for (const cat of result) {
-          if (!merged.some((c) => c.value === cat.value)) {
+          const normalizedValue = cat.value.trim().toLowerCase();
+          if (normalizedValue && !seenValues.has(normalizedValue)) {
             merged.push(cat);
+            seenValues.add(normalizedValue);
           }
         }
         setAvailableCategories(merged);
