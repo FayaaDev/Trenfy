@@ -15,7 +15,7 @@ def _assert_contains(content: str, needle: str, label: str) -> None:
 
 def test_dockerfile_runtime_contract() -> None:
     dockerfile = _read("Dockerfile")
-    _assert_contains(dockerfile, "FROM python:3.11-slim", "docker base image")
+    _assert_contains(dockerfile, "FROM python:3.12-slim", "docker base image")
     _assert_contains(dockerfile, "WORKDIR /app", "docker workdir")
     _assert_contains(dockerfile, "COPY pyproject.toml .", "pyproject copy")
     _assert_contains(dockerfile, "COPY workflows/ workflows/", "workflows copy")
@@ -68,8 +68,25 @@ def test_env_contract_keys() -> None:
         _assert_contains(env_example, key, ".env key")
 
 
+def test_cloudflare_worker_runtime_contract() -> None:
+    wrangler = _read("wrangler.jsonc")
+    worker = _read("worker.js")
+
+    _assert_contains(wrangler, '"main": "worker.js"', "Cloudflare Worker entrypoint")
+    _assert_contains(
+        wrangler,
+        '"run_worker_first": ["/api/*", "/health*"]',
+        "API routes run before static assets",
+    )
+    _assert_contains(wrangler, '"custom_domain": true', "custom domain route")
+    _assert_contains(worker, "'/api/trends'", "trends API route")
+    _assert_contains(worker, "'/api/categories'", "categories API route")
+    _assert_contains(worker, "'/health'", "health route")
+
+
 if __name__ == "__main__":
     test_dockerfile_runtime_contract()
     test_compose_backend_hosted_nocodb_contract()
     test_env_contract_keys()
+    test_cloudflare_worker_runtime_contract()
     print("infra-config-contract-ok")

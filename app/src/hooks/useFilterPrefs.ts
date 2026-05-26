@@ -1,13 +1,13 @@
 import { useCallback, useState } from 'react';
-import Storage from 'expo-sqlite/kv-store';
 
+import { getFilterPref, removeFilterPref, setFilterPref } from '../storage/filterPrefs';
 import type { TrendPlatform, TrendRegion } from '../types';
 
 const PLATFORM_KEY = 'filter:platform';
 const REGION_KEY = 'filter:region';
 
 function readPlatform(): TrendPlatform | null {
-  const value = Storage.getItemSync(PLATFORM_KEY);
+  const value = getFilterPref(PLATFORM_KEY);
 
   if (value === 'youtube' || value === 'x') {
     return value;
@@ -17,7 +17,7 @@ function readPlatform(): TrendPlatform | null {
 }
 
 function readRegion(): TrendRegion | null {
-  const value = Storage.getItemSync(REGION_KEY);
+  const value = getFilterPref(REGION_KEY);
 
   if (
     value === 'US'
@@ -52,29 +52,29 @@ export default function useFilterPrefs(): UseFilterPrefsResult {
     setPlatformState(next);
 
     if (next) {
-      Storage.setItemSync(PLATFORM_KEY, next);
+      setFilterPref(PLATFORM_KEY, next);
       return;
     }
 
-    Storage.removeItemSync(PLATFORM_KEY);
+    removeFilterPref(PLATFORM_KEY);
   }, []);
 
   const setRegion = useCallback((next: TrendRegion | null) => {
     setRegionState(next);
 
     if (next) {
-      Storage.setItemSync(REGION_KEY, next);
+      setFilterPref(REGION_KEY, next);
       return;
     }
 
-    Storage.removeItemSync(REGION_KEY);
+    removeFilterPref(REGION_KEY);
   }, []);
 
   const clearPersistedFilters = useCallback(() => {
     setPlatformState(null);
     setRegionState(null);
-    Storage.removeItemSync(PLATFORM_KEY);
-    Storage.removeItemSync(REGION_KEY);
+    removeFilterPref(PLATFORM_KEY);
+    removeFilterPref(REGION_KEY);
   }, []);
 
   return {

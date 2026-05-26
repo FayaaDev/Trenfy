@@ -1,9 +1,8 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "trenfy",
-  "main": "worker.py",
+  "main": "worker.js",
   "compatibility_date": "2026-05-26",
-  "compatibility_flags": ["python_workers", "disable_python_external_sdk"],
   "assets": {
     "directory": "app/dist-web",
     "binding": "ASSETS",
@@ -12,9 +11,6 @@
   },
   "observability": {
     "enabled": true
-  },
-  "triggers": {
-    "crons": ["*/5 * * * *"]
   },
   "routes": [
     {

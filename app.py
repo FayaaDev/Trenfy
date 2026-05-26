@@ -47,20 +47,27 @@ def _cors_origins() -> list:
 async def lifespan(app: FastAPI):
     """FastAPI lifespan — startup and shutdown logic."""
     # --- Startup ---
-    from trend_agents.shared import source_registry
-    from tools.nocodb_trends_client import nocodb_trends
-    from workflows.trends_scheduler import scheduler
+    scheduler = None
 
-    # 1. Sync sources to NocoDB (non-fatal)
-    try:
-        sources = source_registry.list_enabled()
-        inserted = await nocodb_trends.sync_sources(sources)
-        logger.info("[App] Source sync complete: %d new sources inserted", inserted)
-    except Exception as e:
-        logger.warning("[App] Source sync failed (non-fatal): %s", e)
+    # 1. Sync sources to NocoDB (non-fatal, optional for Worker/request runtimes)
+    if _env_enabled("SOURCE_SYNC_ON_STARTUP", default=True):
+        from trend_agents.shared import source_registry
+        from tools.nocodb_trends_client import nocodb_trends
+
+        try:
+            sources = source_registry.list_enabled()
+            inserted = await nocodb_trends.sync_sources(sources)
+            logger.info("[App] Source sync complete: %d new sources inserted", inserted)
+        except Exception as e:
+            logger.warning("[App] Source sync failed (non-fatal): %s", e)
+    else:
+        logger.info("[App] Source sync disabled via SOURCE_SYNC_ON_STARTUP")
 
     # 2. Start scheduler (optional for local/dev)
     if _env_enabled("TRENDS_ENABLED", default=True):
+        from workflows.trends_scheduler import scheduler as trends_scheduler
+
+        scheduler = trends_scheduler
         await scheduler.start()
         logger.info("[App] Scheduler started: is_running=%s", scheduler.is_running)
     else:
@@ -69,10 +76,8 @@ async def lifespan(app: FastAPI):
     yield
 
     # --- Shutdown ---
-    from workflows.trends_scheduler import scheduler as _scheduler
-
-    if _scheduler.is_running:
-        await _scheduler.stop()
+    if scheduler is not None and scheduler.is_running:
+        await scheduler.stop()
         logger.info("[App] Scheduler stopped")
 
 

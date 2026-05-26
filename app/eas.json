@@ -8,19 +8,19 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_API_URL": "http://174.138.183.153:8080"
+        "EXPO_PUBLIC_API_URL": "https://trenfy.fayaa92.sa"
       }
     },
     "preview": {
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_API_URL": "http://174.138.183.153:8080"
+        "EXPO_PUBLIC_API_URL": "https://trenfy.fayaa92.sa"
       }
     },
     "production": {
       "autoIncrement": true,
       "env": {
-        "EXPO_PUBLIC_API_URL": "http://174.138.183.153:8080"
+        "EXPO_PUBLIC_API_URL": "https://trenfy.fayaa92.sa"
       }
     }
   },

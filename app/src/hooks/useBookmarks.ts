@@ -1,18 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import * as SQLite from 'expo-sqlite';
 
 import { Trend } from '../types';
-
-// Open (or create) the bookmarks database.
-const db = SQLite.openDatabaseSync('bookmarks.db');
-
-// Ensure the table exists on startup.
-db.execSync(
-  `CREATE TABLE IF NOT EXISTS bookmarks (
-    id TEXT PRIMARY KEY NOT NULL,
-    data TEXT NOT NULL
-  );`
-);
+import { deleteBookmark, loadBookmarks, saveBookmark } from '../storage/bookmarks';
 
 export interface UseBookmarksResult {
   bookmarks: Record<string, Trend>;
@@ -26,18 +15,7 @@ export default function useBookmarks(): UseBookmarksResult {
   // Load all bookmarks from SQLite on mount.
   useEffect(() => {
     try {
-      const rows = db.getAllSync<{ id: string; data: string }>(
-        'SELECT id, data FROM bookmarks;'
-      );
-      const map: Record<string, Trend> = {};
-      for (const row of rows) {
-        try {
-          map[row.id] = JSON.parse(row.data) as Trend;
-        } catch {
-          // Skip rows with invalid JSON.
-        }
-      }
-      setBookmarks(map);
+      setBookmarks(loadBookmarks());
     } catch {
       // If the DB read fails, start with an empty map.
     }
@@ -50,7 +28,7 @@ export default function useBookmarks(): UseBookmarksResult {
         // Remove bookmark.
         delete next[trend.id];
         try {
-          db.runSync('DELETE FROM bookmarks WHERE id = ?;', [trend.id]);
+          deleteBookmark(trend.id);
         } catch {
           // Ignore write errors.
         }
@@ -58,10 +36,7 @@ export default function useBookmarks(): UseBookmarksResult {
         // Add bookmark.
         next[trend.id] = trend;
         try {
-          db.runSync(
-            'INSERT OR REPLACE INTO bookmarks (id, data) VALUES (?, ?);',
-            [trend.id, JSON.stringify(trend)]
-          );
+          saveBookmark(trend);
         } catch {
           // Ignore write errors.
         }

@@ -22,12 +22,13 @@
     "android": {
       "package": "app.trenfy",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#0A0F1E"
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "bundler": "metro",
+      "favicon": "./assets/icon.png"
     },
     "updates": {
       "fallbackToCacheTimeout": 0,

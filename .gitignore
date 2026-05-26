@@ -8,8 +8,11 @@ __pycache__/
 
 # Virtual environments
 .venv/
+.venv-workers/
+python_modules/
 venv/
 ENV/
+.wrangler/
 
 # Environment files (secrets - NEVER commit these)
 .env
