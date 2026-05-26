@@ -25,9 +25,10 @@
   ],
   "vars": {
     "NOCODB_API_URL": "https://nocodb.fayaa92.sa",
-    "NOCODB_BASE_ID": "",
-    "NOCODB_TRENDS_TABLE_ID": "",
-    "NOCODB_SOURCES_TABLE_ID": "",
+    "NOCODB_BASE_ID": "ps82pgir3bbih55",
+    "NOCODB_TRENDS_TABLE_ID": "md3c6cy09fvz2jg",
+    "NOCODB_SOURCES_TABLE_ID": "m93wrwcg2yxjc7t",
+    "NOCODB_TRENDS_VIEW_ID": "vwzcsbg00vx542mi",
     "TRENDS_ENABLED": "false",
     "SOURCE_SYNC_ON_STARTUP": "false",
     "CRON_SCAN_BATCH_SIZE": "5",

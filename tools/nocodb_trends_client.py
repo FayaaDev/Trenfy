@@ -29,8 +29,11 @@ class NocoDBTrendsClient:
             or _normalize_url(default_base_url)
         )
         self.api_token = _env("NOCODB_API_TOKEN", "")
+        self.base_id = _env("NOCODB_BASE_ID", "")
         self.trends_table_id = _env("NOCODB_TRENDS_TABLE_ID", "md3c6cy09fvz2jg")
         self.sources_table_id = _env("NOCODB_SOURCES_TABLE_ID", "")
+        self.trends_view_id = _env("NOCODB_TRENDS_VIEW_ID", "")
+        self.sources_view_id = _env("NOCODB_SOURCES_VIEW_ID", "")
 
     @property
     def base_urls(self) -> List[str]:
@@ -52,6 +55,52 @@ class NocoDBTrendsClient:
             "xc-token": self.api_token,
             "Content-Type": "application/json",
         }
+
+    def _records_path(self, table_id: str, record_id: Optional[str] = None) -> str:
+        if getattr(self, "base_id", ""):
+            path = f"/api/v3/data/{self.base_id}/{table_id}/records"
+        else:
+            path = f"/api/v2/tables/{table_id}/records"
+        return f"{path}/{record_id}" if record_id is not None else path
+
+    def _list_params(
+        self,
+        params: Optional[Dict[str, Any]] = None,
+        *,
+        view_id: str = "",
+    ) -> Dict[str, Any]:
+        result = dict(params or {})
+        if getattr(self, "base_id", ""):
+            if "limit" in result and "pageSize" not in result:
+                result["pageSize"] = result.pop("limit")
+            if view_id:
+                result.setdefault("viewId", view_id)
+        return result
+
+    def _rows_from_payload(self, payload: Any) -> List[Dict[str, Any]]:
+        if isinstance(payload, list):
+            return [row for row in payload if isinstance(row, dict)]
+        if not isinstance(payload, dict):
+            return []
+        for key in ("list", "records", "data"):
+            rows = payload.get(key)
+            if isinstance(rows, list):
+                return [row for row in rows if isinstance(row, dict)]
+        return []
+
+    def _count_from_payload(self, payload: Any) -> int:
+        if not isinstance(payload, dict):
+            return 0
+        for key in ("count", "totalRows", "total"):
+            value = payload.get(key)
+            if value is not None:
+                return int(value)
+        page_info = payload.get("pageInfo")
+        if isinstance(page_info, dict):
+            value = page_info.get("totalRows") or page_info.get("total")
+            if value is not None:
+                return int(value)
+        return 0
 
     async def _request(
         self,
@@ -118,7 +167,7 @@ class NocoDBTrendsClient:
         try:
             response = await self._request(
                 "POST",
-                f"/api/v2/tables/{self.trends_table_id}/records",
+                self._records_path(self.trends_table_id),
                 json_body=self._item_to_record(item),
             )
             return response.json() if response else None
@@ -133,7 +182,7 @@ class NocoDBTrendsClient:
         try:
             response = await self._request(
                 "POST",
-                f"/api/v2/tables/{self.trends_table_id}/records",
+                self._records_path(self.trends_table_id),
                 json_body=records,
             )
             if response is None:
@@ -230,12 +279,14 @@ class NocoDBTrendsClient:
         try:
             response = await self._request(
                 "GET",
-                f"/api/v2/tables/{self.trends_table_id}/records",
-                params=params,
+                self._records_path(self.trends_table_id),
+                params=self._list_params(
+                    params, view_id=getattr(self, "trends_view_id", "")
+                ),
             )
             if response is None:
                 return []
-            rows: List[Dict[str, Any]] = response.json().get("list", [])
+            rows = self._rows_from_payload(response.json())
 
             # For pending filter: include rows with null/empty/missing status
             if status == "pending":
@@ -255,7 +306,7 @@ class NocoDBTrendsClient:
         try:
             response = await self._request(
                 "GET",
-                f"/api/v2/tables/{self.trends_table_id}/records/{record_id}",
+                self._records_path(self.trends_table_id, record_id),
                 allow_404=True,
             )
             if response is None:
@@ -282,7 +333,7 @@ class NocoDBTrendsClient:
         try:
             await self._request(
                 "PATCH",
-                f"/api/v2/tables/{self.trends_table_id}/records",
+                self._records_path(self.trends_table_id),
                 json_body=[{"Id": record_id, **updates}],
             )
         except Exception as e:
@@ -299,7 +350,7 @@ class NocoDBTrendsClient:
         try:
             await self._request(
                 "DELETE",
-                f"/api/v2/tables/{self.trends_table_id}/records",
+                self._records_path(self.trends_table_id),
                 json_body=[{"Id": record_id}],
             )
             return True
@@ -311,16 +362,15 @@ class NocoDBTrendsClient:
         try:
             response = await self._request(
                 "GET",
-                f"/api/v2/tables/{self.trends_table_id}/records",
-                params={
-                    "where": f"(content_hash,eq,{content_hash})",
-                    "limit": 1,
-                },
+                self._records_path(self.trends_table_id),
+                params=self._list_params(
+                    {"where": f"(content_hash,eq,{content_hash})", "limit": 1},
+                    view_id=getattr(self, "trends_view_id", ""),
+                ),
             )
             if response is None:
                 return False
-            data = response.json()
-            return len(data.get("list", [])) > 0
+            return len(self._rows_from_payload(response.json())) > 0
         except Exception as e:
             print(f"[NocoDBTrends] Error checking duplicate hash: {e}")
             return False
@@ -340,17 +390,16 @@ class NocoDBTrendsClient:
                 try:
                     response = await self._request(
                         "GET",
-                        f"/api/v2/tables/{self.trends_table_id}/records",
-                        params={
+                        self._records_path(self.trends_table_id),
+                        params=self._list_params({
                             "where": f"(content_hash,anyof,{hash_list})",
                             "limit": page_limit,
                             "offset": offset,
-                        },
+                        }, view_id=getattr(self, "trends_view_id", "")),
                     )
                     if response is None:
                         break
-                    data = response.json()
-                    page = data.get("list", [])
+                    page = self._rows_from_payload(response.json())
                     for record in page:
                         h = record.get("content_hash", "")
                         if h:
@@ -394,26 +443,29 @@ class NocoDBTrendsClient:
             try:
                 count_response = await self._request(
                     "GET",
-                    f"/api/v2/tables/{self.trends_table_id}/records",
-                    params={"where": f"(platform,eq,{platform})", "limit": 1},
+                    self._records_path(self.trends_table_id),
+                    params=self._list_params(
+                        {"where": f"(platform,eq,{platform})", "limit": 1},
+                        view_id=getattr(self, "trends_view_id", ""),
+                    ),
                 )
                 if count_response is not None:
-                    platform_total = int(count_response.json().get("count", 0))
+                    platform_total = self._count_from_payload(count_response.json())
             except Exception:
                 platform_total = 0
 
             try:
                 newest_response = await self._request(
                     "GET",
-                    f"/api/v2/tables/{self.trends_table_id}/records",
-                    params={
+                    self._records_path(self.trends_table_id),
+                    params=self._list_params({
                         "where": f"(platform,eq,{platform})",
                         "sort": "-fetched_at",
                         "limit": 1,
-                    },
+                    }, view_id=getattr(self, "trends_view_id", "")),
                 )
                 if newest_response is not None:
-                    newest_rows = newest_response.json().get("list", [])
+                    newest_rows = self._rows_from_payload(newest_response.json())
                     if newest_rows:
                         newest_fetched_at = newest_rows[0].get("fetched_at")
             except Exception:
@@ -451,12 +503,14 @@ class NocoDBTrendsClient:
         try:
             response = await self._request(
                 "GET",
-                f"/api/v2/tables/{self.sources_table_id}/records",
-                params=params,
+                self._records_path(self.sources_table_id),
+                params=self._list_params(
+                    params, view_id=getattr(self, "sources_view_id", "")
+                ),
             )
             if response is None:
                 return []
-            rows = response.json().get("list", [])
+            rows = self._rows_from_payload(response.json())
             return [self._normalize_source_row(row) for row in rows]
         except Exception as e:
             print(f"[NocoDBTrends] Error querying sources: {e}")
@@ -495,7 +549,7 @@ class NocoDBTrendsClient:
         try:
             response = await self._request(
                 "PATCH",
-                f"/api/v2/tables/{self.sources_table_id}/records",
+                self._records_path(self.sources_table_id),
                 json_body=[
                     {
                         "id": source_id,
@@ -526,13 +580,17 @@ class NocoDBTrendsClient:
             # Fetch existing source IDs from table
             existing_response = await self._request(
                 "GET",
-                f"/api/v2/tables/{self.sources_table_id}/records",
-                params={"fields": "id", "limit": 200},
+                self._records_path(self.sources_table_id),
+                params=self._list_params(
+                    {"fields": "id", "limit": 200},
+                    view_id=getattr(self, "sources_view_id", ""),
+                ),
             )
             if existing_response is None:
                 return 0
             existing_ids: set = {
-                row.get("id", "") for row in existing_response.json().get("list", [])
+                row.get("id", "")
+                for row in self._rows_from_payload(existing_response.json())
             }
 
             # Insert only sources not already present
@@ -553,7 +611,7 @@ class NocoDBTrendsClient:
                 try:
                     await self._request(
                         "POST",
-                        f"/api/v2/tables/{self.sources_table_id}/records",
+                        self._records_path(self.sources_table_id),
                         json_body=[record],
                     )
                     inserted += 1
@@ -599,19 +657,22 @@ class NocoDBTrendsClient:
         try:
             lookup = await self._request(
                 "GET",
-                f"/api/v2/tables/{self.sources_table_id}/records",
-                params={"where": f"(id,eq,{source_id})", "limit": 1},
+                self._records_path(self.sources_table_id),
+                params=self._list_params(
+                    {"where": f"(id,eq,{source_id})", "limit": 1},
+                    view_id=getattr(self, "sources_view_id", ""),
+                ),
             )
             if lookup is None:
                 return None
-            rows = lookup.json().get("list", [])
+            rows = self._rows_from_payload(lookup.json())
             if not rows:
                 return None
 
             nocodb_row_id = rows[0].get("Id") or rows[0].get("id")
             await self._request(
                 "PATCH",
-                f"/api/v2/tables/{self.sources_table_id}/records",
+                self._records_path(self.sources_table_id),
                 json_body=[{"Id": nocodb_row_id, "enabled": enabled}],
             )
             # Return normalized row with updated enabled value
@@ -637,12 +698,15 @@ class NocoDBTrendsClient:
             # Find NocoDB row by source string id
             lookup = await self._request(
                 "GET",
-                f"/api/v2/tables/{self.sources_table_id}/records",
-                params={"where": f"(id,eq,{source_id})", "limit": 1},
+                self._records_path(self.sources_table_id),
+                params=self._list_params(
+                    {"where": f"(id,eq,{source_id})", "limit": 1},
+                    view_id=getattr(self, "sources_view_id", ""),
+                ),
             )
             if lookup is None:
                 return False
-            rows = lookup.json().get("list", [])
+            rows = self._rows_from_payload(lookup.json())
             if not rows:
                 return False
 
@@ -650,7 +714,7 @@ class NocoDBTrendsClient:
 
             response = await self._request(
                 "PATCH",
-                f"/api/v2/tables/{self.sources_table_id}/records",
+                self._records_path(self.sources_table_id),
                 json_body=[
                     {
                         "Id": nocodb_row_id,
@@ -672,7 +736,13 @@ def _env(key: str, default: str) -> str:
 
 
 def _normalize_url(value: str) -> str:
-    return str(value or "").replace("/api/v1", "").replace("/api/v2", "").rstrip("/")
+    return (
+        str(value or "")
+        .replace("/api/v1", "")
+        .replace("/api/v2", "")
+        .replace("/api/v3", "")
+        .rstrip("/")
+    )
 
 
 def _chunk(lst: List[str], size: int) -> List[List[str]]:
@@ -722,7 +792,7 @@ async def migrate_categories_to_lowercase():
             try:
                 await client._request(
                     "PATCH",
-                    f"/api/v2/tables/{client.trends_table_id}/records",
+                    client._records_path(client.trends_table_id),
                     json_body=to_update,
                 )
                 updated += len(to_update)

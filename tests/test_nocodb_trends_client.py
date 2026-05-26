@@ -253,6 +253,67 @@ async def test_update_source_returns_normalized_row():
     assert "enabled" in result
 
 
+class FakeV3TrendClient(NocoDBTrendsClient):
+    def __init__(self):
+        self.base_id = "ps82pgir3bbih55"
+        self.trends_table_id = "md3c6cy09fvz2jg"
+        self.sources_table_id = "m93wrwcg2yxjc7t"
+        self.trends_view_id = "vwzcsbg00vx542mi"
+        self.sources_view_id = ""
+        self.calls = []
+
+    async def _request(
+        self,
+        method,
+        path,
+        *,
+        params=None,
+        json_body=None,
+        allow_404=False,
+    ):
+        self.calls.append(
+            {
+                "method": method,
+                "path": path,
+                "params": params,
+                "json_body": json_body,
+            }
+        )
+        return _FakeResponse({"list": [{"Id": 1, "title": "Cloudflare NocoDB"}]})
+
+
+async def test_v3_query_trends_uses_base_table_view_and_page_size():
+    client = FakeV3TrendClient()
+
+    rows = await client.query_trends(limit=25)
+
+    assert rows == [{"Id": 1, "title": "Cloudflare NocoDB"}]
+    assert client.calls[0]["path"] == (
+        "/api/v3/data/ps82pgir3bbih55/md3c6cy09fvz2jg/records"
+    )
+    assert client.calls[0]["params"]["pageSize"] == 25
+    assert "limit" not in client.calls[0]["params"]
+    assert client.calls[0]["params"]["viewId"] == "vwzcsbg00vx542mi"
+
+
+def test_nocodb_client_reads_v3_cloudflare_ids_from_env(monkeypatch):
+    monkeypatch.setenv("NOCODB_BASE_ID", "ps82pgir3bbih55")
+    monkeypatch.setenv("NOCODB_TRENDS_TABLE_ID", "md3c6cy09fvz2jg")
+    monkeypatch.setenv("NOCODB_SOURCES_TABLE_ID", "m93wrwcg2yxjc7t")
+    monkeypatch.setenv("NOCODB_TRENDS_VIEW_ID", "vwzcsbg00vx542mi")
+    monkeypatch.setenv("NOCODB_API_TOKEN", "test-token")
+
+    client = NocoDBTrendsClient()
+
+    assert client._records_path(client.trends_table_id) == (
+        "/api/v3/data/ps82pgir3bbih55/md3c6cy09fvz2jg/records"
+    )
+    assert client.sources_table_id == "m93wrwcg2yxjc7t"
+    assert client.trends_view_id == "vwzcsbg00vx542mi"
+    assert client.headers["xc-token"] == "test-token"
+
+
 if __name__ == "__main__":
     asyncio.run(test_sync_sources_inserts_valid_rows_and_skips_invalid_platforms())
+    asyncio.run(test_v3_query_trends_uses_base_table_view_and_page_size())
     print("test_nocodb_trends_client.py: ok")
